@@ -1,8 +1,8 @@
 # CODEX_IMAGE_PROMPTS.md — รายละเอียด persona และคำสั่งสร้างภาพสำหรับ Codex
 
-> **ใช้ทำอะไร:** ไฟล์เดียวที่รวมรายละเอียดของผู้รับดูแลรายบุคคล 100 ราย (`adopter-001`–`adopter-100`) และสถานสงเคราะห์ 20 แห่ง (`shelter-001`–`shelter-020`) พร้อมคำสั่งให้ Codex สร้างภาพเสมือนจริงของคน บ้านที่อยู่อาศัย น้องที่ดูแลอยู่ และสถานที่
+> **ใช้ทำอะไร:** ไฟล์เดียวที่รวมรายละเอียดของผู้รับดูแลรายบุคคล 100 ราย (`adopter-001`–`adopter-100`) พร้อมคำสั่งให้ Codex สร้างภาพเสมือนจริงของคน บ้านที่อยู่อาศัย และน้องที่ดูแลอยู่ และตารางช่องสถานสงเคราะห์ 20 แห่ง (`shelter-001`–`shelter-020`) ซึ่งเป็น **องค์กรจริง** ที่ไม่ต้องสร้างภาพ (PROMPT.md D10)
 > **ความสัมพันธ์กับเอกสารอื่น:** ข้อมูลในไฟล์นี้เป็นต้นฉบับของ `src/data/adopters.ts` และ `src/data/shelters.ts` ([PROMPT.md](PROMPT.md) หัวข้อ 10) ส่วนภาพที่ได้ต้องบันทึกใน [CREDITS.md](CREDITS.md) และแสดงป้าย “ภาพสร้างด้วย AI” ([PROMPT.md](PROMPT.md) หัวข้อ 15)
-> **สถานะ:** ยังไม่ได้สร้างภาพ ทุกคนและทุกสถานที่ในไฟล์นี้เป็นข้อมูลสมมติ ชื่อสถานสงเคราะห์ต้องค้นตรวจว่าไม่ตรงกับองค์กรจริงก่อน deploy
+> **สถานะ:** ยังไม่ได้สร้างภาพ ผู้รับดูแลรายบุคคลทุกคนเป็นบุคคลสมมติ ส่วนรายชื่อสถานสงเคราะห์จริงยังต้องค้นและตรวจตอน implement
 
 ## สารบัญ
 
@@ -11,7 +11,7 @@
 3. [สไตล์กลางและแม่แบบ prompt](#3-สไตล์กลางและแม่แบบ-prompt)
 4. [ขนาด ชื่อไฟล์ และที่เก็บ](#4-ขนาด-ชื่อไฟล์-และที่เก็บ)
 5. [ผู้รับดูแลรายบุคคล 100 ราย](#5-ผู้รับดูแลรายบุคคล-100-ราย-adopter-001--adopter-100)
-6. [สถานสงเคราะห์ 20 แห่ง](#6-สถานสงเคราะห์-20-แห่ง-shelter-001--shelter-020)
+6. [สถานสงเคราะห์ 20 แห่ง (องค์กรจริง)](#6-สถานสงเคราะห์-20-แห่ง-องค์กรจริง--ไม่ต้องสร้างภาพ)
 7. [Checklist หลังสร้างภาพ](#7-checklist-หลังสร้างภาพ)
 
 ---
@@ -20,11 +20,11 @@
 
 1. **เครื่องมือและงบ:** ใช้ความสามารถสร้างภาพที่มีอยู่ในสิทธิ์ของผู้ใช้ **ห้ามเปิด billing หรือซื้อเครดิตเพิ่มเอง** ถ้าการสร้างภาพต้องเสียเงินเพิ่ม ให้หยุดและถามผู้ใช้ก่อน
 2. **ทำเป็น batch:** ครั้งละ 10 records (เช่น `adopter-001`–`adopter-010`) → สร้างภาพ → ตรวจตาม [หัวข้อ 7](#7-checklist-หลังสร้างภาพ) → บันทึก CREDITS.md → ทำ batch ถัดไป
-3. **ประกอบ prompt:** ใช้แม่แบบในหัวข้อ 3 แล้วแทนช่อง `{LOOK}`, `{SETTING}`, `{HOME}`, `{PETS}`, `{PET_SCENE}`, `{MANAGER_LOOK}`, `{EXTERIOR}`, `{CARE_AREA}`, `{DONATION_ITEMS}`, `{DISTRICT}` ด้วยค่าของ record นั้น (ค่าภาษาอังกฤษอยู่ใต้ตารางของแต่ละ record)
+3. **ประกอบ prompt:** ใช้แม่แบบในหัวข้อ 3 แล้วแทนช่อง `{LOOK}`, `{SETTING}`, `{HOME}`, `{PETS}`, `{PET_SCENE}` ด้วยค่าของ record นั้น (ค่าภาษาอังกฤษอยู่ใต้ตารางของแต่ละ record)
 4. **ห้ามเปลี่ยนข้อมูลให้ตรงกับภาพ:** ถ้าภาพไม่ตรงรายละเอียด (จำนวนน้อง สี พันธุ์ ประเภทบ้าน) ให้สร้างใหม่ ห้ามแก้ข้อมูลในไฟล์นี้เพื่อให้ตรงกับภาพ
 5. **ภาพคนที่คล้ายคนดังหรือบุคคลจริง:** ทิ้งและสร้างใหม่ทันที
 6. **ความต่อเนื่อง:** ภาพบ้านไม่มีคนและไม่มีสัตว์ ส่วนภาพน้องไม่มีคน จึงไม่ต้องคุมหน้าคนให้เหมือนกันข้ามภาพ แต่ภาพน้องต้องตรงกับรายการ “น้องที่ดูแลอยู่” ทุกตัว
-7. **ขนาดงาน:** ผู้รับดูแลรายบุคคล 291 ภาพ (โปรไฟล์ 100 + บ้าน 100 + น้องที่ดูแลอยู่ 91) และสถานสงเคราะห์ 75 ภาพ (ผู้ดูแล 20 + ภายนอก 20 + พื้นที่ดูแลสัตว์ 20 + มุมบริจาค 15) รวม **366 ภาพ**
+7. **ขนาดงาน:** ผู้รับดูแลรายบุคคล **291 ภาพ** (โปรไฟล์ 100 + บ้าน 100 + น้องที่ดูแลอยู่ 91) **ไม่สร้างภาพสถานสงเคราะห์** เพราะใช้ภาพจากช่องทางทางการขององค์กรจริง (หัวข้อ 6)
 
 ## 2. กติกาความปลอดภัยและความสมจริง
 
@@ -36,8 +36,9 @@
 
 **ความสมจริง (photorealistic)**
 - ให้ดูเหมือนภาพถ่ายจริงจากกล้อง: แสงธรรมชาติ ผิวมีรายละเอียดจริง มือ นิ้ว ตา ฟัน และหูถูกต้อง
+- **ห้ามสร้างภาพคนเป็นเจ้าหน้าที่ ผู้ก่อตั้ง หรือบุคคลขององค์กรจริง**
 - สัตว์มีกายวิภาคถูกต้อง (จำนวนขา หู หาง หนวดแมว) ลักษณะตรงตามพันธุ์และสีที่ระบุ ดูสุขภาพดี สะอาด ไม่มีบาดแผล
-- บ้านและสถานที่ต้องเป็นบริบทกรุงเทพฯ ที่สมจริง สะอาด ปลอดภัยต่อสัตว์ (เช่น ตาข่ายระเบียงสำหรับแมว)
+- บ้านต้องเป็นบริบทกรุงเทพฯ ที่สมจริง สะอาด ปลอดภัยต่อสัตว์ (เช่น ตาข่ายระเบียงสำหรับแมว)
 
 **ห้ามมีในภาพทุกภาพ**
 - ข้อความ ตัวอักษร ป้าย โลโก้ แบรนด์ ลายน้ำ บ้านเลขที่ ป้ายทะเบียน หรือจุดสังเกตที่ระบุสถานที่จริงได้
@@ -67,26 +68,6 @@ Photorealistic interior or exterior photograph of {HOME} in Bangkok, Thailand. N
 Photorealistic candid photograph of {PETS}, together in {PET_SCENE} in Bangkok, Thailand. Natural light, sharp focus on the eyes, accurate breed features and coat colors, correct anatomy, healthy and well-groomed animals. No people.
 ```
 
-**`SHELTER_MANAGER`** (ผู้ดูแลสถานสงเคราะห์)
-```
-Photorealistic head-and-shoulders portrait photograph of {MANAGER_LOOK}, the fictional caretaker of a small animal shelter. Fictional adult person who does not resemble any real person or celebrity. Attractive, trustworthy and warm. Background: a clean, bright animal shelter courtyard, softly blurred. Natural light, 85mm lens, shallow depth of field, true-to-life skin texture.
-```
-
-**`SHELTER_EXTERIOR`**
-```
-Photorealistic exterior photograph of {EXTERIOR} in the {DISTRICT} area of Bangkok, Thailand. Clean, welcoming, well maintained, lush greenery, natural daylight, wide-angle 24mm, eye level. No readable signs, no house numbers, no people.
-```
-
-**`SHELTER_CARE_AREA`**
-```
-Photorealistic photograph of {CARE_AREA} inside a small, clean and humane animal shelter in Bangkok, Thailand. Healthy, relaxed, well-cared-for animals, spacious clean enclosures, good ventilation, natural light. No people, no readable text.
-```
-
-**`SHELTER_DONATION_CORNER`** (เฉพาะที่เปิดรับบริจาค)
-```
-Photorealistic photograph of a tidy donation storage corner in a small animal shelter in Bangkok, Thailand, with {DONATION_ITEMS}. Warm natural light, organized shelves. No money, no QR codes, no bank details, no readable labels or signs, no people.
-```
-
 **`NEGATIVE`** (ต่อท้ายทุก prompt)
 ```
 Avoid: text, letters, captions, logos, brand names, watermarks, signage, QR codes, money, banknotes, coins, license plates, house numbers, extra fingers, distorted hands, extra limbs, deformed animals, extra legs or tails, cartoon, illustration, 3D render, anime, plastic skin, over-smoothed skin, oversaturated colors, celebrity likeness, children, crowded cages, injured or sick animals.
@@ -99,10 +80,6 @@ Avoid: text, letters, captions, logos, brand names, watermarks, signage, QR code
 | โปรไฟล์ | `public/images/personas/adopter-###/profile.webp` | 1:1 · 800×800 | “ภาพสร้างด้วย AI: คุณ[ชื่อ] ผู้รับดูแลรายบุคคล เขต[เขต]” |
 | บ้าน | `public/images/personas/adopter-###/home.webp` | 3:2 · 1280×853 | “ภาพสร้างด้วย AI: [ประเภทบ้าน]ของคุณ[ชื่อ]” |
 | น้องที่ดูแลอยู่ | `public/images/personas/adopter-###/pets.webp` | 3:2 · 1280×853 | “ภาพสร้างด้วย AI: [ชื่อน้อง] ที่คุณ[ชื่อ]ดูแลอยู่” |
-| ผู้ดูแลสถานที่ | `public/images/shelters/shelter-###/manager.webp` | 1:1 · 800×800 | “ภาพสร้างด้วย AI: คุณ[ชื่อ] [บทบาท] [ชื่อสถานที่]” |
-| ภายนอก | `public/images/shelters/shelter-###/exterior.webp` | 16:9 · 1600×900 | “ภาพสร้างด้วย AI: ภายนอก[ชื่อสถานที่]” |
-| พื้นที่ดูแลสัตว์ | `public/images/shelters/shelter-###/care-area.webp` | 3:2 · 1280×853 | “ภาพสร้างด้วย AI: พื้นที่ดูแลสัตว์ของ[ชื่อสถานที่]” |
-| มุมบริจาค | `public/images/shelters/shelter-###/donation-corner.webp` | 3:2 · 1280×853 | “ภาพสร้างด้วย AI: มุมเก็บของบริจาคของ[ชื่อสถานที่] (สถานะตัวอย่าง)” |
 
 - ส่งออกเป็น WebP คุณภาพประมาณ 80 ไฟล์ละไม่เกิน 300 KB และลบ metadata (EXIF/ตำแหน่ง) ออก
 - ถ้าเครื่องมือสร้างภาพได้ขนาดอื่น ให้ครอปตรงกลางตามสัดส่วนในตารางก่อนย่อ
@@ -128,7 +105,7 @@ Avoid: text, letters, captions, logos, brand names, watermarks, signage, QR code
 | ยังไม่มีน้องในความดูแล (ไม่มีภาพ pets) | 9 ราย |
 | รับกรณีฉุกเฉิน | 25 ราย |
 | เพศ / อายุ | หญิง 51 · ชาย 49 · อายุ 21–70 ปี |
-| เขต | ผู้รับดูแลรายบุคคลรวมกับสถานสงเคราะห์ครอบคลุมครบ 50 เขต |
+| เขต | ผู้รับดูแลรายบุคคลครอบคลุมครบ 50 เขต (ไม่ขึ้นกับที่ตั้งของสถานสงเคราะห์จริง) |
 
 ### 5.2 รายละเอียดราย record
 
@@ -2316,387 +2293,38 @@ Avoid: text, letters, captions, logos, brand names, watermarks, signage, QR code
 
 ---
 
-## 6. สถานสงเคราะห์ 20 แห่ง (shelter-001 – shelter-020)
+## 6. สถานสงเคราะห์ 20 แห่ง (องค์กรจริง — ไม่ต้องสร้างภาพ)
 
-ชื่อสถานสงเคราะห์ทั้งหมดเป็นชื่อสมมติ ต้องค้นตรวจว่าไม่ตรงกับองค์กรจริงก่อน deploy (PROMPT.md หัวข้อ 18.3)
+ผู้ใช้ตัดสินให้ใช้สถานสงเคราะห์ที่มีอยู่จริงในกรุงเทพฯ (PROMPT.md D10) **Codex ไม่ต้องสร้างภาพสถานสงเคราะห์ และห้ามสร้างภาพคนเป็นเจ้าหน้าที่ขององค์กรจริง**
 
-| ID | ชื่อ | เขต | รับ | ความจุ | บริจาค | ฉุกเฉิน | Verified |
-|---|---|---|---|---|---|---|---|
-| shelter-001 | บ้านอุ่นใจสี่ขา | บางกะปิ | แมวและสุนัข | 95/100 (ว่าง 5) | เปิด | ได้ | ตัวอย่าง |
-| shelter-002 | บ้านพักน้องริมคลอง | สวนหลวง | แมวและสุนัข | 37/40 (ว่าง 3) | เปิด | — | ตัวอย่าง |
-| shelter-003 | เรือนแมวเมืองเก่า | พระนคร | แมว | 44/50 (ว่าง 6) | เปิด | — | ตัวอย่าง |
-| shelter-004 | ฟาร์มหางกระดิก | หนองจอก | สุนัข | 138/150 (ว่าง 12) | เปิด | ได้ | ตัวอย่าง |
-| shelter-005 | บ้านพักพิงปุยฝ้าย | บางแค | แมวและสุนัข | 29/35 (ว่าง 6) | ปิด | — | ตัวอย่าง |
-| shelter-006 | ลานรักน้องบางมด | ทุ่งครุ | สุนัข | 71/80 (ว่าง 9) | เปิด | ได้ | — |
-| shelter-007 | บ้านแมวชั้นสอง | สาทร | แมว | 30/30 (เต็ม) | เปิด | — | ตัวอย่าง |
-| shelter-008 | สวนพักใจสี่ขามีนบุรี | มีนบุรี | แมวและสุนัข | 58/70 (ว่าง 12) | เปิด | ได้ | ตัวอย่าง |
-| shelter-009 | บ้านน้องรอบ้าน | ดอนเมือง | แมวและสุนัข | 38/45 (ว่าง 7) | ปิด | — | ตัวอย่าง |
-| shelter-010 | เรือนไม้ริมน้ำตลิ่งชัน | ตลิ่งชัน | แมวและสุนัข | 33/40 (ว่าง 7) | เปิด | — | ตัวอย่าง |
-| shelter-011 | บ้านเพื่อนขนนุ่ม | ลาดกระบัง | แมวและสุนัข | 76/90 (ว่าง 14) | เปิด | ได้ | ตัวอย่าง |
-| shelter-012 | บ้านหางตั้งบางเขน | บางเขน | สุนัข | 40/45 (ว่าง 5) | ปิด | — | — |
-| shelter-013 | บ้านกระต่ายและผองเพื่อน | ภาษีเจริญ | แมวและกระต่าย | 31/40 (ว่าง 9) | เปิด | — | ตัวอย่าง |
-| shelter-014 | บ้านแมวแก่ใจดี | ห้วยขวาง | แมว | 22/25 (ว่าง 3) | เปิด | — | ตัวอย่าง |
-| shelter-015 | ลานอุ่นไอรักประเวศ | ประเวศ | แมวและสุนัข | 52/60 (ว่าง 8) | เปิด | ได้ | ตัวอย่าง |
-| shelter-016 | บ้านหมาน้อยคลองสามวา | คลองสามวา | สุนัข | 43/50 (ว่าง 7) | ปิด | — | ตัวอย่าง |
-| shelter-017 | บ้านสะพานใจ | ราษฎร์บูรณะ | แมวและสุนัข | 47/55 (ว่าง 8) | เปิด | ได้ | ตัวอย่าง |
-| shelter-018 | บ้านเหมียวสายไหม | สายไหม | แมว | 30/35 (ว่าง 5) | เปิด | — | ตัวอย่าง |
-| shelter-019 | บ้านขนฟูบางพลัด | บางพลัด | แมวและสุนัข | 24/30 (ว่าง 6) | ปิด | — | — |
-| shelter-020 | สวนสี่ขาทวีวัฒนา | ทวีวัฒนา | แมวและสุนัข | 55/65 (ว่าง 10) | เปิด | — | ตัวอย่าง |
+ทำตอน implement โดยผู้ที่เข้าอินเทอร์เน็ตได้:
+1. ค้นองค์กร/สถานสงเคราะห์สัตว์ที่มีอยู่จริงและตั้งอยู่ในกรุงเทพฯ 20 แห่ง จากเว็บไซต์หรือเพจทางการ แล้วเติมชื่อทางการ เขตที่ตั้งจริง ลิงก์ทางการ และชนิดสัตว์ที่รับตามข้อมูลจริงในตารางด้านล่าง
+2. **ภาพ:** ดาวน์โหลดภาพสถานที่ 1–3 ภาพจากช่องทางทางการ (ภายนอก/พื้นที่ดูแลสัตว์) เก็บที่ `public/images/shelters/shelter-###/` ใส่เครดิตชื่อองค์กรและลิงก์ต้นทางใน CREDITS.md ใช้เพื่องานการศึกษา เลี่ยงภาพที่เห็นหน้าบุคคลชัด และห้ามดึงภาพ QR/เลขบัญชี
+3. **ค่าสาธิต** (ความจุ บริจาค ฉุกเฉิน Verified) ในตารางมีไว้ทดสอบ flow **ไม่ใช่ข้อมูลจริงขององค์กร** หน้าเว็บต้องแสดงป้าย “ข้อมูลสาธิต ไม่ใช่ข้อมูลจริงของ [ชื่อ]” ถ้าชนิดสัตว์จริงไม่เข้ากับค่าสาธิตของช่องนั้น ให้สลับค่าสาธิตระหว่างช่องได้ แต่ต้องคง fixture: ช่อง 001 = 95/100 เปิดรับบริจาค, ช่อง 002 = 37/40, เต็มอย่างน้อย 1, ปิดรับบริจาคอย่างน้อย 1, รับฉุกเฉินอย่างน้อย 3
+4. หาได้ไม่ครบ 20 แห่งในกรุงเทพฯ ให้รายงานผู้ใช้ **ห้ามแต่งองค์กรขึ้นมาเติม**
 
-#### shelter-001 · บ้านอุ่นใจสี่ขา · เขตบางกะปิ (`bang-kapi`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณแก้วตา (ผู้ก่อตั้งและผู้ประสานงาน) · หญิง 46 ปี · หญิงวัยกลางคนหน้าตาอบอุ่น ผมยาวรวบหางม้า ยิ้มกว้าง สวมเสื้อโปโลสีเหลืองมัสตาร์ดไม่มีโลโก้ · คำลงท้าย ค่ะ |
-| สถานที่ | บ้านเดี่ยวสองหลังเชื่อมกันในซอยกว้าง รั้วเหล็กสีครีม ลานหน้าบ้านมีร่มไม้ |
-| พื้นที่ดูแลสัตว์ | ห้องแมวติดมุ้งลวดพร้อมชั้นปีน และลานหมาแยกโซนมีหลังคา |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 95/100 ตัว · **รับเพิ่มได้ 5 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารแมวและทรายแมว (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 09:00–17:00 · ขอประวัติการพบน้องคร่าว ๆ ก่อนรับเข้า / รับกรณีฉุกเฉินหลังโทรนัดล่วงหน้า (จำลอง) |
-
-- `MANAGER_LOOK`: a warm 46-year-old Thai woman with long hair in a ponytail, a wide caring smile, wearing a plain mustard-yellow polo shirt
-- `EXTERIOR`: two connected detached houses in a wide soi with a cream-painted metal fence and a shaded front yard with large trees
-- `CARE_AREA`: a clean screened cat room with climbing shelves and sleeping cubbies next to a separate covered dog yard with raised beds
-- `DONATION_ITEMS`: neatly stacked bags of cat food and cat litter on wooden shelves with folded blankets
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-002 · บ้านพักน้องริมคลอง · เขตสวนหลวง (`suan-luang`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณปกป้อง (ผู้ดูแลสถานที่) · ชาย 39 ปี · ผู้ชายหน้าใจดี ผิวแทน ผมสั้น ยิ้มสุภาพ สวมเสื้อยืดสีเขียวหม่น · คำลงท้าย ครับ |
-| สถานที่ | บ้านไม้สองชั้นริมคลองที่ปรับปรุงใหม่ มีรั้วไม้ระแนงกันตกน้ำ |
-| พื้นที่ดูแลสัตว์ | ห้องแมวบนชั้นสองและคอกหมาใต้ถุนที่ร่มเย็น |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 37/40 ตัว · **รับเพิ่มได้ 3 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการผ้าห่มเก่าและชามอาหารสแตนเลส (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | อังคาร–อาทิตย์ 10:00–17:00 · รับเฉพาะน้องที่ตรวจสุขภาพเบื้องต้นแล้ว (จำลอง) |
-
-- `MANAGER_LOOK`: a kind 39-year-old Thai man with tanned skin, short hair, a polite smile, wearing a muted green t-shirt
-- `EXTERIOR`: a renovated two-story wooden house by a canal with a slatted wooden fence along the water
-- `CARE_AREA`: an airy upstairs cat room with window perches and a shaded ground-floor dog area with clean pens
-- `DONATION_ITEMS`: stacks of donated clean old blankets and stainless steel bowls on shelves
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-003 · เรือนแมวเมืองเก่า · เขตพระนคร (`phra-nakhon`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณลำเจียก (ผู้ก่อตั้ง) · หญิง 55 ปี · หญิงวัยห้าสิบกว่าผมสั้นสีดอกเลา ใส่แว่นกรอบบาง ยิ้มอ่อนโยน สวมเสื้อผ้าฝ้ายสีคราม · คำลงท้าย ค่ะ |
-| สถานที่ | ตึกแถวเก่าสองคูหาในย่านเมืองเก่า หน้าต่างไม้บานเฟี้ยมติดมุ้งลวด |
-| พื้นที่ดูแลสัตว์ | ห้องแมวเพดานสูงพื้นไม้ มีชั้นปีนและตะกร้าให้นอน |
-| รับ · ความจุ | แมว · ดูแลอยู่ 44/50 ตัว · **รับเพิ่มได้ 6 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการทรายแมวและแผ่นลับเล็บ (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 10:00–16:00 · รับเฉพาะแมว / นัดดูบ้านแมวได้ในวันเสาร์ (จำลอง) |
-
-- `MANAGER_LOOK`: a gentle 55-year-old Thai woman with short silver-streaked hair, thin glasses, a soft smile, wearing an indigo cotton blouse
-- `EXTERIOR`: two adjoining old-town shophouses with wooden folding windows fitted with fine mesh screens
-- `CARE_AREA`: a high-ceiling wooden-floor cat room with climbing shelves, woven sleeping baskets and cats lounging calmly
-- `DONATION_ITEMS`: bags of cat litter and cardboard scratchers stacked in a wooden cabinet
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-004 · ฟาร์มหางกระดิก · เขตหนองจอก (`nong-chok`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณบุญส่ง (เจ้าของฟาร์ม) · ชาย 51 ปี · ผู้ชายวัยห้าสิบผิวแทนเข้ม หนวดบาง หมวกแก๊ป ยิ้มกว้าง สวมเสื้อเชิ้ตลายสก๊อต · คำลงท้าย ครับ |
-| สถานที่ | พื้นที่ฟาร์มกว้างหลายไร่ รั้วตาข่ายสูง มีโรงเรือนหลังคาเมทัลชีทสีเขียว |
-| พื้นที่ดูแลสัตว์ | โรงเรือนหมาที่แบ่งคอกกว้าง มีพัดลมและรางน้ำสะอาด |
-| รับ · ความจุ | สุนัข · ดูแลอยู่ 138/150 ตัว · **รับเพิ่มได้ 12 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารหมาเม็ดและยาถ่ายพยาธิที่สัตวแพทย์แนะนำ (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 08:00–17:00 · รับเฉพาะหมา / รับหมาใหญ่ได้ |
-
-- `MANAGER_LOOK`: a sun-tanned 51-year-old Thai man with a thin mustache, a cap, a broad smile, wearing a plaid shirt
-- `EXTERIOR`: a spacious multi-acre farm compound with tall mesh fencing and green metal-roofed kennel barns
-- `CARE_AREA`: a clean dog barn with spacious pens, fans, clean water troughs and healthy dogs resting on raised beds
-- `DONATION_ITEMS`: large sacks of dog kibble stacked on pallets with buckets and leashes on hooks
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-005 · บ้านพักพิงปุยฝ้าย · เขตบางแค (`bang-khae`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณดวงใจ (ผู้ประสานงาน) · หญิง 34 ปี · หญิงสาวผมบ็อบ ใบหน้าสดใส ยิ้มกว้าง สวมเสื้อยืดสีชมพูอ่อน · คำลงท้าย ค่ะ |
-| สถานที่ | ทาวน์เฮาส์สามคูหาเชื่อมกัน หน้าบ้านทาสีขาวมีกระถางต้นไม้ |
-| พื้นที่ดูแลสัตว์ | ห้องรวมแมวและห้องหมาเล็กแยกกัน สะอาด มีของเล่น |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 29/35 ตัว · **รับเพิ่มได้ 6 ตัว** |
-| บริจาค | ไม่เปิดรับ |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | พุธ–อาทิตย์ 10:00–16:00 · รับเฉพาะหมาเล็กและแมว |
-
-- `MANAGER_LOOK`: a bright-faced 34-year-old Thai woman with a bob haircut, a wide smile, wearing a light pink t-shirt
-- `EXTERIOR`: three connected white-painted townhouses with potted plants in front
-- `CARE_AREA`: separate tidy rooms for cats and small dogs with toys, beds and clean floors
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp` (ไม่มีมุมบริจาค)
-
-#### shelter-006 · ลานรักน้องบางมด · เขตทุ่งครุ (`thung-khru`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณธนพล (ผู้จัดการ) · ชาย 42 ปี · ผู้ชายตัวใหญ่ใจดี ผมเกรียน ไว้เครา ยิ้มกว้าง สวมเสื้อกล้ามสีเทาและผ้าขาวม้าคาดเอว · คำลงท้าย ครับ |
-| สถานที่ | ลานดินกว้างล้อมรั้วใกล้สวนมะพร้าว มีเพิงไม้หลังคาจากหลายหลัง |
-| พื้นที่ดูแลสัตว์ | คอกหมาใต้เพิงไม้ร่มรื่น มีบ่อน้ำตื้นให้หมาคลายร้อน |
-| รับ · ความจุ | สุนัข · ดูแลอยู่ 71/80 ตัว · **รับเพิ่มได้ 9 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารหมาและผ้าใบกันฝน (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · ไม่มีป้าย |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 07:00–18:00 · รับเฉพาะหมา |
-
-- `MANAGER_LOOK`: a big-hearted 42-year-old Thai man with a buzz cut, a beard, a wide grin, wearing a gray tank top with a traditional pha khao ma cloth at the waist
-- `EXTERIOR`: a wide fenced dirt compound near coconut groves with several wooden shelters topped with thatched roofs
-- `CARE_AREA`: shaded dog pens under wooden shelters with a shallow cooling pool and healthy dogs playing
-- `DONATION_ITEMS`: sacks of dog food and folded tarpaulins stored under a wooden shelter
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-007 · บ้านแมวชั้นสอง · เขตสาทร (`sathon`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณนลิน (ผู้ก่อตั้ง) · หญิง 31 ปี · หญิงสาวออฟฟิศ ผมยาวตรง ใส่แว่นกรอบดำ ยิ้มเขิน สวมเสื้อเชิ้ตสีฟ้า · คำลงท้าย ค่ะ |
-| สถานที่ | ตึกแถวในซอยย่านธุรกิจ ชั้นสองเป็นบ้านแมว หน้าต่างติดมุ้งลวด |
-| พื้นที่ดูแลสัตว์ | ห้องแมวชั้นสองที่มีคอนโดแมวหลายชั้นและมุมนอนแดด |
-| รับ · ความจุ | แมว · ดูแลอยู่ 30/30 ตัว · **เต็มแล้ว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารแมวสูตรแมวโต (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | เสาร์–อาทิตย์ 10:00–15:00 · รับเฉพาะแมว / ตอนนี้เต็มแล้ว |
-
-- `MANAGER_LOOK`: a 31-year-old Thai office worker with long straight hair, black-framed glasses, a shy smile, wearing a light blue shirt
-- `EXTERIOR`: a shophouse in a business-district soi where the second floor is a cat home with mesh-screened windows
-- `CARE_AREA`: a second-floor cat room with multi-level cat condos, sunny sleeping spots and calm cats
-- `DONATION_ITEMS`: boxes of adult cat food stacked neatly beside a shelf of cat bowls
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-008 · สวนพักใจสี่ขามีนบุรี · เขตมีนบุรี (`min-buri`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณอิสมาแอล (ผู้ดูแลสวน) · ชาย 44 ปี · ผู้ชายมุสลิมหน้าคม ไว้เคราเรียบร้อย สวมหมวกกะปิเยาะสีขาว ยิ้มอบอุ่น · คำลงท้าย ครับ |
-| สถานที่ | สวนผลไม้เก่าที่ปรับเป็นที่พักสัตว์ รั้วไม้ไผ่กับตาข่าย ร่มไม้ใหญ่ |
-| พื้นที่ดูแลสัตว์ | โซนหมาในสวนร่ม และบ้านแมวยกพื้นติดมุ้งลวด |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 58/70 ตัว · **รับเพิ่มได้ 12 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการทรายแมวและเชือกจูงหมา (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 08:00–17:00 · รับทั้งหมาและแมว |
-
-- `MANAGER_LOOK`: a warm 44-year-old Thai Muslim man with a neat beard, wearing a white kufi cap and a simple shirt, a gentle smile
-- `EXTERIOR`: a former fruit orchard converted into an animal sanctuary with bamboo and mesh fencing under large shady trees
-- `CARE_AREA`: a shaded orchard dog zone and a raised screened cat house with shelves
-- `DONATION_ITEMS`: cat litter bags and hanging dog leashes neatly organized in a wooden shed
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-009 · บ้านน้องรอบ้าน · เขตดอนเมือง (`don-mueang`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณพิมพ์ชนก (ผู้ประสานงาน) · หญิง 28 ปี · หญิงสาวผมหางม้า ผิวขาวเหลือง ยิ้มสดใส สวมเสื้อยืดสีขาว · คำลงท้าย ค่ะ |
-| สถานที่ | บ้านเดี่ยวชั้นเดียวหลังใหญ่ รั้วเตี้ยทาสีเหลืองเนย |
-| พื้นที่ดูแลสัตว์ | ห้องรับรองสำหรับพบน้องที่รอบ้าน และห้องพักแมวกับหมาแยกกัน |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 38/45 ตัว · **รับเพิ่มได้ 7 ตัว** |
-| บริจาค | ไม่เปิดรับ |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | พฤหัส–อาทิตย์ 11:00–17:00 · เน้นหาบ้านให้น้องที่ผ่านขั้นตามหาเจ้าของแล้ว (จำลอง) |
-
-- `MANAGER_LOOK`: a cheerful 28-year-old Thai woman with a ponytail, light warm skin, a bright smile, wearing a white t-shirt
-- `EXTERIOR`: a large single-story detached house with a low butter-yellow painted fence
-- `CARE_AREA`: a cozy meet-and-greet room with sofas, plus separate clean rooms for cats and dogs
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp` (ไม่มีมุมบริจาค)
-
-#### shelter-010 · เรือนไม้ริมน้ำตลิ่งชัน · เขตตลิ่งชัน (`taling-chan`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณสมพร (ผู้ก่อตั้ง) · หญิง 60 ปี · คุณป้าใจดี ผมสั้นสีเทา ยิ้มอบอุ่น สวมเสื้อคอกระเช้าลายดอก · คำลงท้าย ค่ะ |
-| สถานที่ | เรือนไทยไม้สักริมคลอง มีสะพานไม้และสวนกล้วยรอบบ้าน |
-| พื้นที่ดูแลสัตว์ | ระเบียงไม้กว้างติดมุ้งลวดสำหรับแมว และลานใต้ถุนสำหรับหมา |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 33/40 ตัว · **รับเพิ่มได้ 7 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารเปียกสำหรับแมวสูงวัย (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 09:00–16:00 · รับน้องสูงวัยเป็นพิเศษ |
-
-- `MANAGER_LOOK`: a kind 60-year-old Thai woman with short gray hair, a warm smile, wearing a floral traditional blouse
-- `EXTERIOR`: a traditional teak Thai house by a canal with a wooden bridge and banana trees around it
-- `CARE_AREA`: a wide screened wooden veranda for cats and a shaded area under the stilt house for dogs
-- `DONATION_ITEMS`: cans of wet cat food in woven baskets on a wooden table
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-011 · บ้านเพื่อนขนนุ่ม · เขตลาดกระบัง (`lat-krabang`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณวิชัย (ผู้จัดการ) · ชาย 48 ปี · ผู้ชายวัยสี่สิบปลาย ใส่แว่น ผมสั้นแซมขาว ยิ้มใจดี สวมเสื้อเชิ้ตสีน้ำเงิน · คำลงท้าย ครับ |
-| สถานที่ | โกดังเก่าที่ปรับปรุงเป็นที่พักสัตว์ ทาสีขาว มีหน้าต่างระบายอากาศ |
-| พื้นที่ดูแลสัตว์ | โซนหมาแยกคอกกว้าง และห้องแมวติดแอร์ |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 76/90 ตัว · **รับเพิ่มได้ 14 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารหมาและพัดลมตั้งพื้น (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 09:00–17:00 · รับทั้งหมาและแมว |
-
-- `MANAGER_LOOK`: a kind 48-year-old Thai man with glasses, short graying hair, a friendly smile, wearing a blue shirt
-- `EXTERIOR`: a converted former warehouse painted white with ventilation windows and a fenced front area
-- `CARE_AREA`: spacious individual dog pens and an air-conditioned cat room with shelves
-- `DONATION_ITEMS`: sacks of dog food and a few standing fans lined up by a wall
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-012 · บ้านหางตั้งบางเขน · เขตบางเขน (`bang-khen`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณณรงค์ (ผู้ก่อตั้ง) · ชาย 57 ปี · ชายวัยห้าสิบกว่าผมขาวตัดสั้น ผิวแทน ยิ้มกว้าง สวมเสื้อยืดสีกรมท่า · คำลงท้าย ครับ |
-| สถานที่ | บ้านเดี่ยวหลังเก่าที่มีลานหญ้าหลังบ้านกว้าง รั้วสูง |
-| พื้นที่ดูแลสัตว์ | ลานหญ้ามีบ้านหมาไม้และสระน้ำตื้น |
-| รับ · ความจุ | สุนัข · ดูแลอยู่ 40/45 ตัว · **รับเพิ่มได้ 5 ตัว** |
-| บริจาค | ไม่เปิดรับ |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · ไม่มีป้าย |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 08:00–16:00 · รับเฉพาะหมา |
-
-- `MANAGER_LOOK`: a cheerful 57-year-old Thai man with short white hair, tanned skin, a wide smile, wearing a navy t-shirt
-- `EXTERIOR`: an older detached house with a wide backyard lawn and a tall fence
-- `CARE_AREA`: a grassy yard with wooden dog houses, a shallow splash pool and happy dogs
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp` (ไม่มีมุมบริจาค)
-
-#### shelter-013 · บ้านกระต่ายและผองเพื่อน · เขตภาษีเจริญ (`phasi-charoen`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณขวัญข้าว (ผู้ดูแล) · หญิง 30 ปี · หญิงสาวน่ารักผมเปียสองข้าง ใส่แว่นกรอบกลม ยิ้มสดใส สวมเอี๊ยมยีนส์ · คำลงท้าย ค่ะ |
-| สถานที่ | บ้านเดี่ยวมีเรือนกระจกเล็ก ๆ และสวนหญ้าล้อมรั้วตาถี่ |
-| พื้นที่ดูแลสัตว์ | ห้องกระต่ายที่มีคอกกว้าง หญ้าแห้ง และห้องแมวแยก |
-| รับ · ความจุ | แมวและกระต่าย · ดูแลอยู่ 31/40 ตัว · **รับเพิ่มได้ 9 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการหญ้าทิโมธีและทรายแมว (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | เสาร์–อาทิตย์ 10:00–16:00 · รับกระต่ายและแมว |
-
-- `MANAGER_LOOK`: a cute 30-year-old Thai woman with two braids, round glasses, a cheerful smile, wearing denim overalls
-- `EXTERIOR`: a detached house with a small greenhouse and a fine-mesh fenced grass garden
-- `CARE_AREA`: a rabbit room with spacious pens, hay racks and tunnels, plus a separate cat room
-- `DONATION_ITEMS`: bales of timothy hay and bags of cat litter on a shelf
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-014 · บ้านแมวแก่ใจดี · เขตห้วยขวาง (`huai-khwang`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณชไมพร (ผู้ก่อตั้ง) · หญิง 49 ปี · หญิงวัยสี่สิบปลาย ผมยาวดัดลอน ยิ้มอ่อนโยน สวมเสื้อคาร์ดิแกนสีครีม · คำลงท้าย ค่ะ |
-| สถานที่ | ทาวน์เฮาส์สองคูหาในซอยเงียบ ทาสีเขียวอ่อน |
-| พื้นที่ดูแลสัตว์ | ห้องแมวสูงวัยที่มีที่นอนนุ่ม ทางลาด และพื้นกันลื่น |
-| รับ · ความจุ | แมว · ดูแลอยู่ 22/25 ตัว · **รับเพิ่มได้ 3 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารแมวสูงวัยและแผ่นรองซับ (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | อังคาร–อาทิตย์ 10:00–16:00 · รับเฉพาะแมวอายุ 7 ปีขึ้นไป |
-
-- `MANAGER_LOOK`: a gentle 49-year-old Thai woman with long wavy hair, a soft smile, wearing a cream cardigan
-- `EXTERIOR`: two joined townhouses painted soft green in a quiet soi
-- `CARE_AREA`: a senior-cat room with soft beds, gentle ramps, non-slip floors and relaxed older cats
-- `DONATION_ITEMS`: senior cat food packs and absorbent pads stacked neatly
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-015 · ลานอุ่นไอรักประเวศ · เขตประเวศ (`prawet`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณศุภชัย (ผู้ประสานงาน) · ชาย 36 ปี · ผู้ชายหน้าตาดี ผมรองทรง ยิ้มมั่นใจ สวมเสื้อยืดสีส้มอิฐ · คำลงท้าย ครับ |
-| สถานที่ | พื้นที่ลานกว้างหลังตึกพาณิชย์ รั้วเหล็กสีเทา หลังคาโปร่งแสง |
-| พื้นที่ดูแลสัตว์ | คอกหมาแยกขนาด และห้องแมวติดพัดลม |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 52/60 ตัว · **รับเพิ่มได้ 8 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารหมาและแชมพูอาบน้ำสัตว์ (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 09:00–17:00 · รับทั้งหมาและแมว |
-
-- `MANAGER_LOOK`: a handsome 36-year-old Thai man with a neat tapered haircut, a confident smile, wearing a brick-orange t-shirt
-- `EXTERIOR`: a wide yard behind commercial buildings with gray metal fencing and translucent roofing
-- `CARE_AREA`: dog pens organized by size and a ventilated cat room with fans
-- `DONATION_ITEMS`: dog food sacks and bottles of pet shampoo without labels on a shelf
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-016 · บ้านหมาน้อยคลองสามวา · เขตคลองสามวา (`khlong-sam-wa`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณกมล (ผู้ก่อตั้ง) · หญิง 43 ปี · หญิงวัยสี่สิบ ผมสั้นเท่ ผิวแทน ยิ้มกว้าง สวมเสื้อยืดสีน้ำตาล · คำลงท้าย ค่ะ |
-| สถานที่ | บ้านสวนกลางทุ่ง รั้วไม้ระแนงยาว |
-| พื้นที่ดูแลสัตว์ | ลานหมาเล็กและคอกลูกหมาที่สะอาด |
-| รับ · ความจุ | สุนัข · ดูแลอยู่ 43/50 ตัว · **รับเพิ่มได้ 7 ตัว** |
-| บริจาค | ไม่เปิดรับ |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 08:00–17:00 · รับเฉพาะหมา / เน้นลูกหมาและหมาเล็ก |
-
-- `MANAGER_LOOK`: a lively 43-year-old Thai woman with a short cool haircut, tanned skin, a wide smile, wearing a brown t-shirt
-- `EXTERIOR`: a garden house in the middle of fields with a long slatted wooden fence
-- `CARE_AREA`: a small-dog play yard and a clean puppy pen with soft mats
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp` (ไม่มีมุมบริจาค)
-
-#### shelter-017 · บ้านสะพานใจ · เขตราษฎร์บูรณะ (`rat-burana`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณอนันต์ (ผู้จัดการ) · ชาย 52 ปี · ผู้ชายวัยห้าสิบ ผมหงอกบาง ยิ้มใจดี ใส่แว่นอ่านหนังสือ สวมเสื้อเชิ้ตสีครีม · คำลงท้าย ครับ |
-| สถานที่ | อาคารสองชั้นริมแม่น้ำ รั้วเหล็กดัดสีขาว |
-| พื้นที่ดูแลสัตว์ | ห้องพักฟื้นที่สะอาดและลานหมาริมน้ำที่ล้อมรั้ว |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 47/55 ตัว · **รับเพิ่มได้ 8 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการผ้าขนหนูและอาหารสำหรับสัตว์พักฟื้น (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 09:00–17:00 · รับน้องที่ต้องพักฟื้นหลังรักษา (จำลอง) |
-
-- `MANAGER_LOOK`: a kind 52-year-old Thai man with thinning gray hair, reading glasses, a warm smile, wearing a cream shirt
-- `EXTERIOR`: a two-story riverside building with a white wrought-iron fence
-- `CARE_AREA`: a clean recovery room with soft bedding and a fenced riverside dog yard
-- `DONATION_ITEMS`: stacks of clean towels and recovery pet food cans on shelves
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-018 · บ้านเหมียวสายไหม · เขตสายไหม (`sai-mai`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณปิยะดา (ผู้ประสานงาน) · หญิง 27 ปี · หญิงสาวหน้าหวาน ผมยาวสีน้ำตาล ยิ้มน่ารัก สวมเสื้อยืดสีม่วงอ่อน · คำลงท้าย ค่ะ |
-| สถานที่ | ทาวน์โฮมหัวมุมมีสวนข้างบ้าน รั้วตาข่ายสูง |
-| พื้นที่ดูแลสัตว์ | สวนแมวปิดตาข่ายและห้องแมวในบ้าน |
-| รับ · ความจุ | แมว · ดูแลอยู่ 30/35 ตัว · **รับเพิ่มได้ 5 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการของเล่นแมวและที่ลับเล็บ (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | เสาร์–อาทิตย์ 10:00–17:00 · รับเฉพาะแมว |
-
-- `MANAGER_LOOK`: a sweet 27-year-old Thai woman with long brown hair, a lovely smile, wearing a lilac t-shirt
-- `EXTERIOR`: a corner townhome with a side garden and a tall mesh fence
-- `CARE_AREA`: a fully netted cat garden (catio) with plants and an indoor cat room
-- `DONATION_ITEMS`: cat toys in baskets and cardboard scratchers stacked by the door
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
-
-#### shelter-019 · บ้านขนฟูบางพลัด · เขตบางพลัด (`bang-phlat`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณธีรวัฒน์ (ผู้ดูแล) · ชาย 33 ปี · หนุ่มหน้าใส ผมสั้น ยิ้มกว้าง สวมเสื้อยืดสีฟ้า · คำลงท้าย ครับ |
-| สถานที่ | บ้านเดี่ยวสองชั้นใกล้ริมน้ำ มีระเบียงกว้าง |
-| พื้นที่ดูแลสัตว์ | ห้องแมวชั้นบนและลานหมาชั้นล่าง |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 24/30 ตัว · **รับเพิ่มได้ 6 ตัว** |
-| บริจาค | ไม่เปิดรับ |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · ไม่มีป้าย |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ศุกร์–อาทิตย์ 10:00–16:00 · รับทั้งหมาและแมว |
-
-- `MANAGER_LOOK`: a friendly 33-year-old Thai man with short hair, a wide smile, wearing a light blue t-shirt
-- `EXTERIOR`: a two-story detached house near the river with a wide balcony
-- `CARE_AREA`: an upstairs cat room and a ground-floor dog area with clean beds
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp` (ไม่มีมุมบริจาค)
-
-#### shelter-020 · สวนสี่ขาทวีวัฒนา · เขตทวีวัฒนา (`thawi-watthana`)
-
-| หัวข้อ | รายละเอียด |
-|---|---|
-| ผู้ดูแลสถานที่ | คุณมยุรี (ผู้ก่อตั้ง) · หญิง 50 ปี · หญิงวัยห้าสิบ ผิวแทน ผมยาวรวบ ยิ้มอบอุ่น สวมเสื้อเชิ้ตลายดอก · คำลงท้าย ค่ะ |
-| สถานที่ | สวนกว้างริมคลองชลประทาน มีบ้านไม้และโรงเรือนสัตว์ |
-| พื้นที่ดูแลสัตว์ | โรงเรือนหมาแมวแยกกัน มีพื้นที่วิ่งเล่นกว้าง |
-| รับ · ความจุ | แมวและสุนัข · ดูแลอยู่ 55/65 ตัว · **รับเพิ่มได้ 10 ตัว** |
-| บริจาค | เปิดรับบริจาค (สถานะตัวอย่าง) — ต้องการอาหารหมาแมวและอุปกรณ์ทำความสะอาด (ข้อความตัวอย่าง) |
-| ฉุกเฉิน · Verified | ไม่รับกรณีฉุกเฉิน · Verified (ตัวอย่าง) |
-| เวลาทำการ (ตัวอย่าง) · เงื่อนไข | ทุกวัน 08:00–17:00 · รับทั้งหมาและแมว |
-
-- `MANAGER_LOOK`: a warm 50-year-old Thai woman with tanned skin, long tied-back hair, a kind smile, wearing a floral shirt
-- `EXTERIOR`: a wide garden by an irrigation canal with a wooden house and animal shelters
-- `CARE_AREA`: separate shelters for dogs and cats with a large grassy play area
-- `DONATION_ITEMS`: pet food sacks and cleaning supplies without labels neatly arranged in a shed
-- ภาพ: `manager.webp`, `exterior.webp`, `care-area.webp`, `donation-corner.webp`
+| ID | ชื่อทางการ (เติม) | เขตที่ตั้งจริง (เติม) | ลิงก์ทางการ (เติม) | ชนิดสัตว์ที่รับ (เติมตามจริง) | ค่าสาธิต: ความจุ | ค่าสาธิต: บริจาค | ค่าสาธิต: ฉุกเฉิน | ค่าสาธิต: Verified |
+|---|---|---|---|---|---|---|---|---|
+| shelter-001 | | | | | 95/100 (ว่าง 5) | เปิด | รับ | ตัวอย่าง |
+| shelter-002 | | | | | 37/40 (ว่าง 3) | เปิด | — | ตัวอย่าง |
+| shelter-003 | | | | | 44/50 (ว่าง 6) | เปิด | — | ตัวอย่าง |
+| shelter-004 | | | | | 138/150 (ว่าง 12) | เปิด | รับ | ตัวอย่าง |
+| shelter-005 | | | | | 29/35 (ว่าง 6) | ปิด | — | ตัวอย่าง |
+| shelter-006 | | | | | 71/80 (ว่าง 9) | เปิด | รับ | — |
+| shelter-007 | | | | | 30/30 (เต็ม) | เปิด | — | ตัวอย่าง |
+| shelter-008 | | | | | 58/70 (ว่าง 12) | เปิด | รับ | ตัวอย่าง |
+| shelter-009 | | | | | 38/45 (ว่าง 7) | ปิด | — | ตัวอย่าง |
+| shelter-010 | | | | | 33/40 (ว่าง 7) | เปิด | — | ตัวอย่าง |
+| shelter-011 | | | | | 76/90 (ว่าง 14) | เปิด | รับ | ตัวอย่าง |
+| shelter-012 | | | | | 40/45 (ว่าง 5) | ปิด | — | — |
+| shelter-013 | | | | | 31/40 (ว่าง 9) | เปิด | — | ตัวอย่าง |
+| shelter-014 | | | | | 22/25 (ว่าง 3) | เปิด | — | ตัวอย่าง |
+| shelter-015 | | | | | 52/60 (ว่าง 8) | เปิด | รับ | ตัวอย่าง |
+| shelter-016 | | | | | 43/50 (ว่าง 7) | ปิด | — | ตัวอย่าง |
+| shelter-017 | | | | | 47/55 (ว่าง 8) | เปิด | รับ | ตัวอย่าง |
+| shelter-018 | | | | | 30/35 (ว่าง 5) | เปิด | — | ตัวอย่าง |
+| shelter-019 | | | | | 24/30 (ว่าง 6) | ปิด | — | — |
+| shelter-020 | | | | | 55/65 (ว่าง 10) | เปิด | — | ตัวอย่าง |
 
 ---
 
@@ -2709,9 +2337,7 @@ Avoid: text, letters, captions, logos, brand names, watermarks, signage, QR code
 - [ ] ลุค (ทรงผม แว่น เสื้อผ้า โทนผิว) ตรงกับคำบรรยายของ record
 - [ ] ภาพบ้านตรงประเภทบ้านและรายละเอียด ไม่มีคน ไม่มีสัตว์ ไม่มีบ้านเลขที่หรือป้าย
 - [ ] ภาพน้อง: จำนวน ชนิด สี และพันธุ์ตรงกับ “น้องที่ดูแลอยู่” ทุกตัว กายวิภาคถูกต้อง ดูสุขภาพดี
-- [ ] ภาพสถานสงเคราะห์สะอาดและมีมนุษยธรรม ไม่มีสัตว์ป่วยหรือกรงแออัด
-- [ ] มุมบริจาคไม่มีเงิน QR เลขบัญชี ฉลาก หรือป้ายที่อ่านได้
 - [ ] ไม่มีข้อความ โลโก้ หรือลายน้ำในภาพใดเลย
 - [ ] WebP ≤ 300 KB ขนาดตามหัวข้อ 4 ลบ metadata แล้ว
-- [ ] เพิ่มแถวใน CREDITS.md หนึ่งแถวต่อ batch เช่น `ai-personas-001-010` หรือ `ai-shelters-001-010` ระบุเครื่องมือที่ใช้ วันที่สร้าง และเงื่อนไขการใช้งานภาพของเครื่องมือนั้น ณ วันที่สร้าง
+- [ ] เพิ่มแถวใน CREDITS.md หนึ่งแถวต่อ batch เช่น `ai-personas-001-010` ระบุเครื่องมือที่ใช้ วันที่สร้าง และเงื่อนไขการใช้งานภาพของเครื่องมือนั้น ณ วันที่สร้าง
 - [ ] ใน `src/data` ตั้ง `images.*.src` เป็น path ของไฟล์ `aiGenerated: true`, `creditId` ตรงกับแถว CREDITS.md และ `alt` ตามรูปแบบในหัวข้อ 4
