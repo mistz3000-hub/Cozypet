@@ -9,6 +9,10 @@
   - ภาพคน บ้าน และน้องที่ผู้รับดูแลรายบุคคลดูแลอยู่ → **ภาพสร้างด้วย AI โดย Codex** ตาม [CODEX_IMAGE_PROMPTS.md](CODEX_IMAGE_PROMPTS.md) บันทึกเป็นแถวต่อ batch และระบุเครื่องมือกับเงื่อนไขการใช้งานภาพ ณ วันที่สร้าง
   - ภาพสถานสงเคราะห์ (องค์กรจริง, PROMPT.md D10) → **ภาพจากเว็บไซต์/เพจทางการขององค์กร** ใช้เพื่องานการศึกษา ให้เครดิตชื่อองค์กรและลิงก์ต้นทางทุกภาพ และแสดงเครดิตในหน้า `/about-demo`
   - mascot และ wordmark → **ออกแบบเอง** (SVG แยกชิ้นส่วน พื้นหลังโปร่งใส)
+  - ตัวละครและฉากใน animation (ขนมชั้น ขนมปัง มอคค่า น้องหมา มือคน ซอย ห้องคอนโด UI กล้อง) → **ออกแบบเองเป็น SVG ในโค้ด** ห้าม trace ภาพถ่าย ห้ามใช้ asset 3D หรือ UI กล้องของยี่ห้อจริง (STORYBOARD.md หัวข้อ 6)
+  - โลโก้แบรนด์พันธมิตร → **ป้ายที่ออกแบบเองของแบรนด์สมมติ** ห้ามคล้ายแบรนด์จริง
+  - ปุ่ม Google Sign-In และไอคอน SDG → ใช้ตามแนวทางของเจ้าของ (Google / สหประชาชาติ) โดยตรวจเงื่อนไข ณ วันที่ใช้ ห้ามดัดแปลง
+  - ภาพหน้าจอ ภาพนิ่ง และวิดีโอในงานส่ง → สร้างจากเว็บของโปรเจกต์เอง ไฟล์ผลลัพธ์ไม่อยู่ใน repo
   - ฟอนต์ SIL OFL และไอคอนไลเซนส์ MIT/ISC
 - **ห้าม:** ดึงรูปจาก Google Images โดยตรง, ใช้/trace ภาพอ้างอิง, ใช้ชื่อ โลโก้ ข้อความ หรือภาพของ PetZen, ภาพที่เห็นหน้าคนหรือป้ายทะเบียนชัดเจน, hotlink จากเว็บอื่น
 - ดาวน์โหลดภาพเก็บใน `public/images/` และบันทึก URL ต้นทาง ผู้สร้าง ไลเซนส์ และวันที่
@@ -45,3 +49,13 @@
 | `sound-synth` | `src/lib/audio/` | เพลงและเสียงประกอบทั้งหมด | สังเคราะห์ด้วย Web Audio API ในโค้ดของโปรเจกต์ | — | ของโปรเจกต์ | — | วางแผน | ไม่มีไฟล์เสียงจากภายนอก ถ้าเพิ่มไฟล์ต้องเป็น CC0 และเพิ่มแถวใหม่ |
 | `lib-threejs-gsap` | `package.json` | animation เล่าเรื่องและเอฟเฟกต์ | three.js / GSAP | https://threejs.org · https://gsap.com | MIT (three.js) · ตรวจเงื่อนไข GSAP ณ วันที่ติดตั้ง | — | วางแผน | โหลดแบบ dynamic import |
 | `fallback-paw` | `public/images/fallback-paw.svg` | ภาพ fallback | สร้างขึ้นสำหรับ Cozypet | — | ของโปรเจกต์ | — | วางแผน | |
+| `story-characters` | `src/features/story/characters/` | animation บท 0–14 (ขนมชั้น ขนมปัง มอคค่า น้องหมา มือคน) | สร้างขึ้นสำหรับ Cozypet (SVG ในโค้ด) | — | ของโปรเจกต์ | — | วางแผน | ออกแบบจากคำบรรยายใน STORYBOARD.md ไม่ trace ภาพ |
+| `story-scenes` | `src/features/story/scenes/` | ฉากซอย ห้องคอนโด เมืองยามค่ำ UI ช่องมองภาพ | สร้างขึ้นสำหรับ Cozypet (SVG + shader ในโค้ด) | — | ของโปรเจกต์ | — | วางแผน | ไม่มีตัวอักษร ป้าย ป้ายทะเบียน หรือแบรนด์ในฉาก |
+| `app-illustrations` | `src/components/illustrations/` | กล่องพัสดุ ผู้ดูแลยืนยันรับของ ป้ายระดับแต้มน้ำใจ | สร้างขึ้นสำหรับ Cozypet | — | ของโปรเจกต์ | — | วางแผน | |
+| `partner-brand-badges` | `src/components/illustrations/brands/` | แบรนด์พันธมิตร A–C (แบรนด์สมมติ) | สร้างขึ้นสำหรับ Cozypet | — | ของโปรเจกต์ | — | วางแผน | ห้ามคล้ายโลโก้แบรนด์จริง |
+| `google-signin` | `src/features/auth/GoogleButton.tsx` | ปุ่ม “เข้าสู่ระบบด้วย Google” | Google | แนวทางแบรนด์ของ Google Sign-In (ตรวจ URL ทางการ ณ วันที่ทำ) | ตามแนวทางของ Google | — | วางแผน | ห้ามดัดแปลงโลโก้ G |
+| `sdg-icons` | `public/images/sdg/` หรือป้ายข้อความ | โปสเตอร์ สไลด์ รายงาน วิดีโอ | สหประชาชาติ (ถ้าใช้ไอคอนทางการ) | แนวทางการใช้ SDG ของสหประชาชาติ (ตรวจ URL ทางการ ณ วันที่ทำ) | ตามแนวทางของสหประชาชาติ (ใช้เพื่อการศึกษา ไม่ดัดแปลง) | — | วางแผน | ถ้าไม่แน่ใจเงื่อนไข ให้ใช้ป้ายข้อความ “SDG 3” ที่ทำเอง |
+| `submission-media` | `public/_generated/`, `out/` (ไม่ commit) | ภาพหน้าจอ ภาพนิ่ง วิดีโอ โปสเตอร์ สไลด์ รายงาน | สร้างจากเว็บ Cozypet ด้วยสคริปต์ของโปรเจกต์ | — | ของโปรเจกต์ | — | วางแผน | ภาพในงานส่งที่มาจาก asset อื่นต้องอ้างแถวของ asset นั้นด้วย |
+| `lib-supabase` | `package.json` | บัญชีผู้ใช้และฐานข้อมูล | Supabase | https://supabase.com | ตรวจไลเซนส์ของ `@supabase/ssr` และ `@supabase/supabase-js` ณ วันที่ติดตั้ง | — | วางแผน | ใช้ฝั่ง server เท่านั้น |
+| `lib-zod-qrcode` | `package.json` | ตรวจ schema, QR บนโปสเตอร์/สไลด์ | zod / qrcode contributors | https://zod.dev · https://github.com/soldair/node-qrcode | MIT (ตรวจอีกครั้ง) | — | วางแผน | |
+| `tool-playwright-ffmpeg` | devDependency / โปรแกรมในเครื่อง | อัดหน้าจอ ส่งออก PDF และ render วิดีโอ | Microsoft Playwright / FFmpeg | https://playwright.dev · https://ffmpeg.org | Apache-2.0 (Playwright) · LGPL/GPL (FFmpeg ใช้เป็นเครื่องมือ ไม่แจกจ่ายไปกับเว็บ) | — | วางแผน | ห้ามใส่ไฟล์ ffmpeg ใน repo |
