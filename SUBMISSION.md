@@ -177,7 +177,7 @@
 | 5 | How it works | Input → Smart Load Balancer + GenAI → Recommendation | แผนภาพ IPO | อธิบายว่าข้อมูลอะไรเข้า อะไรออก |
 | 6 | Technology | Cloud web app with AI at its core | สถาปัตยกรรม + สูตรปัจจัย | AI เป็นแกนหลัก ไม่ใช่ส่วนเสริม |
 | 7 | Innovation | Not another directory — a balancer | ตารางเดิม vs ใหม่ | ต่างจากโพสต์โซเชียลและเว็บมูลนิธิอย่างไร |
-| 8 | Prototype | Try it now | ภาพหน้าจอมือถือ 3 จอ + QR เว็บเดโม + QR วิดีโอ | เดโมสดหรือเปิดวิดีโอ |
+| 8 | Prototype | Try it now | ภาพหน้าจอมือถือ 3 จอ หรือคลิป how-to 32 วินาทีวนซ้ำ (`cozypet-howto.mp4`, MOTION.md หัวข้อ 5) + QR เว็บเดโม (หรือ `/how-to`) + QR วิดีโอ | เดโมสดหรือเปิดวิดีโอ |
 | 9 | Business | B2B2C supply packages + CSR ads | แผนภาพเงินและของ | commission มาจากแบรนด์ ผู้บริจาคไม่เสียเพิ่ม |
 | 10 | Global | Bangkok → Thailand → ASEAN | ตาราง localization + roadmap | ประเทศแรกและเหตุผล |
 | 11 | Impact | SDG 3 · 9 · 11 | ไอคอน SDG + KPI + กราฟจำลอง (มีป้าย) | ผลกระทบที่วัดได้ |

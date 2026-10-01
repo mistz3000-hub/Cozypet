@@ -12,6 +12,7 @@
   - ตัวละครและฉากใน animation (ขนมชั้น ขนมปัง มอคค่า น้องหมา มือคน ซอย ห้องคอนโด UI กล้อง) → **ออกแบบเองเป็น SVG ในโค้ด** ห้าม trace ภาพถ่าย ห้ามใช้ asset 3D หรือ UI กล้องของยี่ห้อจริง (STORYBOARD.md หัวข้อ 6)
   - โลโก้แบรนด์พันธมิตร → **ป้ายที่ออกแบบเองของแบรนด์สมมติ** ห้ามคล้ายแบรนด์จริง
   - ปุ่ม Google Sign-In และไอคอน SDG → ใช้ตามแนวทางของเจ้าของ (Google / สหประชาชาติ) โดยตรวจเงื่อนไข ณ วันที่ใช้ ห้ามดัดแปลง
+  - โทรศัพท์ 3 มิติและเคอร์เซอร์อุ้งเท้าของทัวร์ → **สร้างเองจากโค้ด/SVG** ห้ามใช้โมเดล 3 มิติหรือ UI ของยี่ห้อจริง
   - ภาพหน้าจอ ภาพนิ่ง และวิดีโอในงานส่ง → สร้างจากเว็บของโปรเจกต์เอง ไฟล์ผลลัพธ์ไม่อยู่ใน repo
   - ฟอนต์ SIL OFL และไอคอนไลเซนส์ MIT/ISC
 - **ห้าม:** ดึงรูปจาก Google Images โดยตรง, ใช้/trace ภาพอ้างอิง, ใช้ชื่อ โลโก้ ข้อความ หรือภาพของ PetZen, ภาพที่เห็นหน้าคนหรือป้ายทะเบียนชัดเจน, hotlink จากเว็บอื่น
@@ -56,6 +57,9 @@
 | `google-signin` | `src/features/auth/GoogleButton.tsx` | ปุ่ม “เข้าสู่ระบบด้วย Google” | Google | แนวทางแบรนด์ของ Google Sign-In (ตรวจ URL ทางการ ณ วันที่ทำ) | ตามแนวทางของ Google | — | วางแผน | ห้ามดัดแปลงโลโก้ G |
 | `sdg-icons` | `public/images/sdg/` หรือป้ายข้อความ | โปสเตอร์ สไลด์ รายงาน วิดีโอ | สหประชาชาติ (ถ้าใช้ไอคอนทางการ) | แนวทางการใช้ SDG ของสหประชาชาติ (ตรวจ URL ทางการ ณ วันที่ทำ) | ตามแนวทางของสหประชาชาติ (ใช้เพื่อการศึกษา ไม่ดัดแปลง) | — | วางแผน | ถ้าไม่แน่ใจเงื่อนไข ให้ใช้ป้ายข้อความ “SDG 3” ที่ทำเอง |
 | `submission-media` | `public/_generated/`, `out/` (ไม่ commit) | ภาพหน้าจอ ภาพนิ่ง วิดีโอ โปสเตอร์ สไลด์ รายงาน | สร้างจากเว็บ Cozypet ด้วยสคริปต์ของโปรเจกต์ | — | ของโปรเจกต์ | — | วางแผน | ภาพในงานส่งที่มาจาก asset อื่นต้องอ้างแถวของ asset นั้นด้วย |
+| `lib-motion` | `package.json` | motion ของ UI (LazyMotion + `m`) | Motion (motion.dev) | https://motion.dev | ตรวจไลเซนส์ ณ วันที่ติดตั้ง (คาดว่า MIT) | — | วางแผน | โหลดเต็มเฉพาะ feature pack ที่ใช้ |
+| `howto-phone-model` | `src/features/motion/howto/` | โทรศัพท์ 3 มิติใน Phone Tour | สร้างขึ้นสำหรับ Cozypet (procedural geometry) | — | ของโปรเจกต์ | — | วางแผน | ไม่เหมือนรุ่น/ยี่ห้อใด ไม่มีโมเดลจากภายนอก |
+| `tour-cursor-paw` | `src/features/motion/tour/` | เคอร์เซอร์อุ้งเท้าและวงแตะของทัวร์ | สร้างขึ้นสำหรับ Cozypet (SVG) | — | ของโปรเจกต์ | — | วางแผน | |
 | `lib-supabase` | `package.json` | บัญชีผู้ใช้และฐานข้อมูล | Supabase | https://supabase.com | ตรวจไลเซนส์ของ `@supabase/ssr` และ `@supabase/supabase-js` ณ วันที่ติดตั้ง | — | วางแผน | ใช้ฝั่ง server เท่านั้น |
 | `lib-zod-qrcode` | `package.json` | ตรวจ schema, QR บนโปสเตอร์/สไลด์ | zod / qrcode contributors | https://zod.dev · https://github.com/soldair/node-qrcode | MIT (ตรวจอีกครั้ง) | — | วางแผน | |
 | `tool-playwright-ffmpeg` | devDependency / โปรแกรมในเครื่อง | อัดหน้าจอ ส่งออก PDF และ render วิดีโอ | Microsoft Playwright / FFmpeg | https://playwright.dev · https://ffmpeg.org | Apache-2.0 (Playwright) · LGPL/GPL (FFmpeg ใช้เป็นเครื่องมือ ไม่แจกจ่ายไปกับเว็บ) | — | วางแผน | ห้ามใส่ไฟล์ ffmpeg ใน repo |

@@ -1,8 +1,8 @@
 # Cozypet — สเปกหลักสำหรับสร้างเว็บต้นแบบ
 
-> **สถานะ:** ขั้นเอกสาร ยังไม่เริ่ม implement (ปรับล่าสุด 30 ก.ย. 2026: เพิ่มบัญชีผู้ใช้จริง, Smart Load Balancer, แพ็กเกจของใช้จำลอง, แดชบอร์ด, ภาษาอังกฤษ และงานส่ง 5 ชิ้นตามฟอร์มโครงงาน — D12–D18)
-> **ไฟล์นี้คือ source of truth ด้านผลิตภัณฑ์และเทคนิค** ส่วนพฤติกรรมของแชต AI และ Smart Assist (ทุก provider) อยู่ใน [GEMINI_ROLEPLAY.md](GEMINI_ROLEPLAY.md), เนื้อเรื่อง animation หน้าแรกอยู่ใน [STORYBOARD.md](STORYBOARD.md), วิดีโอเดโมอยู่ใน [DEMO_VIDEO.md](DEMO_VIDEO.md), งานส่งอาจารย์ทั้ง 5 ชิ้นอยู่ใน [SUBMISSION.md](SUBMISSION.md), รายละเอียด persona/สถานสงเคราะห์และคำสั่งสร้างภาพอยู่ใน [CODEX_IMAGE_PROMPTS.md](CODEX_IMAGE_PROMPTS.md), กติกาการทำงานของ agent อยู่ใน [AGENTS.md](AGENTS.md), ทะเบียนที่มาภาพอยู่ใน [CREDITS.md](CREDITS.md)
-> ถ้าเอกสารขัดกัน ให้ถือลำดับ: คำสั่งล่าสุดของผู้ใช้ → PROMPT.md → GEMINI_ROLEPLAY.md → CODEX_IMAGE_PROMPTS.md → STORYBOARD.md → DEMO_VIDEO.md → SUBMISSION.md → เอกสารอื่น แล้วบันทึกข้อขัดแย้งไว้ในหัวข้อ 18
+> **สถานะ:** ขั้นเอกสาร ยังไม่เริ่ม implement (ปรับล่าสุด 1 ต.ค. 2026: เพิ่ม Motion design และวิธีใช้งานแบบเคลื่อนไหว — D19 · ก่อนหน้า 30 ก.ย.: บัญชีผู้ใช้จริง, Smart Load Balancer, แพ็กเกจของใช้จำลอง, แดชบอร์ด, ภาษาอังกฤษ และงานส่ง 5 ชิ้นตามฟอร์มโครงงาน — D12–D18)
+> **ไฟล์นี้คือ source of truth ด้านผลิตภัณฑ์และเทคนิค** ส่วนพฤติกรรมของแชต AI และ Smart Assist (ทุก provider) อยู่ใน [GEMINI_ROLEPLAY.md](GEMINI_ROLEPLAY.md), เนื้อเรื่อง animation หน้าแรกอยู่ใน [STORYBOARD.md](STORYBOARD.md), ระบบ Motion และวิธีใช้งานแบบเคลื่อนไหวอยู่ใน [MOTION.md](MOTION.md), วิดีโอเดโมอยู่ใน [DEMO_VIDEO.md](DEMO_VIDEO.md), งานส่งอาจารย์ทั้ง 5 ชิ้นอยู่ใน [SUBMISSION.md](SUBMISSION.md), รายละเอียด persona/สถานสงเคราะห์และคำสั่งสร้างภาพอยู่ใน [CODEX_IMAGE_PROMPTS.md](CODEX_IMAGE_PROMPTS.md), กติกาการทำงานของ agent อยู่ใน [AGENTS.md](AGENTS.md), ทะเบียนที่มาภาพอยู่ใน [CREDITS.md](CREDITS.md)
+> ถ้าเอกสารขัดกัน ให้ถือลำดับ: คำสั่งล่าสุดของผู้ใช้ → PROMPT.md → GEMINI_ROLEPLAY.md → CODEX_IMAGE_PROMPTS.md → STORYBOARD.md → MOTION.md → DEMO_VIDEO.md → SUBMISSION.md → เอกสารอื่น แล้วบันทึกข้อขัดแย้งไว้ในหัวข้อ 18
 
 ## สารบัญ
 
@@ -39,6 +39,7 @@
 - แชตและ Smart Assist เรียก AI provider แบบฟรีเท่านั้น (Gemini / Groq / OpenRouter เลือกด้วย `AI_PROVIDER`) ผ่าน Vercel server route **งบ API 0 บาท** เก็บ key ฝั่ง server และเล่น demo ได้ครบโดยไม่ต้องเรียก API (หัวข้อ 12)
 - **Smart Load Balancer** (หัวข้อ 11.5) คือแกนหลักของเทคโนโลยี ทุก flow ที่แนะนำสถานที่ ผู้รับดูแล หรือผู้รับแพ็กเกจ ต้องเรียกฟังก์ชันจัดอันดับชุดเดียวกัน
 - ภาพคน บ้าน และสัตว์ที่ผู้รับดูแลรายบุคคลดูแลอยู่ สร้างด้วย Codex ตาม [CODEX_IMAGE_PROMPTS.md](CODEX_IMAGE_PROMPTS.md) (บุคคลสมมติ ติดป้าย “ภาพสร้างด้วย AI”) ส่วนสถานสงเคราะห์เป็นองค์กรจริงที่ใช้ภาพจากช่องทางทางการ (D10)
+- การเคลื่อนไหวของ UI ใช้ไลบรารี **Motion** ตาม tokens ใน [MOTION.md](MOTION.md) และมีการโชว์วิธีใช้งานแบบเคลื่อนไหว 2 ชั้น: **Phone Tour** (WebGL) บนหน้าแรกและ `/how-to` กับ **ทัวร์ในแอป** (หัวข้อ 7.19)
 - งานที่ต้องส่งอาจารย์ (รายงาน สไลด์ วิดีโอ โปสเตอร์ ฟอร์ม) สร้างจากแอปจริงตาม [SUBMISSION.md](SUBMISSION.md) และ [DEMO_VIDEO.md](DEMO_VIDEO.md) ในขั้น M11
 - อย่าลบหรือเขียนทับงานเดิมโดยไม่ตรวจก่อน commit/push เฉพาะเมื่อผู้ใช้สั่งในรอบนั้น
 
@@ -119,6 +120,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 | หน้าจำลองสถานการณ์ (`/insights`) | การจำลอง 30 วันด้วยสถานที่สมมติ (หัวข้อ 11.7) | ผลการทดลองจริง |
 | เทมเพลตสัญญา | เอกสารตัวอย่างที่เติมข้อมูลจากคำขอ | เอกสารทางกฎหมาย |
 | สถานที่ของฉัน (ทดลอง) | record ที่ผู้ใช้สร้างเองและเห็นเฉพาะตัวเอง | สถานที่ที่เปิดให้คนอื่นใช้จริง |
+| หน้าจอใน Phone Tour และทัวร์ในแอป | ประกอบจาก component จริงด้วยข้อมูลตัวอย่าง (ป้ายใต้โทรศัพท์ “หน้าจอย่อจากแอปจริง ข้อมูลตัวอย่าง”) | ข้อมูลหรือผลงานจริง |
 
 ---
 
@@ -171,6 +173,9 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 | สถานที่ของฉัน (ทดลอง) | record ผู้ดูแลที่ผู้ใช้สร้างเพื่อทดลองอัปเดตสถานะ | `CaretakerPlace` | — |
 | เทมเพลตสัญญา (ตัวอย่าง) | เอกสารตัวอย่างสำหรับอุปถัมภ์/รับเลี้ยง | — | สัญญา (เฉย ๆ) |
 | ภาษา: ไทย / EN | ตัวสลับภาษาใน header | `Locale`: `th` / `en` | — |
+| วิธีใช้ | ปุ่มใน header เปิดทัวร์ของหน้าปัจจุบัน | `TourStep`, `TourState` | คู่มือ, help |
+| Phone Tour | โทรศัพท์ 3 มิติหมุนตามการเลื่อนหน้า โชว์ 5 หน้าจอบังคับ (หน้าแรกและ `/how-to`) | `howto` | — |
+| ทัวร์ในแอป | ไฮไลต์ปุ่มจริงทีละจุด พร้อมโหมด “ให้ Cozypet สาธิต” (autopilot) | `TourProvider` | — |
 
 **ป้ายปุ่มหลักที่ต้องใช้ตรงตัว:** “ฉันพบสัตว์”, “ฉันกำลังตามหาสัตว์”, “หาที่ช่วยเหลือใกล้ฉัน”, “เริ่มช่วยน้อง”, “ขอส่งน้องเข้าดูแล”, “ขออุปถัมภ์ชั่วคราว”, “ขอรับเลี้ยงถาวร”, “ยืนยันส่งต่อน้อง (จำลอง)”, “ดูเรื่องราวทั้งหมด”, “เข้าสู่ระบบด้วย Google”, “สมัครสมาชิก”, “ทดลอง Demo”, “ให้ AI ช่วยสรุป”, “ดูเบื้องหลัง”, “ส่งแพ็กเกจของใช้ (จำลอง)”, “ยืนยันคำสั่งจำลอง”
 
@@ -264,7 +269,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 
 **Navigation สองระดับ:**
 1. **Header** (ทุกหน้า): wordmark ลิงก์กลับหน้าแรก, ป้าย “Demo · Run 042” (กดไป `/profile`) ในหน้าแรกมีลิงก์สมอ “หน้าแรก”, “วิธีช่วยน้อง”, “ค้นหาความช่วยเหลือ”, “น้องที่ได้บ้านแล้ว”, “เกี่ยวกับ Cozypet” และปุ่ม “เริ่มช่วยน้อง” (ไป `/scan`) บนจอ < 1024px ยุบลิงก์สมอเป็นเมนูที่เปิด/ปิดได้จริง
-   - มุมขวาของ header มีตัวสลับ **“ภาษา: ไทย / EN”** (หัวข้อ 7.17) และปุ่ม **“เข้าสู่ระบบ”** (ผู้ใช้ทั่วไป) หรือ avatar + เมนูบัญชี (ผู้ที่เข้าสู่ระบบแล้ว: “แดชบอร์ด”, “โปรไฟล์”, “ออกจากระบบ”) ตามหัวข้อ 7.9
+   - มุมขวาของ header มีตัวสลับ **“ภาษา: ไทย / EN”** (หัวข้อ 7.17) ปุ่ม **“วิธีใช้”** (ไอคอน ? + ข้อความ เปิดทัวร์ของหน้านั้น หัวข้อ 7.19) และปุ่ม **“เข้าสู่ระบบ”** (ผู้ใช้ทั่วไป) หรือ avatar + เมนูบัญชี (ผู้ที่เข้าสู่ระบบแล้ว: “แดชบอร์ด”, “โปรไฟล์”, “ออกจากระบบ”) ตามหัวข้อ 7.9
    - เมื่อเข้าสู่ระบบแล้ว ป้าย Run แสดงเป็น “Run 042” (ไม่มีคำว่า Demo) ส่วนโหมดทดลองยังแสดง “Demo · Run 042”
 2. **Tab bar (มือถือ) / dock (แท็บเล็ต-desktop)** (ทุกหน้า): 5 ปลายทางคือ “หน้าแรก”, “สแกน” `/scan`, “ค้นหา” `/nearby`, “ประกาศ” `/listings`, “โปรไฟล์” `/profile` พร้อม mascot switch (หัวข้อ 6.4) แท็บปัจจุบันมี `aria-current="page"`
    - แท็บ “หน้าแรก” ไป `/dashboard` เมื่อมี Run แล้ว (ทั้งบัญชีและโหมดทดลอง) และไป `/` เมื่อยังไม่เริ่ม ส่วน wordmark ใน header ไป `/` เสมอ
@@ -277,7 +282,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 - เคารพ `prefers-reduced-motion: reduce` ทุกจุด: ปิด loop และการเคลื่อนที่ ใช้การเปลี่ยน opacity/สถานะแบบทันทีแทน
 - micro-animation เมื่อ action สำเร็จ (บันทึก/ส่งคำขอ) ใช้รอยเท้าหรือเครื่องหมายถูก แยกจากหัวใจของ mascot เพื่อไม่ให้สับสน
 - splash ตอนเปิดเว็บ **ไม่บังคับ** ถ้าทำต้องแสดงครั้งแรกของ session เท่านั้น ไม่เกิน 800ms ไม่บล็อกการโหลด และข้ามเมื่อ reduced motion
-- เอฟเฟกต์ WebGL และเสียงอยู่ในหัวข้อ 3.7
+- เอฟเฟกต์ WebGL และเสียงอยู่ในหัวข้อ 3.7 ส่วนระบบ motion ของ UI (เวลา easing spring ด้วยไลบรารี Motion) อยู่ในหัวข้อ 3.8
 
 ### 3.7 เอฟเฟกต์ WebGL และเสียง
 
@@ -286,6 +291,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 | จุด | เอฟเฟกต์ | ถ้าไม่มี WebGL / reduced motion |
 |---|---|---|
 | หน้าแรก — “ช่วยน้องได้ใน 3 ขั้นตอน” | **animation เล่าเรื่อง v2 15 บท ~1:47 ตาม [STORYBOARD.md](STORYBOARD.md)** เปิดด้วยฉาก “ช่องมองภาพ” (ลูกแมวเลียขน กล้องมือถือเดินเข้าไป ชัตเตอร์ + แฟลชขาวครั้งเดียว) และจบที่ “บ้านที่อบอุ่น” (หัวข้อ 5.2) | เวอร์ชัน 2D / storyboard ภาพนิ่ง ไม่มีแฟลชเต็มจอ |
+| หน้าแรกและ `/how-to` — **Phone Tour** (5.2, 7.19) | โทรศัพท์ 3 มิติหมุน/เอียงตามการเลื่อนหน้า (±28°) หน้าจอเป็น DOM จริงผ่าน `CSS3DRenderer` + เอฟเฟกต์ WebGL Motion Kit ต่อขั้น (MOTION.md หัวข้อ 4–5) | โทรศัพท์ DOM + CSS 3D / การ์ด 5 ขั้นแบบนิ่งเมื่อ reduced motion |
 | ค้นหาความช่วยเหลือ — Smart Load Balancer (7.11) | เส้นโค้งเรืองแสงจากจุดค้นหาไปยังที่ที่แนะนำ ≤ 3 เส้น หลัง pop-up แนะนำเปิด (SVG + CSS ก็ได้ ไม่บังคับ WebGL) | ไฮไลต์หมุดด้วยขอบหนา + ข้อความ |
 | แพ็กเกจของใช้ — timeline คำสั่งจำลอง (7.12) | กล่องพัสดุเล็กเลื่อนไปตามเส้น timeline และแถบเสบียงเติมขึ้น (CSS/SVG) | ติ๊กทีละขั้นแบบทันที |
 | หน้าจำลองสถานการณ์ (7.16) | เส้นกราฟวาดขึ้นทีละวัน (SVG) | แสดงกราฟสมบูรณ์ทันที + ตาราง |
@@ -309,6 +315,16 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 - เสียง UI สั้นกว่า 400ms และเบา: แตะ/ป๊อป, reaction ของ mascot (“เหมียว”/“โฮ่ง” สังเคราะห์ที่ฟังน่ารัก), ชัตเตอร์ตอนถ่ายรูป, สแกน, chime เมื่อพบประกาศที่อาจตรง, ping radar, ป๊อปข้อความแชต, ติ๊ก “อ่านแล้ว”, jingle ส่งต่อน้อง, ป๊อปกล่องพัสดุ, ติ๊ก timeline แพ็กเกจ **ห้ามมีเสียงเหรียญหรือเครื่องคิดเงิน**
 - สูตรเสียงของฉากเปิด/ฉากจบและเพลงอยู่ใน STORYBOARD.md หัวข้อ 7 ใช้ module เสียงชุดเดียวกันทั้งเว็บและวิดีโอ
 - เสียงไม่ใช่ช่องทางเดียวของข้อมูล ทุกเหตุการณ์ต้องเห็นได้บนจอด้วย
+
+### 3.8 Motion design system (D19)
+
+รายละเอียดทั้งหมดอยู่ใน [MOTION.md](MOTION.md) สรุปข้อบังคับ:
+
+- ใช้ไลบรารี **Motion** (`motion`, entry `motion/react`) สำหรับ motion ของ UI ในรูป **LazyMotion + `m`** (ห้าม import แบบเต็ม) ครอบแอปด้วย `MotionConfig reducedMotion="user"` ส่วน **GSAP + three.js** ใช้กับ timeline ที่ต้อง seek ได้และฉาก WebGL เท่านั้น (ห้ามให้สองไลบรารีควบคุม element เดียวกัน)
+- **tokens กลาง** ที่ `src/lib/motion-tokens.ts` และ CSS custom properties ต้องมีค่าตรงกัน (เวลา `instant 90 / quick 150 / base 250 / slow 400 / hero 700` ms, easing, spring `snappy / soft / bouncy / gentle`) ห้าม hard-code เวลา easing หรือ spring ใน component
+- animate เฉพาะ `transform`, `opacity`, `filter` และใช้ `layout` สำหรับการย้ายรายการ (≤ 30 รายการพร้อมกัน) การเปลี่ยนหน้าเป็น enter-only 250ms ไม่มี exit ที่ทำให้ช้าลง
+- การเคลื่อนไหวทุกชิ้นมีโหมด reduced motion ตามตารางใน MOTION.md หัวข้อ 3 และข้อมูลต้องครบแม้ไม่มีการเคลื่อนไหว
+- ชุด **WebGL Motion Kit** 6 ชิ้น (`PawTrail`, `NoticeSwirl`, `RadarSweep`, `WaterColumns`, `RouteFlow`, `HeartBurst`) ใช้ซ้ำใน animation หน้าแรก หน้าค้นหา หน้าจำลอง แชต และ Phone Tour โดยเปิด WebGL context ไม่เกิน 2 อันต่อหน้า
 
 ---
 
@@ -346,6 +362,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 | `/caretaker` | สถานที่ของฉัน (ทดลอง) | ใช่ | หัวข้อ 7.14 |
 | `/requests/[id]/agreement` | เทมเพลตสัญญา (ตัวอย่าง) | ใช่ | เฉพาะคำขอ `foster`/`adopt` และการส่งต่อที่เป็นรับเลี้ยง (หัวข้อ 7.15) |
 | `/insights` | จำลองสถานการณ์: Smart Load Balancer ทำงานยังไง | ไม่ | หัวข้อ 7.16 |
+| `/how-to` | วิธีใช้งาน: Phone Tour เต็มหน้า + เล่นอัตโนมัติ + เริ่มทัวร์ในแอป | ไม่ | หัวข้อ 7.19 (ลิงก์บนโปสเตอร์และสไลด์) |
 | `/api/assist` | server route ของ Smart Assist | — | `POST` เท่านั้น (หัวข้อ 12.9) |
 | `/film` | stage สำหรับอัดวิดีโอ | ไม่ | `noindex` ไม่อยู่ในเมนู (STORYBOARD.md หัวข้อ 10) |
 | `/print/poster`, `/print/deck`, `/print/report`, `/print/form` | หน้าสำหรับส่งออกงานส่ง | ไม่ | `noindex` ไม่อยู่ในเมนู (หัวข้อ 7.18) |
@@ -384,6 +401,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 
 - **ส่วนบน: animation เล่าเรื่อง “Cozypet ทำงานยังไง” (v2)** ~1:47 15 บท สไตล์คลิปโปรโมต (WebGL + ข้อความ DOM + เสียงสังเคราะห์) ตาม [STORYBOARD.md](STORYBOARD.md) เปิดด้วยฉาก **“ช่องมองภาพ”**: ลูกแมวสามสี “ขนมชั้น” กำลังเลียขน กล้องมือถือค่อย ๆ เดินเข้าไปและสั่นตามจังหวะเดิน มีขอบแบบกล้องถ่ายรูป กดชัตเตอร์แล้วมีเสียงและภาพขาวแวบหนึ่ง → สแกนจำลอง → เทียบประกาศ (น้องหมาอีกตัวได้กลับบ้าน) → ยังไม่พบ ลงประกาศ → Smart Load Balancer → แพ็กเกจของใช้ → ส่งต่อน้อง → รอเจ้าของก่อน → รับเลี้ยงถาวร → **ขนมชั้นได้บ้านที่อบอุ่น** จบที่ปุ่มจริง
 - stage สัดส่วน 16:9 บน desktop และ 4:5 บนมือถือ มี poster + ปุ่ม “ดูว่า Cozypet ช่วยน้องยังไง (2 นาที)” ปุ่มเล่น/หยุด จุดบท 15 จุด ปุ่มเสียง และลิงก์ “ข้ามไปใช้งานเลย” (STORYBOARD.md หัวข้อ 8–9)
+- **ส่วนกลาง: “ดูวิธีใช้งานทีละหน้าจอ” (`id="how-to-use"`)** คือ **Phone Tour**: โทรศัพท์ 3 มิติ (WebGL) หมุนและเอียงตามการเลื่อนหน้า โชว์ 5 หน้าจอบังคับ (เข้าสู่ระบบ/โปรไฟล์ → แดชบอร์ด → ค้นหา + AI → pop-up แนะนำ → ผลลัพธ์/แพ็กเกจ) พร้อมเคอร์เซอร์อุ้งเท้า ตัวบอก INPUT/PROCESS/OUTPUT และปุ่ม “ลองจริง” ตามหัวข้อ 7.19 และ MOTION.md หัวข้อ 5 เป็นส่วนย่อยของ section “ช่วยน้องได้ใน 3 ขั้นตอน” (ไม่นับเป็น section ที่ 7 และไม่มีลิงก์สมอใน header) มีลิงก์ “ดูแบบเต็มหน้า” → `/how-to`
 - **ส่วนล่าง:** การ์ด 3 ใบเรียงแนวนอนบน desktop และแนวตั้งบนมือถือ (อยู่เสมอ แม้ไม่ได้เล่น animation) ทุกปุ่มต้องพาไป flow จริง
 
 | ขั้น | หัวข้อ | คำอธิบาย (ร่าง) | ปุ่ม → ปลายทาง |
@@ -891,6 +909,23 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 - `npm run shots` จับภาพหน้าจอบังคับ 5 หน้า (มือถือ + desktop, TH + EN) ในสถานะ deterministic (Run 001, เวลาคงที่) สำหรับรายงาน สไลด์ โปสเตอร์ และฟอร์ม
 - `/film` ตาม STORYBOARD.md หัวข้อ 10 และ DEMO_VIDEO.md
 
+### 7.19 วิธีใช้งานแบบเคลื่อนไหว: Phone Tour และทัวร์ในแอป — D19
+
+รายละเอียด ไทม์ไลน์ สคริปต์ข้อความ และโครงโค้ดอยู่ใน [MOTION.md](MOTION.md) หัวข้อ 5–7 สรุปข้อบังคับ:
+
+**Phone Tour (หน้าแรก `#how-to-use`, `/how-to`, `/film?cut=howto`)**
+- โทรศัพท์ 3 มิติ (ตัวเครื่องออกแบบเอง) หมุน ±28° ตามการเลื่อน (pinned + scroll-scrub) โชว์ 5 หน้าจอบังคับ ทุกขั้นมีข้อความ ชิป INPUT/PROCESS/OUTPUT และปุ่ม “ลองจริง” ไปหน้าจริง
+- **หน้าจอเป็น DOM จริง** (ตัวอักษรไทยคมชัด) ผ่าน `CSS3DRenderer` ซิงก์กับกล้อง WebGL ประกอบจาก component ตัวเดียวกับแอปและข้อมูลจาก `src/data` ไม่เรียก network ไม่อ่าน/เขียน storage และตัวเลข (เช่น น้ำหนักปัจจัย) อ่านจาก `balancer-config.ts` ห้ามพิมพ์ลงสคริปต์
+- `/how-to` มีจุดขั้น (`role="tablist"`, ←/→), ปุ่มเล่นอัตโนมัติ (Space เล่น/หยุด) และปุ่ม “เริ่มทัวร์ในแอป” ส่วนคลิป 32.0 วินาทีสร้างด้วย `npm run film:render -- --cut howto`
+- โหมดสำรอง: ไม่มี WebGL → โทรศัพท์ DOM + CSS 3D · reduced motion → 5 การ์ดนิ่ง · ข้อความของทุกขั้นเป็น DOM ปกติเสมอ
+
+**ทัวร์ในแอป (ปุ่ม “วิธีใช้” ใน header)**
+- เปิดทัวร์ของหน้าปัจจุบัน (≤ 6 ขั้น) หรือ “ทัวร์ทั้งแอป” (แดชบอร์ด → สแกน → ค้นหา → แพ็กเกจของใช้ → จำลองสถานการณ์) ใช้ spotlight (Motion spring) และ coachmark ที่ **ไม่ขวางการกดปุ่มจริง** ไม่เริ่มเอง มีเพียงการ์ดเล็ก “อยากให้พาดูวิธีใช้ไหม” ครั้งเดียวที่ปิดแล้วจำค่า
+- เป้าหมายอ้างด้วย `data-tour="<id>"` ถ้าเป้าหมายไม่พบหรือถูกซ่อนให้ข้ามขั้นเงียบ ๆ ทุกหน้าในตาราง MOTION.md หัวข้อ 6.3 ต้องใส่ `data-tour` ให้ครบ
+- **“ให้ Cozypet สาธิต” (autopilot)** ทำได้เฉพาะ element ที่มี `data-tour-safe="true"` ไม่ส่งฟอร์ม ไม่สร้างหรือแก้ record ไม่เรียก `/api/*` ไม่เขียน storage ยกเว้น `tourState` ใช้กฎคำสำคัญแทน AI (ไม่กินโควตาที่ใช้ร่วมกัน) และหยุดก่อนปุ่มยืนยันเสมอ แล้วคืนสถานะ UI เมื่อเปลี่ยนขั้นหรือออก
+- เข้าถึงได้: `role="dialog"` `aria-modal="false"` วน Tab ใน coachmark, ←/→/Esc/`?`, ปุ่ม “ไปที่ปุ่มจริง”, ประกาศขั้นผ่าน `aria-live` และ reduced motion ย้าย spotlight ทันทีโดยไม่มีเคอร์เซอร์
+- ข้อความทัวร์ทั้งหมดอยู่ใน i18n (`tour.*`) ทั้ง TH และ EN
+
 ---
 
 ## 8. สถานะของแต่ละหน้าจอ
@@ -918,6 +953,8 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 | จำลองสถานการณ์ | คำอธิบาย + ตัวควบคุม | กราฟวาดทีละวัน | กราฟ + KPI + ตาราง | — | — | ปุ่มเริ่มระหว่างจำลอง |
 | สถานที่ของฉัน | ฟอร์มว่างหรือค่าเดิม | “กำลังบันทึก…” | ป้าย “ของคุณ (ทดลอง)” + ลิงก์ไปแผนที่ | ยังไม่มีสถานที่ → ปุ่มสร้าง | error รายช่อง | ปุ่มบันทึกระหว่างบันทึก |
 | Account | ข้อมูลบัญชี | “กำลังบันทึก/ลบ…” | toast | — | ลบไม่สำเร็จ → บอกเหตุผล บัญชียังอยู่ | ลบบัญชีจนพิมพ์คำยืนยันถูก |
+| Phone Tour (`/how-to`, หน้าแรก) | การ์ด 5 ขั้นแบบนิ่งจนโหลดเสร็จ | โหลด three.js/GSAP (ไม่มีหน้าจอว่าง) | โทรศัพท์หมุนตามการเลื่อน + ข้อความ IPO | — | WebGL ไม่ได้ → โทรศัพท์ DOM + CSS 3D โดยไม่มี error บนจอ | — |
+| ทัวร์ในแอป | ปุ่ม “วิธีใช้” (และการ์ดถามครั้งเดียว) | หา/เลื่อนไปยังเป้าหมาย (≤ 1.5 วินาที) | spotlight + coachmark | หน้านี้ไม่มีสคริปต์ → ปุ่มไป `/how-to` | เป้าหมายไม่พบ → ข้ามขั้น; autopilot ไม่พบหมุดที่เต็ม → ข้อความบอก | “ให้ Cozypet สาธิต” เมื่อไม่ใช่ขั้น `demo` |
 
 ---
 
@@ -927,6 +964,7 @@ Cozypet เป็นเว็บตัวกลางที่ช่วยให
 
 - `<html lang="th">` (หรือ `en` ตามภาษาที่เลือก หัวข้อ 7.17), landmark (`header`, `nav`, `main`, `footer`), หัวข้อเรียงลำดับ, ลิงก์ “ข้ามไปเนื้อหาหลัก” เป็นลิงก์แรก
 - กราฟทุกกราฟ (หน้าจำลองสถานการณ์ แดชบอร์ด แผง “เบื้องหลัง”) มีตัวเลขเป็นข้อความและปุ่ม “ดูเป็นตาราง” สีสถานะมีรูปทรงและคำกำกับเสมอ
+- ทัวร์และ Phone Tour ตาม MOTION.md หัวข้อ 8: เนื้อหาไม่พึ่งการเคลื่อนไหว, coachmark เป็น `role="dialog"` ไม่ modal, วน Tab ภายใน, ←/→/Esc/`?`, ประกาศขั้นผ่าน `aria-live="polite"`
 - ปุ่ม “เข้าสู่ระบบด้วย Google” มีชื่อที่อ่านออก ช่องรหัสผ่านใช้ `autocomplete="current-password"`/`"new-password"` และปุ่มแสดง/ซ่อนรหัสผ่านมี `aria-pressed`
 - contrast ตามหัวข้อ 3.3 และสถานะต้องมีไอคอน + ข้อความ
 - ใช้งานด้วยคีย์บอร์ดได้ทุกส่วน focus ring ชัดเจน (outline 3px สี `--cp-ink` + offset 2px) และลำดับโฟกัสตามสายตา
@@ -1275,6 +1313,26 @@ export interface AccountProfile {  // ตาราง profiles ใน Supabase (
   runNumber: number | null;
   mascot: MascotKind;
 }
+
+// ---------- เพิ่มเมื่อ 1 ต.ค. 2026 (D19) ----------
+export interface TourStep {
+  id: string;                    // 'nearby-assist'
+  route: string;                 // '/nearby'
+  target: string;                // ค่า data-tour
+  kind: 'explain' | 'try' | 'demo';
+  placement?: 'auto' | 'top' | 'bottom' | 'left' | 'right';
+  titleKey: string;              // คีย์ i18n 'tour.nearby.assist.title'
+  bodyKey: string;
+  ipo?: 'input' | 'process' | 'output';
+  advanceOn?: 'click-target';    // เฉพาะ kind 'try'
+  action?: { type: 'tap'; safeTarget: string } | { type: 'type'; safeTarget: string; textKey: string };
+  motionKit?: 'PawTrail' | 'RadarSweep' | 'WaterColumns' | 'RouteFlow' | 'HeartBurst';
+}
+export interface TourState {     // key 'tourState' อยู่ในเครื่องเท่านั้น ไม่ซิงก์
+  dismissedHint: boolean;        // กด “ไม่ต้องถามอีก”
+  completedPages: string[];      // route ที่ดูทัวร์จบแล้ว
+  updatedAt: string;
+}
 ```
 
 ### 10.3 Fixture ที่ต้องมี
@@ -1320,12 +1378,12 @@ export interface AccountProfile {  // ตาราง profiles ใน Supabase (
 
 ### 10.5 localStorage
 
-- ทุก key ขึ้นต้น `cozypet:v1:` ได้แก่ `demoSession`, `findingSessions`, `userListings`, `careRequests`, `conversations`, `handoffs`, `saved`, `noticeDismissed`, `donationOrders`, `caretakerPlace`, `searchHistory`
+- ทุก key ขึ้นต้น `cozypet:v1:` ได้แก่ `demoSession`, `findingSessions`, `userListings`, `careRequests`, `conversations`, `handoffs`, `saved`, `noticeDismissed`, `donationOrders`, `caretakerPlace`, `searchHistory`, `tourState`
 - อ่าน/เขียนผ่าน module เดียว (`src/lib/storage.ts`) ครอบ `try/catch` ทุกครั้ง ถ้า parse ไม่ได้ให้รีเซ็ตเฉพาะ key นั้นและแจ้งผู้ใช้ ถ้า storage ใช้ไม่ได้ (โหมดส่วนตัว/เต็ม) แอปต้องยังเล่นได้ในหน้าปัจจุบันพร้อมแจ้งว่าจะไม่บันทึก
 - **storage adapter (D13):** `storage.ts` มี interface เดียว (`get/set/remove/keys/subscribe`) และ 2 แบบ:
   - โหมดทดลอง: localStorage key `cozypet:v1:<key>` เหมือนเดิม
   - บัญชี: cache ในเครื่องที่ `cozypet:v1:acct:<userId>:<key>` (แยกบัญชีไม่ให้ข้อมูลปนกันบนเครื่องที่ใช้ร่วมกัน) + ส่งขึ้นตาราง `user_state` ใน Supabase ผ่าน server action แบบ debounce 800ms (หัวข้อ 13)
-  - key ที่ซิงก์: ทุก key ยกเว้น `noticeDismissed` และ **ไม่ส่งรูปในประกาศขึ้น server** (ตัด `photo.src` ที่เป็น data URL ออกก่อนส่ง)
+  - key ที่ซิงก์: ทุก key ยกเว้น `noticeDismissed` และ `tourState` (อยู่ในเครื่องเท่านั้น) และ **ไม่ส่งรูปในประกาศขึ้น server** (ตัด `photo.src` ที่เป็น data URL ออกก่อนส่ง)
   - ขนาดต่อ key ≤ 256 KB ถ้าเกินให้แจ้ง “ข้อมูลนี้ใหญ่เกินกว่าจะซิงก์ (เก็บในเครื่องแทน)”
   - ภาษาเก็บเพิ่มใน cookie `cozypet_locale` เพื่อ render ฝั่ง server
 - ข้อมูล seed ไม่ถูกเขียนลง localStorage ข้อมูลที่แสดงคือ seed + ข้อมูลผู้ทดลองของ Run ปัจจุบัน
@@ -1686,6 +1744,7 @@ create policy "own state" on public.user_state for all
 - **บัญชีและฐานข้อมูล (D13):** `@supabase/ssr` + `@supabase/supabase-js` (ตรวจรุ่นและวิธีใช้กับ App Router ณ วันที่ติดตั้ง) ใช้ฝั่ง server เท่านั้น
 - **ตรวจ input:** `zod` สำหรับ schema ของ `/api/chat`, `/api/assist`, ฟอร์มบัญชี และผลจากโมเดล (เหตุผล: ต้องตรวจ JSON จาก AI ให้ปลอดภัย)
 - **i18n:** เขียนเอง (`src/i18n/`) ไม่ต้องเพิ่ม library
+- **Motion (D19):** `motion` (ไลบรารี Motion จาก motion.dev ใช้ entry `motion/react` ตรวจไลเซนส์ รุ่น และ path ณ วันที่ติดตั้ง) สำหรับ motion ของ UI ในรูป LazyMotion + `m` ส่วน `CSS3DRenderer` มากับ three.js (ไม่ต้องเพิ่ม package) · GSAP ยังใช้กับ timeline ที่ต้อง seek ได้เท่านั้น (เหตุผลของทั้งสองบันทึกใน README)
 - **งานส่ง:** `@playwright/test` (devDependency ใช้ Chromium ที่ติดตั้งไว้แล้ว ห้าม `playwright install`) สำหรับ `shots`, `print:*`, `film:*` · `qrcode` (MIT) สำหรับ QR บนโปสเตอร์/สไลด์ · ffmpeg เป็นโปรแกรมในเครื่อง ไม่ใส่ใน repo · `pptxgenjs` เฉพาะเมื่ออาจารย์ต้องการ PPTX
 - กราฟทั้งหมดวาดด้วย SVG เอง ไม่ต้องใช้ library กราฟ
 - dependency อื่นต้องมีเหตุผลและบันทึกใน README
@@ -1698,14 +1757,15 @@ src/
   components/          # UI ทั่วไป (Button, Card, Badge, Dialog, Toast, Skeleton, TabBar, Dock, StatusBadge, WhyPanel, LocaleSwitch)
   components/mascot/   # CatMascot, DogMascot, MascotStage, MiniMascot, MascotSwitch, Hearts
   features/            # scan, nearby, listings, requests, chat, stories, demo, story (animation หน้าแรก),
-                       # auth, dashboard, balancer (pop-up, assist), donate, caretaker, agreement, insights, film, print
+                       # auth, dashboard, balancer (pop-up, assist), donate, caretaker, agreement, insights, film, print,
+                       # motion (webgl/ = Motion Kit, howto/ = Phone Tour + screens + timeline, tour/ = ทัวร์ในแอป: provider, overlay, coachmark, ghost cursor)
   data/                # districts.ts, shelters.ts, adopters.ts, owners.ts, listings.ts, stories.ts, project-info.ts,
                        # supplies.ts, brands.ts, packages.ts, donation-baseline.ts, sim-places.ts
   i18n/                # th.ts, en.ts, film.th.ts, film.en.ts, index.ts (useT, format date/currency)
   config/              # regions.ts
   lib/                 # types.ts, storage.ts (adapter), seeded-random.ts, geo.ts, capacity.ts, matching.ts, run.ts, handoff.ts,
                        # fallback-chat.ts, balancer.ts, balancer-config.ts, status.ts, simulation.ts, assist-rules.ts,
-                       # kindness.ts, orders.ts, audio/ (synth + sfx + music)
+                       # kindness.ts, orders.ts, motion-tokens.ts, motion.ts (LazyMotion), tour/ (scripts.ts, targets.ts, path.ts), audio/ (synth + sfx + music)
   server/              # roleplay.ts, chat-context.ts, assist.ts, supabase/ (client.ts, auth.ts, sync.ts),
                        # ai/ (build-prompt.ts, rate-limit.ts, providers/gemini.ts, groq.ts, openrouter.ts) — import 'server-only'
 content/submission/    # report.th.md, deck.ts, research/ (sources.md, survey-summary.json)
@@ -1744,6 +1804,8 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 | ปุ่ม Google Sign-In | โลโก้ G ทางการตามแนวทางแบรนด์ของ Google (ตรวจ ณ วันที่ทำ) | ปุ่มข้อความ “เข้าสู่ระบบด้วย Google” |
 | ไอคอน SDG (งานส่ง) | ไอคอนทางการตามแนวทางของสหประชาชาติ หรือป้ายข้อความที่ทำเอง | ป้ายข้อความ “SDG 3” |
 | ภาพหน้าจอและภาพนิ่งในงานส่ง | สร้างจากแอปของโปรเจกต์เอง (`npm run shots`, `film:stills`) | — |
+| โทรศัพท์ 3 มิติและหน้าจอย่อใน Phone Tour | ตัวเครื่องสร้างจากโค้ด (procedural geometry ไม่มีโมเดลจากภายนอก) หน้าจอประกอบจาก component จริง | โทรศัพท์ DOM + CSS 3D |
+| เคอร์เซอร์อุ้งเท้าของทัวร์ | SVG ที่ออกแบบเอง | ลูกศรเคอร์เซอร์ปกติ + วงแตะ |
 
 - ทุก asset ต้องมีแถวใน [CREDITS.md](CREDITS.md) และ `MediaRef.creditId` อ้างถึงแถวนั้น
 - **ห้าม** ดึงรูปจาก Google Images ใช้ภาพอ้างอิงเป็น asset หรือใช้ภาพถ่ายที่เห็นหน้าคนจริง/ป้ายทะเบียนชัดเจน
@@ -1867,6 +1929,17 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 - [ ] AC-79 (M) ทุกงานส่งมีชื่อทีม ชื่อ–นามสกุล และรหัสนักศึกษาทุกคนจาก `team.local.json` และคำสั่งส่งออกหยุดพร้อมบอกช่องที่ขาดถ้ายังมี `[[ต้องเติม`
 - [ ] AC-80 (M) ตัวเลขทุกตัวในรายงาน สไลด์ โปสเตอร์ และวิดีโอ มีแหล่งอ้างอิงหรือป้ายข้อมูลจำลอง/สมมติฐาน และไม่มีสถานสงเคราะห์จริงในสถานะ “เต็ม” หรือ “เร่งด่วน” ในสื่อนำเสนอ (SUBMISSION.md หัวข้อ 10)
 
+### Motion design และวิธีใช้งานแบบเคลื่อนไหว (D19)
+- [ ] AC-81 (B/U) ใช้ Motion ผ่าน `LazyMotion` + `m` เท่านั้น (ไม่มี import แบบเต็มนอก `src/lib/motion.ts`) และ bundle แรกของหน้าแรกไม่มี three.js, GSAP, `domMax` หรือโค้ดทัวร์ (โหลดเมื่อ section เข้าจอหรือผู้ใช้กด “วิธีใช้”)
+- [ ] AC-82 (U) `motion-tokens.ts` ตรงกับ CSS custom properties (เวลา easing) และไม่มีเวลา/easing/spring ที่ hard-code ใน component
+- [ ] AC-83 (M) เปิด reduced motion แล้ว: ไม่มี layout animation, parallax, การหมุนโทรศัพท์, เคอร์เซอร์อุ้งเท้า และชิ้นกระจาย แต่ Phone Tour แสดง 5 การ์ดนิ่งครบข้อมูล และทัวร์ในแอปยังใช้ได้ด้วย spotlight ที่ย้ายทันที
+- [ ] AC-84 (M) **Phone Tour บนหน้าแรก:** เลื่อนไป-กลับแล้วโทรศัพท์หมุน ≤ ±28° ผ่านครบ 5 หน้าจอ (Login/Profile, Dashboard, Main, AI/Smart, Result) แต่ละขั้นมีข้อความ ชิป INPUT/PROCESS/OUTPUT ที่ตรงกับตาราง MOTION.md 5.2 และปุ่ม “ลองจริง” ไปหน้าที่ถูกต้อง ตัวอักษรไทยบนหน้าจอคมชัดที่ซูม 200% น้ำหนักปัจจัยในขั้น 4 ตรงกับ `balancer-config.ts` และบังคับ context WebGL หลุดแล้วเห็นโหมด DOM + CSS 3D โดยไม่มี error บนจอ
+- [ ] AC-85 (M) **`/how-to`:** จุดขั้นเลือกด้วยเมาส์ นิ้ว และ ←/→ ได้ ปุ่มเล่นอัตโนมัติและ Space เล่น/หยุดได้ ปุ่ม “เริ่มทัวร์ในแอป” เปิดทัวร์ และหยุด render เมื่อออกนอกจอหรือแท็บถูกซ่อน
+- [ ] AC-86 (M) **ทัวร์ในแอป:** ปุ่ม “วิธีใช้” เปิดทัวร์ของหน้าปัจจุบัน (≤ 6 ขั้น) spotlight ชี้เป้า `data-tour` ถูกต้องบน 360px และ 1280px กดปุ่มจริงใต้ spotlight ได้ ←/→/Esc/`?` ทำงาน โฟกัสกลับที่ปุ่ม “วิธีใช้” เมื่อจบ ไม่เริ่มเอง (มีเพียงการ์ดถามครั้งเดียวที่จำค่าได้) และเป้าหมายที่ไม่พบถูกข้ามโดยไม่มี error
+- [ ] AC-87 (U/M) **autopilot:** เล่นทุกขั้นชนิด `demo` โดยไม่มีการเรียก network (mock `fetch`) ไม่เขียน storage นอกจาก `tourState` ไม่สร้าง record ใด ๆ ใช้กฎคำสำคัญแทน AI หยุดก่อนปุ่มยืนยัน ปฏิเสธ element ที่ไม่มี `data-tour-safe` และคืนสถานะ UI เมื่อออก
+- [ ] AC-88 (U) สคริปต์ทัวร์: ทุก `target` มี `data-tour` ในซอร์ส ทุกคีย์ i18n มีใน TH และ EN ข้อความ ≤ 2 ประโยค page tour ≤ 6 ขั้น ทัวร์ทั้งแอป ≤ 24 ขั้น และทุก `action.safeTarget` มี `data-tour-safe`
+- [ ] AC-89 (U/M) `cursorAt(t)` และไทม์ไลน์ Phone Tour deterministic และ `npm run film:render -- --cut howto` ได้คลิป 32.0 วินาที 1920×1080 30 fps ที่วนต่อกันเนียน โดยเรนเดอร์สองรอบได้ hash เฟรมที่ t = 5, 15, 25 วินาทีเท่ากัน
+
 ---
 
 ## 17. ลำดับการทำงานและการรายงานผล
@@ -1889,9 +1962,10 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 | M8.2 | `/dashboard`, `/donate` + timeline, `/caretaker`, เทมเพลตสัญญา | AC-63, 69–70, 72–73 |
 | M8.4 | `simulation.ts` + `/insights` | AC-68 |
 | M8.5 | animation เล่าเรื่อง v2 หน้าแรก (STORYBOARD.md: บท 0 และบท 12 ก่อน แล้วบทอื่น), เอฟเฟกต์ WebGL เสริม, เสียง Web Audio, โหมดสำรอง, `/film` record mode | AC-54–57, 76 |
+| M8.6 | `motion-tokens.ts` + LazyMotion + ปรับ motion ของ UI ตามตารางใน MOTION.md หัวข้อ 3, WebGL Motion Kit 6 ชิ้น, Phone Tour (หน้าแรก + `/how-to`), ทัวร์ในแอป + autopilot + `data-tour` ทุกหน้าที่อยู่ในสคริปต์, คำแปล `tour.*` | AC-81–89 |
 | M9 | QA responsive, สถานะ, accessibility, reduced motion, ภาพ fallback, **เติมคำแปล EN ให้ครบ flow A–G** | AC-40–45, 74 |
 | M10 | อัปเดต README/CREDITS ให้ตรงกับของจริง, ตรวจ `git status`/diff | AC-01–03 |
-| M11 | งานส่ง: `shots`, `film:*`, `print:*` ตาม DEMO_VIDEO.md และ SUBMISSION.md (ร่างรายงานและสไลด์จากสเปก เว้นช่อง `[[ต้องเติม]]` ให้ทีม) | AC-77–80 |
+| M11 | งานส่ง: `shots`, `film:*` (รวม `--cut howto`), `print:*` ตาม DEMO_VIDEO.md และ SUBMISSION.md (ร่างรายงานและสไลด์จากสเปก เว้นช่อง `[[ต้องเติม]]` ให้ทีม) | AC-77–80 |
 
 ถ้าเวลาไม่พอ ให้ทำตามลำดับความสำคัญใน SUBMISSION.md หัวข้อ 12 (P0 → P1 → P2) และรายงานว่าข้ามอะไร
 
@@ -1929,6 +2003,7 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 | D16 | ภาษาอังกฤษ (30 ก.ย. 2026) | มาจากฟอร์มหัวข้อ 12 (Localization: ภาษาท้องถิ่นและอังกฤษ) และเกณฑ์ Global Potential: โหมด TH/EN ทั้งแอป + config ตามพื้นที่ | 7.17 |
 | D17 | วิดีโอเดโมและ animation v2 (30 ก.ย. 2026) | ผู้ใช้สั่ง: ฉากแรกเป็นแมวน่ารักกำลังเลียขน กล้องค่อย ๆ สั่นเหมือนเดินไปถ่าย มีขอบเหมือนกล้องถ่ายรูป กดถ่ายแล้วมีเสียงและภาพขาวแวบหนึ่ง แล้วเล่น animation เต็มที่ว่าระบบทำงานยังไงจนแมวได้บ้านอย่างอบอุ่น และ “อย่าทิ้งงานเดิม แค่เพิ่มเติม” → STORYBOARD.md v2 (15 บท ~1:47 ฉากเดิมอยู่ครบ) + DEMO_VIDEO.md (2:45 และ 2:00, ภาพใช้งานจริง ≥ 60%) | 3.7, 5.2, STORYBOARD.md, DEMO_VIDEO.md |
 | D18 | งานส่งสร้างด้วยโค้ด (30 ก.ย. 2026) | โปสเตอร์ สไลด์ รายงาน และฟอร์มฉบับพิมพ์สร้างจากแอปจริงที่ `/print/*` ข้อมูลส่วนบุคคลของทีมไม่ commit | 7.18, SUBMISSION.md |
+| D19 | Motion design และวิธีใช้งานแบบเคลื่อนไหว (1 ต.ค. 2026) | ผู้ใช้สั่ง “WebGL ทำเป็น Motion Design โชว์วิธีการใช้งานเพิ่มเติมนิดหน่อย ใช้ Motion” → ระบบ motion ด้วยไลบรารี Motion + tokens, WebGL Motion Kit 6 ชิ้น, **Phone Tour** (โทรศัพท์ 3 มิติหมุนตามการเลื่อน โชว์ 5 หน้าจอบังคับ), ทัวร์ในแอปพร้อม autopilot ที่ไม่เขียนข้อมูล และคลิป how-to 32 วินาที | 3.8, 5.2, 7.19, MOTION.md |
 
 ### 18.2 สมมติฐานที่ยังใช้ (เปลี่ยนได้ถ้าผู้ใช้ไม่เห็นด้วย)
 
@@ -1951,6 +2026,9 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 | S15 | น้ำหนักของ Smart Load Balancer (0.50/0.35/0.15, 0.55/0.25/0.20, 0.50/0.30/0.20) | ค่าเริ่มต้นที่อธิบายง่าย ปรับได้ใน `balancer-config.ts` แล้วคำบรรยายทุกที่เปลี่ยนตาม |
 | S16 | วิดีโอหลัก 2:45 + เวอร์ชัน 2:00 ทั้งไทยและอังกฤษ ไม่มีเสียงพากย์เป็นค่าเริ่มต้น | อยู่ในช่วง 2–3 นาที และทีมเขียนไว้ว่า 2 นาที |
 | S17 | ผู้ใช้ไม่ได้ตอบเรื่องโหมดภาษาอังกฤษและแพ็กเกจจำลองโดยตรง แต่ให้ “คิดต่อเองได้เลย” จึงทำตามฟอร์มของทีม (D14, D16) | เปลี่ยนได้ถ้าผู้ใช้ไม่เห็นด้วย |
+| S18 | “Motion” ในคำสั่งหมายถึงไลบรารี Motion (motion.dev) และ “WebGL ทำเป็น Motion Design” หมายถึงชุด WebGL Motion Kit + Phone Tour | ผู้ใช้ไม่ได้ระบุเพิ่ม เปลี่ยนได้ถ้าหมายถึงอย่างอื่น |
+| S19 | ใช้ Motion คู่กับ GSAP โดยแบ่งหน้าที่ชัดเจน (Motion = UI interaction, GSAP = timeline ที่ seek ได้) | Phone Tour ต้อง scrub ตามการเลื่อนและ render ทีละเฟรมในโหมดอัดวิดีโอ ซึ่ง GSAP ทำได้แม่นกว่า (ถ้าต้องการลด dependency ให้ตัดสินใจก่อน implement) |
+| S20 | หน้าจอโทรศัพท์ใน Phone Tour เป็น DOM ผ่าน `CSS3DRenderer` และจำกัดการหมุน ±28° | รักษากติกา “ห้าม render ตัวอักษรไทยใน WebGL” และได้ตัวอักษรคมชัด |
 
 ### 18.3 ประเด็นที่ยังเปิดอยู่ (ไม่บล็อกการเริ่ม implement)
 
@@ -1965,6 +2043,7 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 9. **SMTP ฟรี** สำหรับยืนยันอีเมลและลืมรหัสผ่าน (ไม่บังคับ)
 10. **เสียงพากย์วิดีโอ** โดยสมาชิกทีม (ไม่บังคับ)
 11. **AI วิเคราะห์ภาพจริง** (provider ฟรีบางเจ้าอาจรับภาพได้) ยังอยู่นอก scope จนกว่าผู้ใช้ตัดสินใจ เพราะต้องส่งรูปออกไปภายนอกและต้องตรวจเงื่อนไขฟรี
+12. **ไลบรารี Motion:** ยืนยันว่าตีความ “Motion” ถูกต้อง และตรวจไลเซนส์/รุ่น/path ก่อนติดตั้ง ถ้าไม่ต้องการใช้ทั้ง Motion และ GSAP ให้เลือกอย่างเดียวก่อนเริ่ม M8.6
 
 ---
 
@@ -1997,5 +2076,7 @@ team.example.json      # แม่แบบข้อมูลทีม (ขอ�
 | ภาษา | ภาษาไทยเป็นหลัก `lang="th"` | TH/EN ทั้งแอป (D16) |
 | ข้อมูลทีม | ไม่ใส่ข้อมูลทีมเลย (D5) | ใส่ชื่อทีมจากฟอร์มได้ ชื่อ/รหัสสมาชิกอยู่ใน `team.local.json` เท่านั้น (D12) |
 | ที่เก็บข้อมูล | localStorage อย่างเดียว ไม่ sync | โหมดทดลองยังเป็น localStorage ส่วนบัญชีซิงก์ขึ้น Supabase โดยไม่อัปโหลดรูป (D13) |
+| Motion ของ UI | transition 150–350ms ด้วย CSS/SVG เป็นหลัก (หัวข้อ 3.6) | ใช้ CSS/SVG ต่อสำหรับของง่าย ส่วน interaction ที่ซับซ้อน (layout, sheet ลากปิด, spotlight, ตัวเลขนับ) ใช้ไลบรารี Motion ตาม tokens กลาง (D19) |
+| วิธีใช้งาน | มีแค่การ์ด 3 ขั้นตอนบนหน้าแรกและ animation เล่าเรื่อง | เพิ่ม Phone Tour (WebGL), `/how-to` และทัวร์ในแอปที่ไฮไลต์ปุ่มจริงพร้อม autopilot ที่ไม่เขียนข้อมูล (D19) |
 | ศัพท์จากฟอร์ม | ฟอร์มใช้ “สถานพักพิง” และ “ผู้รับเลี้ยงอิสระ” | ใช้ “สถานสงเคราะห์” และ “ผู้รับดูแลรายบุคคล” ตามแอป และอธิบายครั้งเดียวในรายงาน |
 | “100% Transparent” ในฟอร์ม | อ้างความโปร่งใส 100% | ใช้ “ติดตามได้ทุกขั้น (Transparent end-to-end)” และบอกชัดว่าค่านายหน้ามาจากแบรนด์ ผู้บริจาคไม่เสียเพิ่ม |

@@ -40,6 +40,7 @@
 |---|---|
 | `cozypet-demo-th.mp4`, `cozypet-demo-en.mp4` | 1920×1080, 30 fps คงที่, H.264 High, yuv420p, CRF 18, AAC-LC 192 kbps 48 kHz stereo, `+faststart`, ขนาดประมาณ ≤ 250 MB |
 | `cozypet-demo-short-th.mp4` | เวอร์ชัน 2:00 สเปกเดียวกัน |
+| `cozypet-howto.mp4` | คลิป Phone Tour (MOTION.md หัวข้อ 5) 32.0 วินาที 1920×1080 30 fps วนต่อกันเนียน ใช้บนสไลด์ Prototype และโปสเตอร์เวอร์ชันจอ (ไม่บังคับ) |
 | `cozypet-story-home.mp4` | animation หน้าแรกทั้งเรื่อง (~1:47) ใช้เปิดตอนนำเสนอได้ (ไม่บังคับ) |
 | `*.th.srt`, `*.en.srt` | ซับไตเติลของทุกไฟล์ |
 | `thumbnail.png` | 1920×1080 ภาพปก (เฟรมบท 12 + ชื่อ Cozypet) |
@@ -215,7 +216,7 @@
 | `npm run film:render -- --cut demo --locale th` | เปิด `/film?cut=demo&locale=th&record=1` แล้ว `seek` ทีละเฟรม (30 fps) → screenshot → ส่งเข้า ffmpeg ทาง stdin | `out/film/demo-th/video.mp4` (ไม่มีเสียง) |
 | `npm run film:audio -- --cut demo --locale th` | เรียก `renderAudio()` ได้ WAV 48 kHz | `out/film/demo-th/music.wav` |
 | `npm run film:mux -- --cut demo --locale th [--voice path]` | ผสมเสียง + loudnorm + รวมภาพ + สร้าง srt, thumbnail, contact sheet | `out/film/cozypet-demo-th.mp4` และไฟล์ประกอบ |
-| `npm run film:all` | รันทั้งหมดสำหรับ `demo-th`, `demo-en`, `demo-short-th`, `home` | ไฟล์ครบตามหัวข้อ 1 |
+| `npm run film:all` | รันทั้งหมดสำหรับ `demo-th`, `demo-en`, `demo-short-th`, `home`, `howto` (คลิป how-to ใช้คำสั่ง `film:render -- --cut howto` และ `film:mux` ชุดเดียวกัน) | ไฟล์ครบตามหัวข้อ 1 |
 
 - คำสั่ง ffmpeg หลัก (ภาพ): `-f image2pipe -framerate 30 -i - -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart`
 - render ใช้เวลาประมาณ 10–20 นาทีต่อไฟล์ ขึ้นกับเครื่อง ให้แสดงความคืบหน้าเป็นเฟรม/วินาที

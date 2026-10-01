@@ -10,13 +10,14 @@
 4. `GEMINI_ROLEPLAY.md` — กติกาแชต AI และ Smart Assist (ใช้กับทุก provider)
 5. `CODEX_IMAGE_PROMPTS.md` — รายละเอียด persona/สถานสงเคราะห์ และคำสั่งสร้างภาพ
 6. `STORYBOARD.md` — เนื้อเรื่อง ภาพ และเสียงของ animation (หน้าแรกและวิดีโอ)
-7. `DEMO_VIDEO.md` — วิดีโอเดโม 2–3 นาทีที่ต้องส่งอาจารย์
-8. `SUBMISSION.md` — งานส่ง 5 ชิ้น ฟอร์ม รายงาน สไลด์ โปสเตอร์ และสิ่งที่ทีมต้องทำเอง
-9. `CREDITS.md` — ทะเบียนที่มาภาพและไลเซนส์
+7. `MOTION.md` — ระบบ Motion ของ UI, WebGL Motion Kit, Phone Tour และทัวร์ในแอป
+8. `DEMO_VIDEO.md` — วิดีโอเดโม 2–3 นาทีที่ต้องส่งอาจารย์
+9. `SUBMISSION.md` — งานส่ง 5 ชิ้น ฟอร์ม รายงาน สไลด์ โปสเตอร์ และสิ่งที่ทีมต้องทำเอง
+10. `CREDITS.md` — ทะเบียนที่มาภาพและไลเซนส์
 
 ## 2. ลำดับความสำคัญเมื่อข้อมูลขัดกัน
 
-คำสั่งล่าสุดของผู้ใช้ในรอบนั้น → `PROMPT.md` → `GEMINI_ROLEPLAY.md` → `CODEX_IMAGE_PROMPTS.md` → `STORYBOARD.md` → `DEMO_VIDEO.md` → `SUBMISSION.md` → `README.md`/`CREDITS.md` → โค้ดเดิม
+คำสั่งล่าสุดของผู้ใช้ในรอบนั้น → `PROMPT.md` → `GEMINI_ROLEPLAY.md` → `CODEX_IMAGE_PROMPTS.md` → `STORYBOARD.md` → `MOTION.md` → `DEMO_VIDEO.md` → `SUBMISSION.md` → `README.md`/`CREDITS.md` → โค้ดเดิม
 
 ถ้าพบข้อขัดแย้งที่ตัดสินเองไม่ได้ ให้ถามผู้ใช้ ถ้าตัดสินได้ ให้บันทึกไว้ใน `PROMPT.md` หัวข้อ 18 หรือภาคผนวก ห้ามเดาเงียบ ๆ
 
@@ -41,6 +42,8 @@
 - mascot ต้องเป็น animation (SVG/Rive/Lottie/sprite ที่โปร่งใส) ห้ามใช้วิดีโอหรือภาพถ่าย
 - เอฟเฟกต์ WebGL และเสียงเป็นชั้นเสริมตาม `PROMPT.md` หัวข้อ 3.7: ต้องมีโหมดสำรอง เสียงปิดเป็นค่าเริ่มต้นและเริ่มหลังผู้ใช้กดเท่านั้น ข้อความไทยเป็น DOM/SVG และห้ามคัดลอกชื่อ ภาพ หรือเพลงจากวิดีโออ้างอิง แฟลชขาวเต็มจอมีได้ครั้งเดียว (บท 0) และห้ามกะพริบเกิน 3 ครั้ง/วินาที
 - ข้อความ UI ทุกข้อความผ่าน i18n (`src/i18n/th.ts`, `en.ts`) ห้าม hard-code ข้อความไทยใน component
+- **Motion (D19):** ใช้ไลบรารี Motion ผ่าน LazyMotion + `m` และ tokens กลาง (`src/lib/motion-tokens.ts`) ห้าม hard-code เวลา/easing/spring animate เฉพาะ `transform`/`opacity`/`filter` และทุกชิ้นต้องมีโหมด reduced motion GSAP ใช้กับ timeline ที่ต้อง seek ได้เท่านั้น (ห้ามให้ Motion กับ GSAP ควบคุม element เดียวกัน)
+- **ทัวร์ในแอป/autopilot:** ต้องไม่ส่งฟอร์ม ไม่สร้างหรือแก้ record ไม่เรียก `/api/*` และไม่เขียน storage นอกจาก `tourState` ทำได้เฉพาะ element ที่มี `data-tour-safe="true"` และหยุดก่อนปุ่มยืนยันเสมอ
 - งานส่ง (รายงาน สไลด์ โปสเตอร์ วิดีโอ) ห้ามมีตัวเลขที่ไม่มีแหล่งอ้างอิงหรือไม่มีป้ายจำลอง และไฟล์ที่สร้าง (`out/`, `public/_generated/`) ห้าม commit
 - ภาพคนที่สร้างด้วย AI ต้องเป็นบุคคลสมมติอายุ 21 ปีขึ้นไป ไม่เลียนแบบคนจริงหรือคนดัง ติดป้าย “ภาพสร้างด้วย AI” และทำตาม `CODEX_IMAGE_PROMPTS.md` หัวข้อ 2 การสร้างภาพต้องใช้สิทธิ์ที่ผู้ใช้มีอยู่ ห้ามเปิด billing เพิ่มโดยไม่ได้รับอนุญาต
 
@@ -53,7 +56,7 @@
 - dependency ใหม่ต้องจำเป็นจริง อยู่ในรายการของ `PROMPT.md` หัวข้อ 14 หรือบันทึกเหตุผลใน README
 - logic ที่ต้อง deterministic (seeded random, จุดค้นหา, ความจุ, การจับคู่, mapping Run) ต้องมี unit test
 - ถ้าแก้กติกาแชตหรือ prompt ของ Smart Assist ให้แก้ใน `GEMINI_ROLEPLAY.md` เท่านั้น ห้าม hard-code กติกาซ้ำในโค้ด และทุก provider ต้องใช้กติกา persona และประวัติชุดเดียวกัน
-- ฉากและเสียงของ animation แก้ใน `STORYBOARD.md` ก่อนแก้โค้ด ส่วนวิดีโอเดโมแก้ใน `DEMO_VIDEO.md`
+- ฉากและเสียงของ animation แก้ใน `STORYBOARD.md` ก่อนแก้โค้ด ระบบ motion/Phone Tour/ทัวร์ในแอปแก้ใน `MOTION.md` ส่วนวิดีโอเดโมแก้ใน `DEMO_VIDEO.md`
 - ข้อมูล persona/สถานสงเคราะห์ใน `src/data` ต้องตรงกับ `CODEX_IMAGE_PROMPTS.md` ถ้าต้องแก้ ให้แก้ทั้งสองที่พร้อมกัน
 
 ## 6. คำสั่งตรวจงาน (หลังมีโค้ด)
