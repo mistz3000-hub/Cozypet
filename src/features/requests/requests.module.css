@@ -1,0 +1,140 @@
+.page {
+  display: grid;
+  gap: var(--cp-space-4);
+  max-width: 820px;
+}
+.page > :first-child {
+  justify-self: start;
+}
+.page h1 {
+  margin: 0;
+}
+.to,
+.pet,
+.eyebrow {
+  margin: 0;
+  font-weight: 600;
+}
+.eyebrow {
+  color: var(--cp-ink-muted);
+}
+.muted {
+  margin: 0;
+  color: var(--cp-ink-muted);
+}
+.inline {
+  display: inline-flex;
+  margin-left: 8px;
+}
+.form {
+  display: grid;
+  gap: var(--cp-space-4);
+}
+.block {
+  display: grid;
+  gap: 12px;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-card);
+  padding: var(--cp-space-4);
+}
+.h2 {
+  margin: 0;
+  font-size: var(--cp-text-xl);
+}
+.shortGrid {
+  display: grid;
+  gap: 0 12px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+.statusTitle {
+  font-size: var(--cp-text-xl);
+}
+.statusTitle > span {
+  font-size: inherit;
+  padding: 8px 14px;
+  white-space: normal;
+  line-height: 1.4;
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+.timeline li {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 0 0 18px;
+  color: var(--cp-ink-muted);
+}
+.timeline li:last-child {
+  padding-bottom: 0;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 24px;
+  bottom: 0;
+  width: 2px;
+  background: var(--cp-border);
+}
+.timeline li:last-child::before {
+  display: none;
+}
+.timeline li[data-done='true'] {
+  color: var(--cp-ink);
+  font-weight: 600;
+}
+.dot {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--cp-border-strong);
+  background: var(--cp-surface);
+  display: grid;
+  place-items: center;
+}
+.timeline li[data-done='true'] .dot {
+  background: var(--cp-gold-500);
+  border-color: var(--cp-gold-600);
+  color: var(--cp-ink);
+}
+.listingBox {
+  max-width: 360px;
+}
+.answers {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.answers > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 220px) 1fr;
+  gap: 8px;
+}
+.answers dt {
+  color: var(--cp-ink-muted);
+  font-size: var(--cp-text-sm);
+}
+.answers dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 520px) {
+  .answers > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

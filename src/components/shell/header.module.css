@@ -1,0 +1,320 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgb(255 253 248 / 92%);
+  backdrop-filter: saturate(1.2) blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--cp-dur-quick) var(--cp-ease-out), box-shadow var(--cp-dur-quick) var(--cp-ease-out);
+}
+.header[data-scrolled='true'] {
+  border-bottom-color: var(--cp-border);
+  box-shadow: 0 2px 12px rgb(43 33 24 / 5%);
+}
+.inner {
+  height: var(--cp-header-h);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  min-height: 44px;
+}
+.anchors {
+  display: none;
+  gap: 4px;
+  margin-left: 8px;
+}
+.anchors a {
+  padding: 8px 10px;
+  border-radius: var(--cp-radius-pill);
+  color: var(--cp-ink);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--cp-text-sm);
+  white-space: nowrap;
+}
+.anchors a:hover {
+  background: var(--cp-butter);
+}
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.right > * {
+  flex: none;
+}
+.runBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 10px;
+  border-radius: var(--cp-radius-pill);
+  background: var(--cp-info-bg);
+  color: var(--cp-info-ink);
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+}
+.runBadge::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+.runBadge:hover {
+  color: var(--cp-info-ink);
+  background: #d9e5f4;
+}
+.help,
+.sound,
+.login,
+.menuBtn,
+.avatarBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 10px;
+  border-radius: var(--cp-radius-pill);
+  border: 1px solid var(--cp-border);
+  background: var(--cp-surface);
+  color: var(--cp-ink);
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  justify-content: center;
+}
+.help:hover,
+.sound:hover,
+.login:hover,
+.menuBtn:hover,
+.avatarBtn:hover {
+  background: var(--cp-butter);
+  color: var(--cp-ink);
+}
+.helpTextCompact {
+  display: none;
+}
+.login {
+  background: var(--cp-ink);
+  color: var(--cp-bg);
+  border-color: var(--cp-ink);
+}
+.login:hover {
+  background: #4a3a2c;
+  color: var(--cp-bg);
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--cp-radius-pill);
+  background: var(--cp-gold-500);
+  color: var(--cp-ink);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cta:hover {
+  background: var(--cp-gold-600);
+  color: var(--cp-ink);
+}
+.locale {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--cp-radius-pill);
+  border: 1px solid var(--cp-border);
+  background: var(--cp-surface);
+}
+.localeLabel {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+  padding: 0 4px 0 8px;
+}
+.localeBtn {
+  min-height: 40px;
+  min-width: 44px;
+  padding: 0 10px;
+  border-radius: var(--cp-radius-pill);
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  cursor: pointer;
+  color: var(--cp-ink-muted);
+}
+.localeBtn[aria-pressed='true'] {
+  background: var(--cp-gold-500);
+  color: var(--cp-ink);
+}
+.wideOnly,
+.desktopOnly {
+  display: none;
+}
+.menuBtn {
+  padding: 0;
+}
+.account {
+  position: relative;
+}
+.avatarImg,
+.avatarInitial {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.avatarInitial {
+  display: grid;
+  place-items: center;
+  background: var(--cp-gold-500);
+  font-family: var(--cp-font-heading);
+}
+.avatarBtn {
+  padding: 0 8px 0 4px;
+}
+.menuPop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 220px;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 16px;
+  box-shadow: var(--cp-shadow-lift);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  z-index: 120;
+}
+.menuPop a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--cp-ink);
+  text-decoration: none;
+}
+.menuPop a:hover,
+.menuPop a:focus-visible {
+  background: var(--cp-butter);
+}
+.menuName {
+  margin: 4px 12px 6px;
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.mobileMenu {
+  border-top: 1px solid var(--cp-border);
+  background: var(--cp-bg);
+  padding: 12px 0 16px;
+  box-shadow: 0 8px 18px rgb(43 33 24 / 8%);
+}
+.mobileMenu[hidden] {
+  display: none;
+}
+.mobileAnchors {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+.mobileAnchors a:not(.cta) {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--cp-ink);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 10px;
+}
+.mobileAnchors a:not(.cta):hover {
+  background: var(--cp-butter);
+}
+.mobileAnchors .cta {
+  margin-top: 8px;
+  justify-content: center;
+}
+.mobileControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (max-width: 420px) {
+  .runBadge {
+    padding: 4px 8px;
+  }
+}
+@media (min-width: 768px) {
+  .wideOnly {
+    display: contents;
+  }
+  .helpTextCompact {
+    display: inline;
+  }
+  .mobileControls :global(.locale-dup) {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .anchors {
+    display: flex;
+  }
+  .desktopOnly {
+    display: inline-flex;
+  }
+  .menuBtn {
+    display: none;
+  }
+  .mobileMenu {
+    display: none;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .anchors a {
+    padding: 8px 6px;
+    font-size: 0.8125rem;
+  }
+  .localeLabel {
+    display: none;
+  }
+  .help {
+    padding: 0 8px;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .runBadge span {
+    max-width: 7.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .helpTextCompact {
+    display: none;
+  }
+}
+@media (min-width: 400px) and (max-width: 767px) {
+  .helpTextCompact {
+    display: inline;
+  }
+}

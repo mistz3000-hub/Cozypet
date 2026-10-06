@@ -1,0 +1,58 @@
+{
+  "name": "cozypet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cozypet — Final Project prototype: ช่วยพาน้องหลงกลับบ้านและกระจายความช่วยเหลือด้วย Smart Load Balancer (ข้อมูลตัวอย่าง)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "eval:chat": "node --experimental-strip-types scripts/eval-chat.ts",
+    "shots": "node --experimental-strip-types scripts/shots.ts",
+    "film:stills": "node --experimental-strip-types scripts/film/stills.ts",
+    "film:plan": "node --experimental-strip-types scripts/film/plan.ts",
+    "film:capture": "node --experimental-strip-types scripts/film/capture.ts",
+    "film:render": "node --experimental-strip-types scripts/film/render.ts",
+    "film:audio": "node --experimental-strip-types scripts/film/audio.ts",
+    "film:mux": "node --experimental-strip-types scripts/film/mux.ts",
+    "film:all": "node --experimental-strip-types scripts/film/all.ts",
+    "print:poster": "node --experimental-strip-types scripts/print/export.ts poster",
+    "print:deck": "node --experimental-strip-types scripts/print/export.ts deck",
+    "print:report": "node --experimental-strip-types scripts/print/export.ts report",
+    "print:form": "node --experimental-strip-types scripts/print/export.ts form",
+    "print:all": "node --experimental-strip-types scripts/print/export.ts all",
+    "research:summarize": "node --experimental-strip-types scripts/research-summarize.ts"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.2",
+    "gsap": "^3.15.0",
+    "motion": "^14.0.0",
+    "next": "^16.3.8",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1",
+    "three": "^0.186.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "^22.20.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.8",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

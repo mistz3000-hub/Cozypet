@@ -1,0 +1,277 @@
+.page {
+  display: grid;
+  gap: var(--cp-space-4);
+}
+.back {
+  justify-self: start;
+}
+.hero {
+  display: flex;
+  gap: var(--cp-space-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.heroImg {
+  width: 120px !important;
+  flex: none;
+}
+.heroText {
+  flex: 1;
+  min-width: 240px;
+  display: grid;
+  gap: 6px;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.verifiedBtn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--cp-radius-pill);
+}
+.verifiedText {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  background: var(--cp-reunited-bg);
+  color: var(--cp-reunited-ink);
+  padding: 8px 12px;
+  border-radius: var(--cp-radius-sm);
+}
+.name {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.meta {
+  margin: 0;
+  color: var(--cp-ink-muted);
+  display: block;
+}
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.whyBox {
+  background: var(--cp-bg-alt);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  padding: 10px 14px;
+}
+.whyBox p {
+  margin: 0 0 4px;
+}
+.whyTitle {
+  font-weight: 700;
+}
+.orgNote a {
+  font-weight: 600;
+}
+.layout {
+  display: grid;
+  gap: var(--cp-space-5);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr 340px;
+    align-items: start;
+  }
+  .sideCol {
+    position: sticky;
+    top: calc(var(--cp-header-h) + 12px);
+  }
+}
+.mainCol,
+.sideCol {
+  display: grid;
+  gap: var(--cp-space-4);
+  min-width: 0;
+}
+.section {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-card);
+  padding: var(--cp-space-4);
+  display: grid;
+  gap: 10px;
+}
+.section h2 {
+  font-size: var(--cp-text-xl);
+  margin: 0;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.h3 {
+  font-size: var(--cp-text-lg);
+  margin: 6px 0 0;
+}
+.count {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+  font-weight: 500;
+}
+.capText {
+  margin: 0;
+  font-weight: 600;
+}
+.demoNote,
+.small {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.muted {
+  margin: 0;
+  color: var(--cp-ink-muted);
+}
+.supplies {
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--cp-border);
+}
+.supplyHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: var(--cp-text-sm);
+}
+.facts {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.facts > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 160px) 1fr;
+  gap: 8px;
+}
+.facts dt {
+  color: var(--cp-ink-muted);
+  font-size: var(--cp-text-sm);
+}
+.facts dd {
+  margin: 0;
+}
+.desc {
+  margin: 0;
+}
+.bullets,
+.pets {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+}
+.pets {
+  list-style: none;
+  padding-left: 0;
+}
+.prefs {
+  margin: 0;
+  font-weight: 600;
+}
+.gallery {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+.figure {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.figure figcaption {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.noImage {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 16px;
+  border: 2px dashed var(--cp-border-strong);
+  border-radius: var(--cp-radius-sm);
+  color: var(--cp-ink-muted);
+}
+.waitList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.waitItem {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.waitActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.actions {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-card);
+  padding: var(--cp-space-4);
+  display: grid;
+  gap: 10px;
+  box-shadow: var(--cp-shadow);
+}
+.actionsTitle {
+  font-size: var(--cp-text-lg);
+  margin: 0;
+}
+.disabledBtn {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.blockReason {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-status-full-ink);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.donationRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  background: var(--cp-butter);
+  font: inherit;
+  font-weight: 600;
+  color: var(--cp-ink);
+  cursor: pointer;
+}
+.mapCard {
+  display: grid;
+  gap: 8px;
+}
+.mapTitle {
+  font-size: var(--cp-text-lg);
+  margin: 0;
+}
+
+.meta svg {
+  vertical-align: -0.15em;
+  margin-right: 2px;
+}

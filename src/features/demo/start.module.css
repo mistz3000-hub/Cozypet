@@ -1,0 +1,53 @@
+.wrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 32px;
+}
+.card {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: var(--cp-gold-500);
+  display: grid;
+  place-items: center;
+}
+.intro {
+  color: var(--cp-ink-muted);
+}
+.current {
+  font-weight: 600;
+  color: var(--cp-info-ink);
+}
+.runInput {
+  font-size: 1.5rem;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+  max-width: 200px;
+}
+.preview {
+  margin: -8px 0 12px;
+  font-weight: 600;
+  color: var(--cp-reunited-ink);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.small {
+  font-size: var(--cp-text-sm);
+  margin: 4px 0 0;
+}
+.small a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}

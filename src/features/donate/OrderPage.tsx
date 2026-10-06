@@ -1,0 +1,151 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import type { DonationOrder } from '@/lib/types';
+import { useI18n } from '@/i18n/provider';
+import { getHelper } from '@/data';
+import { getPackage } from '@/data/packages';
+import { ORDER_ARRIVED_STEP, ORDER_STEPS } from '@/lib/balancer-config';
+import { canCancelOrder, orderStepIndex, orderStepTime, orderTotalTHB } from '@/lib/orders';
+import { supplyLevel } from '@/lib/status';
+import { updateValue, useHydrated, useStore } from '@/lib/store';
+import { useNow } from '@/lib/useNow';
+import { playSfx } from '@/lib/audio/sfx';
+import { useToast } from '@/components/providers/Toast';
+import { Badge, Card, Notice, Skeleton } from '@/components/ui/Badge';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/Dialog';
+import { Icon } from '@/components/ui/Icon';
+import { Meter } from '@/components/ui/Meter';
+import { SupplyBadge } from '@/components/ui/StatusBadge';
+import { helperName } from '@/features/helpers/helper-text';
+import { useHelperSupplies } from '@/features/helpers/supplies';
+import { DemoModeBar } from '@/features/shared/DemoModeBar';
+import s from './donate.module.css';
+
+export function OrderPage({ id }: { id: string }) {
+  const hydrated = useHydrated();
+  const orders = useStore('donationOrders');
+  const { m } = useI18n();
+  if (!hydrated) return <div className="cp-container cp-page" aria-busy="true"><Skeleton height={280} /></div>;
+  const order = orders.find((o) => o.id === id);
+  if (!order) {
+    return (
+      <div className="cp-container cp-page">
+        <h1>{m.orders.notFound}</h1>
+        <ButtonLink href="/donate" icon="box">{m.donate.title}</ButtonLink>
+      </div>
+    );
+  }
+  return <Order order={order} />;
+}
+
+/** timeline 5 ขั้น เวลาคำนวณจาก createdAt (ไม่เก็บ) — PROMPT.md 7.12 */
+function Order({ order }: { order: DonationOrder }) {
+  const { m, f, loc, money, time, locale } = useI18n();
+  const toast = useToast();
+  const helper = getHelper(order.helperId);
+  const pkg = getPackage(order.packageId);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const live = order.status === 'active' && !order.fastForwarded;
+  const now = useNow(live);
+  const step = orderStepIndex(order, new Date(now || Date.parse(order.createdAt)));
+  const sup = useHelperSupplies(order.helperId, true);
+  const name = helper ? helperName(helper, locale) : order.helperId;
+  const pkgName = pkg ? loc(pkg.name) : order.packageId;
+  const done = step >= ORDER_STEPS - 1;
+
+  // toast แต้มน้ำใจเมื่อถึงขั้นสุดท้ายระหว่างเปิดหน้านี้
+  const prev = useRef(step);
+  useEffect(() => {
+    if (prev.current < ORDER_STEPS - 1 && step >= ORDER_STEPS - 1 && order.status === 'active') {
+      toast(f(m.kindness.earned, { n: Math.floor(orderTotalTHB(order) / 10) }));
+      playSfx('chime');
+    }
+    prev.current = step;
+  }, [step, order, toast, f, m.kindness.earned]);
+
+  const cancel = () => {
+    updateValue('donationOrders', (list) => list.map((o) => (o.id === order.id ? { ...o, status: 'cancelled' } : o)));
+    setConfirmCancel(false);
+    toast(m.orders.cancelled);
+  };
+  const fastForward = () => updateValue('donationOrders', (list) => list.map((o) => (o.id === order.id ? { ...o, fastForwarded: true } : o)));
+
+  return (
+    <div className={`cp-container cp-page ${s.page}`}>
+      <DemoModeBar next={`/donate/orders/${order.id}`} />
+      <p className={s.bar}><Icon name="info" size="1em" /> {m.donate.bar}</p>
+      <h1>{m.orders.title}</h1>
+      <p className={s.orderSummary}>{f(m.orders.summary, { pkg: pkgName, qty: order.quantity, helper: name })} · {f(m.donate.totalSim, { money: money(orderTotalTHB(order)) })}</p>
+
+      {order.status === 'cancelled' ? <Notice tone="info" icon="x">{m.orders.cancelledTitle}</Notice> : (
+        <>
+          <ol className={s.timeline} aria-live="polite">
+            {m.orders.steps.map((label, i) => (
+              <li key={label} data-done={i <= step ? 'true' : undefined} data-current={i === step ? 'true' : undefined}>
+                <span className={s.dot} aria-hidden="true">{i <= step ? <Icon name="check" size={14} /> : null}</span>
+                <span className={s.tlText}>
+                  <strong>{label}</strong>
+                  <span className={s.muted}>{f(m.orders.stepAt, { time: time(orderStepTime(order, i).toISOString()) })}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <div className={s.nav}>
+            {!done ? <Button icon="bolt" onClick={fastForward}>{m.orders.fastForward}</Button> : null}
+            {canCancelOrder(order, new Date(now || Date.parse(order.createdAt))) ? <Button variant="ghost" icon="x" onClick={() => setConfirmCancel(true)}>{m.orders.cancel}</Button> : null}
+          </div>
+
+          {step >= ORDER_ARRIVED_STEP ? (
+            <Card flat className={s.arrived}>
+              <svg viewBox="0 0 120 80" className={s.boxArt} role="img" aria-label={m.orders.arrivedArt}>
+                <rect x="30" y="30" width="60" height="40" rx="4" fill="var(--cp-wood)" />
+                <path d="M30 30 L60 18 L90 30 L60 42 Z" fill="var(--cp-gold-500)" />
+                <path d="M60 42 V70" stroke="var(--cp-wood-dark)" strokeWidth="3" />
+                <path d="M52 12 q8 -10 16 0 q-8 8 -16 0" fill="var(--cp-heart)" />
+              </svg>
+              {sup ? (
+                <div className={s.afterSup}>
+                  <p className={s.h3}>{m.donate.afterSupplies}</p>
+                  <p className={s.supply}>
+                    <SupplyBadge level={supplyLevel(sup.foodDays, sup.litterDays)} />
+                    <span>{f(m.supply.food, { days: sup.foodDays })}{sup.litterDays !== undefined ? ` · ${f(m.supply.litter, { days: sup.litterDays })}` : ''} {m.supply.demo}</span>
+                  </p>
+                  <Meter value={Math.min(sup.foodDays, 30)} max={30} label={m.supply.title} level="gold" valueText={f(m.supply.food, { days: sup.foodDays })} />
+                </div>
+              ) : null}
+            </Card>
+          ) : null}
+
+          {done ? (
+            <Card flat className={s.thanks}>
+              <p className={s.h3}>{m.orders.thanksTitle} <Badge tone="butter">{m.orders.thanksTag}</Badge></p>
+              <p>{f(m.orders.thanks, { pkg: pkgName, p: helper?.persona.politeParticle ?? 'ค่ะ' })}</p>
+              <p className={s.muted}>— {name}</p>
+            </Card>
+          ) : null}
+        </>
+      )}
+      <div className={s.nav}>
+        <ButtonLink href="/donate" icon="box">{m.orders.newOrder}</ButtonLink>
+        {helper ? <ButtonLink href={`/helpers/${helper.id}`} variant="ghost" icon="user">{m.chat.viewHelper}</ButtonLink> : null}
+      </div>
+
+      <Dialog
+        open={confirmCancel}
+        onClose={() => setConfirmCancel(false)}
+        title={m.orders.cancel}
+        size="sm"
+        footer={(
+          <>
+            <Button onClick={() => setConfirmCancel(false)} data-autofocus>{m.common.cancel}</Button>
+            <Button variant="danger" icon="x" onClick={cancel}>{m.orders.cancel}</Button>
+          </>
+        )}
+      >
+        <p>{m.orders.cancelConfirm}</p>
+      </Dialog>
+    </div>
+  );
+}

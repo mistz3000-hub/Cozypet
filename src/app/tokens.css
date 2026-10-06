@@ -1,0 +1,93 @@
+/* Design tokens — PROMPT.md 3.3 และ MOTION.md 2 (ค่าเวลา/easing ต้องตรงกับ src/lib/motion-tokens.ts) */
+:root {
+  /* สี */
+  --cp-bg: #fffdf8;
+  --cp-bg-alt: #fbf7ef;
+  --cp-surface: #ffffff;
+  --cp-ink: #2b2118;
+  --cp-ink-muted: #5e4f42;
+  --cp-gold-500: #f4b400;
+  --cp-gold-600: #e5a800;
+  --cp-gold-700: #9c6b00;
+  --cp-butter: #fff3d1;
+  --cp-peach: #ffe6d5;
+  --cp-heart: #f0707a;
+  --cp-border: #efe6d6;
+  --cp-border-strong: #8c7b6b;
+  --cp-reunited-ink: #1f6b4f;
+  --cp-reunited-bg: #e3f4ec;
+  --cp-adopted-ink: #8a5a00;
+  --cp-adopted-bg: #fff3d1;
+  --cp-info-ink: #1b4e8a;
+  --cp-info-bg: #e6eef8;
+  --cp-error-ink: #b3261e;
+  --cp-error-bg: #fdecea;
+  --cp-status-open-ink: #1f6b4f;
+  --cp-status-open-bg: #e3f4ec;
+  --cp-status-tight-ink: #8a4b00;
+  --cp-status-tight-bg: #fff1d6;
+  --cp-status-full-ink: #9e1f16;
+  --cp-status-full-bg: #fdecea;
+  --cp-pin-open: #2e8b62;
+  --cp-pin-tight: #b26b00;
+  --cp-pin-full: #c0392b;
+  /* สีเสริมสำหรับกราฟิก (ไม่ใช้เป็นตัวอักษร) */
+  --cp-river: #bcd7ea;
+  --cp-map-land: #f6efe1;
+  --cp-wood: #d9b98c;
+  --cp-wood-dark: #b48a5a;
+  --cp-overlay: rgb(43 33 24 / 45%);
+  --cp-shadow: 0 6px 20px rgb(43 33 24 / 8%);
+  --cp-shadow-lift: 0 10px 28px rgb(43 33 24 / 12%);
+
+  /* ตัวอักษร */
+  --cp-font-heading: var(--font-mitr), 'Noto Sans Thai', 'Leelawadee UI', 'Thonburi', sans-serif;
+  --cp-font-body: var(--font-noto-thai), 'Noto Sans Thai', 'Leelawadee UI', 'Thonburi', sans-serif;
+  --cp-text-sm: 0.875rem;
+  --cp-text-base: 1rem;
+  --cp-text-lg: 1.125rem;
+  --cp-text-xl: 1.375rem;
+  --cp-text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --cp-text-hero: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+
+  /* รูปทรงและระยะ */
+  --cp-radius-card: 20px;
+  --cp-radius-sm: 12px;
+  --cp-radius-pill: 999px;
+  --cp-space-1: 4px;
+  --cp-space-2: 8px;
+  --cp-space-3: 12px;
+  --cp-space-4: 16px;
+  --cp-space-5: 24px;
+  --cp-space-6: 32px;
+  --cp-space-7: 48px;
+  --cp-space-8: 64px;
+  --cp-container: 1200px;
+  --cp-gutter: 16px;
+  --cp-header-h: 64px;
+  --cp-tabbar-h: 112px;
+  --cp-dock-h: 76px;
+  --cp-bottom-safe: calc(var(--cp-tabbar-h) + env(safe-area-inset-bottom, 0px));
+
+  /* motion (ตรงกับ motion-tokens.ts) */
+  --cp-dur-instant: 90ms;
+  --cp-dur-quick: 150ms;
+  --cp-dur-base: 250ms;
+  --cp-dur-slow: 400ms;
+  --cp-dur-hero: 700ms;
+  --cp-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --cp-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --cp-ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --cp-gutter: 24px;
+    --cp-bottom-safe: calc(var(--cp-dock-h) + 24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --cp-gutter: 32px;
+  }
+}

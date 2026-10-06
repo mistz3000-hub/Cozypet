@@ -1,0 +1,224 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.canvas {
+  position: relative;
+  width: 100%;
+  border-radius: var(--cp-radius-card);
+  overflow: hidden;
+  border: 1px solid var(--cp-border);
+  background: var(--cp-bg-alt);
+}
+.svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  width: 30px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--cp-pin-open);
+}
+.pin[data-level='tight'] {
+  color: var(--cp-pin-tight);
+}
+.pin[data-level='full'] {
+  color: var(--cp-pin-full);
+}
+.pin[data-kind='individual'],
+.pin[data-kind='place'] {
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+}
+.pin::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+}
+.pin[data-dim='true'] {
+  opacity: 0.45;
+}
+.pin[data-selected='true'] {
+  z-index: 3;
+}
+.pin[data-selected='true'] .drop {
+  transform: scale(1.25);
+}
+.pin[data-selected='true'] .area {
+  outline: 3px solid var(--cp-ink);
+  outline-offset: 1px;
+}
+.drop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 3px rgb(43 33 24 / 25%));
+  transition: transform var(--cp-dur-quick) var(--cp-ease-out);
+  transform-origin: 50% 100%;
+}
+.area {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.85;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 6px color-mix(in srgb, currentColor 22%, transparent);
+}
+.pin[data-kind='place'] .area {
+  background: #fff;
+  border: 3px dashed currentColor;
+  opacity: 1;
+  box-shadow: none;
+}
+.pinShape {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  margin-top: -6px;
+}
+.pin[data-kind='individual'] .pinShape,
+.pin[data-kind='place'] .pinShape {
+  margin-top: 0;
+}
+.pin[data-kind='place'] .pinShape {
+  color: var(--cp-ink);
+}
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  pointer-events: none;
+}
+.search {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgb(27 78 138 / 18%);
+  display: grid;
+  place-items: center;
+  z-index: 4;
+  pointer-events: none;
+}
+.searchDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  transform: rotate(45deg);
+  background: var(--cp-info-ink);
+  border: 2px solid #fff;
+}
+.mockLabel {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 88%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cp-ink-muted);
+  pointer-events: none;
+}
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend li[data-level='open'] {
+  color: var(--cp-status-open-ink);
+}
+.legend li[data-level='tight'] {
+  color: var(--cp-status-tight-ink);
+}
+.legend li[data-level='full'] {
+  color: var(--cp-status-full-ink);
+}
+.legendSearch {
+  width: 11px;
+  height: 11px;
+  transform: rotate(45deg);
+  border-radius: 3px;
+  background: var(--cp-info-ink);
+}
+.legendDrop {
+  width: 12px;
+  height: 14px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--cp-ink-muted);
+}
+.legendArea {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cp-ink-muted);
+  opacity: 0.7;
+}
+.legendPlace {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px dashed var(--cp-ink);
+}
+.mini .pin {
+  width: 18px;
+  height: 22px;
+}
+.mini .pin[data-kind='individual'] {
+  width: 14px;
+  height: 14px;
+}
+.mini .mockLabel {
+  font-size: 0.7rem;
+}
+.radar {
+  position: absolute;
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: conic-gradient(from 0deg, rgb(244 180 0 / 0%) 0deg, rgb(244 180 0 / 35%) 60deg, rgb(244 180 0 / 0%) 61deg);
+  border: 2px solid var(--cp-gold-500);
+  animation: radar var(--cp-dur-hero) linear infinite;
+  pointer-events: none;
+}
+@keyframes radar {
+  to {
+    rotate: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .radar {
+    animation: none;
+    background: rgb(244 180 0 / 12%);
+  }
+}

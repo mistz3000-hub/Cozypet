@@ -1,0 +1,121 @@
+.box {
+  background: linear-gradient(135deg, var(--cp-butter), var(--cp-surface) 60%);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-card);
+  padding: 18px;
+}
+.compact {
+  padding: 14px;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--cp-text-lg);
+  margin-bottom: 4px;
+}
+.title svg {
+  color: var(--cp-gold-700);
+}
+.intro {
+  color: var(--cp-ink-muted);
+  font-size: var(--cp-text-sm);
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: -6px;
+}
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  color: var(--cp-ink-muted);
+}
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--cp-border);
+  border-top-color: var(--cp-gold-600);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.result {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 16px;
+  padding: 14px;
+}
+.source {
+  margin: 0;
+}
+.summary {
+  margin: 0;
+  font-weight: 600;
+}
+.chipsTitle {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.grid {
+  display: grid;
+  gap: 10px;
+}
+.row {
+  display: grid;
+  gap: 4px;
+}
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: 140px 1fr;
+    align-items: center;
+  }
+}
+.rowLabel {
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 2px solid var(--cp-border);
+  background: var(--cp-surface);
+  font-size: var(--cp-text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+.chip::after {
+  content: '';
+  position: absolute;
+  inset: -3px -1px;
+}
+.chip[aria-pressed='true'] {
+  border-color: var(--cp-ink);
+  background: var(--cp-butter);
+  font-weight: 600;
+}
+.apply {
+  align-self: flex-start;
+}

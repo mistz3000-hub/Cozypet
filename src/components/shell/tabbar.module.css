@@ -1,0 +1,128 @@
+/* มือถือ: bottom tab bar สองแถว (แถว switch + แถว 5 แท็บ) */
+.wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  transition: transform var(--cp-dur-base) var(--cp-ease-out);
+}
+.bar {
+  position: relative;
+  background: rgb(255 253 248 / 96%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--cp-border);
+  box-shadow: 0 -6px 20px rgb(43 33 24 / 6%);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.topRow {
+  position: relative;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--cp-border);
+}
+.topRow > span:first-child {
+  right: auto !important;
+  left: 14px;
+}
+.soundSlot {
+  display: none;
+}
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 60px;
+}
+.pill {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 20%;
+  padding: 0 6px;
+  pointer-events: none;
+}
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: 0 6px;
+  border-radius: 16px;
+  background: var(--cp-butter);
+}
+.tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 44px;
+  color: var(--cp-ink-muted);
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab[aria-current='page'] {
+  color: var(--cp-ink);
+}
+.tab[aria-current='page'] svg {
+  color: var(--cp-gold-700);
+}
+.tab:hover {
+  color: var(--cp-ink);
+}
+
+/* แท็บเล็ต/desktop: dock ลอยด้านล่างกึ่งกลาง */
+@media (min-width: 768px) {
+  .wrap {
+    bottom: 16px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - 32px);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--cp-border);
+    border-radius: 24px;
+    padding: 6px 8px;
+    box-shadow: var(--cp-shadow-lift);
+  }
+  .topRow {
+    order: 2;
+    height: auto;
+    border: none;
+    padding: 0 4px 0 8px;
+    border-left: 1px solid var(--cp-border);
+  }
+  .topRow > span:first-child {
+    left: auto !important;
+    right: 18px !important;
+    top: -38px !important;
+  }
+  .soundSlot {
+    display: block;
+  }
+  .tabs {
+    order: 1;
+    grid-template-columns: repeat(5, 84px);
+    height: 58px;
+  }
+  .pill {
+    width: 84px;
+  }
+}
+@media (max-width: 380px) {
+  .tab {
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,42 @@
+.switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 0;
+  border-radius: var(--cp-radius-pill);
+  background: var(--cp-bg-alt);
+  border: 1px solid var(--cp-border);
+}
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 4px 12px;
+  border-radius: var(--cp-radius-pill);
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background-color var(--cp-dur-quick) var(--cp-ease-out);
+}
+.item input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.item:focus-within {
+  outline: 3px solid var(--cp-ink);
+  outline-offset: 2px;
+}
+.item[data-checked='true'] {
+  background: var(--cp-gold-500);
+  color: var(--cp-ink);
+  border-color: var(--cp-ink);
+}
+.compact .item {
+  min-height: 36px;
+  padding: 4px 10px;
+}

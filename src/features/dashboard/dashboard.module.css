@@ -1,0 +1,222 @@
+.page {
+  display: grid;
+  gap: var(--cp-space-4);
+}
+.hello {
+  display: grid;
+  gap: 8px;
+}
+.hello h1 {
+  margin: 0;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.kChip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 12px;
+  min-height: 32px;
+  border-radius: var(--cp-radius-pill);
+  background: var(--cp-butter);
+  color: var(--cp-ink);
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  text-decoration: none;
+}
+.grid {
+  display: grid;
+  gap: var(--cp-space-5);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+  }
+}
+.col {
+  display: grid;
+  gap: var(--cp-space-5);
+  min-width: 0;
+}
+.h2 {
+  margin: 0 0 10px;
+  font-size: var(--cp-text-xl);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.tile {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  height: 100%;
+  min-height: 132px;
+  padding: 14px;
+  border-radius: var(--cp-radius-card);
+  background: var(--cp-surface);
+  border: 2px solid var(--cp-border);
+  color: var(--cp-ink);
+  text-decoration: none;
+  transition: transform var(--cp-dur-quick) var(--cp-ease-out), border-color var(--cp-dur-instant) linear;
+}
+.tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--cp-gold-500);
+}
+.tile[data-key='found'] .tileIcon {
+  background: var(--cp-peach);
+}
+.tile[data-key='place'] .tileIcon {
+  background: var(--cp-butter);
+}
+.tile[data-key='donate'] .tileIcon {
+  background: var(--cp-reunited-bg);
+}
+.tile[data-key='adopt'] .tileIcon {
+  background: var(--cp-adopted-bg);
+}
+.tileIcon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+.tileTitle {
+  font-family: var(--cp-font-heading);
+  font-size: var(--cp-text-lg);
+  font-weight: 600;
+}
+.tileDesc {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.assist {
+  margin-top: 12px;
+}
+.urgent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.urgentCard {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: var(--cp-radius-card);
+  background: var(--cp-error-bg);
+  border: 1px solid var(--cp-error-ink);
+  border-left-width: 6px;
+}
+.urgentCard > a {
+  justify-self: start;
+}
+.urgentTitle {
+  margin: 0;
+  font-weight: 700;
+}
+.urgentTitle a {
+  color: var(--cp-ink);
+}
+.urgentMeta {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.reasonChips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.reasonChips li {
+  background: var(--cp-surface);
+  border-radius: var(--cp-radius-pill);
+  padding: 2px 10px;
+  font-size: var(--cp-text-sm);
+  font-weight: 600;
+  color: var(--cp-error-ink);
+}
+.total,
+.area {
+  display: grid;
+  gap: 8px;
+}
+.total .h2,
+.area .h2 {
+  margin: 0;
+}
+.money {
+  margin: 0;
+  font-family: var(--cp-font-heading);
+  font-size: var(--cp-text-2xl);
+  font-weight: 600;
+}
+.packages {
+  margin: 0;
+  color: var(--cp-ink-muted);
+}
+.simNote {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  font-weight: 600;
+  color: var(--cp-info-ink);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.area > a {
+  justify-self: start;
+}
+.muted {
+  margin: 0;
+  color: var(--cp-ink-muted);
+  font-size: var(--cp-text-sm);
+}
+.more {
+  display: inline-block;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.why {
+  display: grid;
+  gap: 8px;
+}
+.why > button {
+  justify-self: start;
+}
+.whyBox {
+  background: var(--cp-bg-alt);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  padding: 10px 14px;
+}
+.whyBox ul {
+  margin: 6px 0 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+}
+.whyTitle {
+  margin: 0;
+  font-weight: 700;
+}

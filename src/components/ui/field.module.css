@@ -1,0 +1,232 @@
+.field,
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 18px;
+  min-width: 0;
+}
+.fieldset {
+  border: none;
+  padding: 0;
+}
+.label {
+  font-weight: 600;
+  padding: 0;
+}
+.req {
+  color: var(--cp-error-ink);
+  font-weight: 500;
+}
+.reqText {
+  font-size: var(--cp-text-sm);
+}
+.hint {
+  margin: 0;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.error {
+  margin: 0;
+  color: var(--cp-error-ink);
+  font-size: var(--cp-text-sm);
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.counter {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--cp-border-strong);
+  background: var(--cp-surface);
+  transition: border-color var(--cp-dur-quick) var(--cp-ease-out);
+}
+.input:focus {
+  border-color: var(--cp-gold-600);
+  outline: 3px solid var(--cp-ink);
+  outline-offset: 2px;
+}
+[data-invalid='true'] .input {
+  border-color: var(--cp-error-ink);
+}
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.6;
+}
+.selectWrap {
+  position: relative;
+}
+.select {
+  appearance: none;
+  padding-right: 40px;
+}
+.selectIcon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.optRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.optCol {
+  display: grid;
+  gap: 8px;
+}
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 2px solid var(--cp-border);
+  background: var(--cp-surface);
+  cursor: pointer;
+}
+.opt input {
+  margin-top: 4px;
+  accent-color: var(--cp-ink);
+  width: 18px;
+  height: 18px;
+}
+.opt[data-checked='true'] {
+  border-color: var(--cp-ink);
+  background: var(--cp-butter);
+}
+.opt[data-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.optText {
+  display: flex;
+  flex-direction: column;
+}
+.optLabel {
+  font-weight: 600;
+}
+.optDesc {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 14px;
+  border-radius: var(--cp-radius-pill);
+  border: 2px solid var(--cp-border);
+  background: var(--cp-surface);
+  cursor: pointer;
+  font-weight: 500;
+}
+.chip input,
+.segItem input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.chip:focus-within,
+.segItem:focus-within {
+  outline: 3px solid var(--cp-ink);
+  outline-offset: 2px;
+}
+.chip[data-checked='true'] {
+  border-color: var(--cp-ink);
+  background: var(--cp-butter);
+}
+.swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--cp-border-strong);
+}
+.checkWrap {
+  margin: 0 0 14px;
+}
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  min-height: 44px;
+  padding-top: 8px;
+}
+.check input {
+  width: 20px;
+  height: 20px;
+  margin-top: 3px;
+  flex: none;
+  accent-color: var(--cp-ink);
+}
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--cp-radius-pill);
+  background: var(--cp-bg-alt);
+  border: 1px solid var(--cp-border);
+}
+.segItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 6px 16px;
+  border-radius: var(--cp-radius-pill);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--cp-ink-muted);
+}
+.segItem[data-checked='true'] {
+  background: var(--cp-gold-500);
+  color: var(--cp-ink);
+  box-shadow: var(--cp-shadow);
+}
+.summary {
+  border: 2px solid var(--cp-error-ink);
+  background: var(--cp-error-bg);
+  color: var(--cp-error-ink);
+  border-radius: var(--cp-radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+}
+.summaryTitle {
+  font-weight: 700;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 6px;
+}
+.summary ul {
+  margin: 0;
+  padding-left: 22px;
+}
+.summary a {
+  color: var(--cp-error-ink);
+}

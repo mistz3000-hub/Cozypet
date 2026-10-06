@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# env / secrets
+.env
+.env*.local
+!.env.example
+
+# งานส่งที่สร้างในเครื่อง (PROMPT.md 13, AGENTS.md)
+out/
+public/_generated/
+team.local.json
+*.local.csv
+
+# misc
+.DS_Store
+npm-debug.log*
+coverage/
+test-results/
+playwright-report/
+.vercel

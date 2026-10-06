@@ -1,0 +1,259 @@
+.stageWrap {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
+}
+.stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 400 / 320;
+  max-height: 300px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 28px;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (min-width: 768px) {
+  .stage {
+    max-height: none;
+  }
+}
+.stage:focus-visible {
+  outline: 3px solid var(--cp-ink);
+  outline-offset: 4px;
+}
+.blob {
+  position: absolute;
+  inset: 6% 4% 18%;
+  border-radius: 46% 54% 42% 58% / 52% 44% 56% 48%;
+  background:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 55%) 0 6px, transparent 7px),
+    radial-gradient(circle at 78% 22%, rgb(255 255 255 / 45%) 0 5px, transparent 6px),
+    var(--cp-butter);
+}
+.art {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.layer {
+  position: absolute;
+  inset: 0;
+}
+.layer :global([data-part='head']),
+.layer :global([data-part='body']),
+.layer :global([data-part='tail']) {
+  transition: transform var(--cp-dur-base) var(--cp-ease-out);
+}
+.layer :global([data-part='paw-l']),
+.layer :global([data-part='paw-r']) {
+  transition: opacity var(--cp-dur-base) var(--cp-ease-out), transform var(--cp-dur-base) var(--cp-ease-out);
+}
+.leaving :global([data-part='head']),
+.leaving :global([data-part='body']),
+.leaving :global([data-part='tail']) {
+  transform: translateY(150px) !important;
+}
+.leaving :global([data-part='paw-l']),
+.leaving :global([data-part='paw-r']) {
+  opacity: 0;
+}
+.leaving {
+  transition: opacity var(--cp-dur-base) linear;
+}
+.entering :global([data-part='head']),
+.entering :global([data-part='body']),
+.entering :global([data-part='paw-l']),
+.entering :global([data-part='paw-r']) {
+  animation: rise var(--cp-dur-base) var(--cp-ease-out) both;
+}
+@keyframes rise {
+  from {
+    transform: translateY(140px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* idle: หางหมาแกว่งเบา ๆ */
+.stage[data-kind='dog'] :global([data-active='true'] [data-part='tail']) {
+  animation: wag 3s ease-in-out infinite;
+}
+@keyframes wag {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-6deg);
+  }
+}
+
+/* reaction */
+.stage[data-reacting='true'] :global([data-active='true'] [data-part='eyes-open']) {
+  opacity: 0;
+}
+.stage[data-reacting='true'] :global([data-active='true'] [data-part='eyes-happy']) {
+  opacity: 1 !important;
+}
+.stage[data-reacting='true'] :global([data-active='true'] [data-part='tongue']) {
+  opacity: 1 !important;
+}
+.stage[data-kind='cat'][data-reacting='true'] :global([data-active='true'] [data-part='face']) {
+  animation: catUp var(--cp-dur-hero) var(--cp-ease-out);
+}
+.stage[data-kind='cat'][data-reacting='true'] :global([data-active='true'] [data-part='ear-l']),
+.stage[data-kind='cat'][data-reacting='true'] :global([data-active='true'] [data-part='ear-r']) {
+  animation: earWiggle var(--cp-dur-hero) ease-in-out;
+}
+.stage[data-kind='dog'][data-reacting='true'] :global([data-active='true'] [data-part='tail']) {
+  animation: wagFast var(--cp-dur-hero) linear;
+}
+.stage[data-kind='dog'][data-reacting='true'] :global([data-active='true'] [data-part='ear-l']),
+.stage[data-kind='dog'][data-reacting='true'] :global([data-active='true'] [data-part='ear-r']) {
+  animation: earBounce var(--cp-dur-hero) var(--cp-ease-out);
+}
+.stage[data-kind='dog'][data-reacting='true'] :global([data-active='true'] [data-part='paw-r']) {
+  animation: pawOffer var(--cp-dur-hero) var(--cp-ease-out);
+}
+@keyframes catUp {
+  40% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes earWiggle {
+  20% {
+    transform: rotate(-10deg);
+  }
+  40% {
+    transform: rotate(8deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+}
+@keyframes wagFast {
+  0%,
+  50%,
+  100% {
+    transform: rotate(-14deg);
+  }
+  25%,
+  75% {
+    transform: rotate(16deg);
+  }
+}
+@keyframes earBounce {
+  30% {
+    transform: translateY(-8px) rotate(-6deg);
+  }
+  60% {
+    transform: translateY(2px);
+  }
+}
+@keyframes pawOffer {
+  40% {
+    transform: translateY(-14px) rotate(-8deg);
+  }
+}
+
+/* หัวใจ */
+.hearts {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8%;
+  height: 40%;
+  pointer-events: none;
+}
+.heart {
+  position: absolute;
+  top: 40%;
+  color: var(--cp-heart);
+  transform: translate(-50%, 0) scale(0.6);
+  opacity: 0;
+  animation: heartFloat var(--heart-ms) var(--cp-ease-out) forwards;
+}
+.heart[data-reduced='true'] {
+  transform: translate(-50%, -20px);
+  animation: heartFade var(--heart-ms) linear forwards;
+}
+@keyframes heartFloat {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.6) rotate(0);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -70px) scale(1) rotate(var(--rot));
+  }
+}
+@keyframes heartFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.static {
+  width: 100%;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage :global([data-part]) {
+    animation: none !important;
+  }
+}
+
+/* mini mascot */
+.mini {
+  position: absolute;
+  width: 52px;
+  height: 42px;
+  pointer-events: none;
+}
+.mini svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.mini :global([data-part='mini-paw']) {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.mini[data-tap='true'] :global([data-part='mini-paw']) {
+  animation: miniTap var(--cp-dur-base) var(--cp-ease-out);
+}
+@keyframes miniTap {
+  50% {
+    transform: translateY(-6px) rotate(-12deg);
+  }
+}
+.mini[data-idle='true'] :global([data-part='mini-head']) {
+  animation: miniBob 4s ease-in-out infinite;
+}
+@keyframes miniBob {
+  50% {
+    transform: translateY(1.5px);
+  }
+}

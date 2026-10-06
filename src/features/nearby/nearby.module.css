@@ -1,0 +1,149 @@
+.page h1 {
+  margin-bottom: var(--cp-space-3);
+}
+.pointBox {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: var(--cp-space-4);
+  background: var(--cp-butter);
+}
+.pointIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cp-surface);
+  color: var(--cp-gold-700);
+}
+.pointMain {
+  margin: 0;
+  font-weight: 700;
+}
+.pointNote {
+  margin: 2px 0 0;
+  color: var(--cp-ink-muted);
+  font-size: var(--cp-text-sm);
+}
+.layout {
+  display: grid;
+  gap: var(--cp-space-5);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(300px, 360px) 1fr;
+    align-items: start;
+  }
+  .side {
+    position: sticky;
+    top: calc(var(--cp-header-h) + 12px);
+  }
+}
+.side {
+  display: grid;
+  gap: var(--cp-space-4);
+}
+.filters {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-card);
+  padding: var(--cp-space-4);
+}
+.filtersTitle {
+  font-size: var(--cp-text-lg);
+  margin: 0 0 var(--cp-space-2);
+}
+.filterGrid {
+  display: grid;
+  gap: 0 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.districtRow {
+  margin-top: var(--cp-space-2);
+}
+.searchBtns {
+  display: grid;
+  gap: 8px;
+  margin-top: var(--cp-space-2);
+}
+.main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--cp-space-4);
+}
+.mapWrap {
+  position: relative;
+}
+.skeletons {
+  display: grid;
+  gap: 12px;
+}
+.searchingText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 600;
+}
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid var(--cp-border);
+  border-top-color: var(--cp-gold-600);
+  animation: spin var(--cp-dur-slow) linear infinite;
+}
+.count {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+.personaBox {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: var(--cp-bg-alt);
+}
+.personaName {
+  margin: 0;
+  font-weight: 600;
+}
+.personaActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.empty {
+  text-align: center;
+  padding: var(--cp-space-6) var(--cp-space-4);
+  border: 2px dashed var(--cp-border-strong);
+  border-radius: var(--cp-radius-card);
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+.emptyTitle {
+  margin: 0;
+  font-weight: 700;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}

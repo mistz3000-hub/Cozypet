@@ -1,0 +1,79 @@
+.box {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--cp-butter);
+}
+.rounded {
+  border-radius: 16px;
+}
+.art,
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--cp-gold-700);
+  text-align: center;
+  padding: 8px;
+}
+.fallbackText {
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink);
+}
+.tag {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgb(43 33 24 / 72%);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.avatar {
+  position: relative;
+  flex: none;
+  border-radius: 50%;
+  background: var(--cp-gold-500);
+  color: var(--cp-ink);
+  display: inline-grid;
+  place-items: center;
+  font-family: var(--cp-font-heading);
+  font-weight: 600;
+  overflow: visible;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.aiDot {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--cp-ink);
+  color: #fff;
+  font-size: 9px;
+  font-family: var(--cp-font-body);
+  line-height: 14px;
+}
