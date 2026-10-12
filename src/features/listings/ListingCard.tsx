@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Icon } from '@/components/ui/Icon';
 import { useSaved } from '@/features/shared/saved';
 import { listingTitle, speciesLabel, colorsText } from './listing-text';
+import { animalBreedLabel } from '@/data/animal-catalog';
 import s from './listings.module.css';
 
 const TYPE_TONE = { lost: 'tight', found: 'info', adoption: 'adopted' } as const;
@@ -33,6 +34,7 @@ export function ListingCard({ listing, from, rank }: { listing: PetListing; from
         </div>
         <h3 className={s.cardTitle}><Link href={href}>{title}</Link></h3>
         <p className={s.cardMeta}>{speciesLabel(listing, m)} · {colorsText(listing.colors, loc)}</p>
+        <p className={s.cardMeta}>{m.common.breed}: {animalBreedLabel(listing, loc, m.common.breedUnknown)}</p>
         <p className={s.cardMeta}><Icon name="pin" size="1em" /> {f(where, { district: district(listing.districtId) })}</p>
         <p className={s.cardMeta}><Icon name="clock" size="1em" /> {date(listing.eventAt)}{listing.source === 'seed' ? ` · ${m.common.sampleDate}` : ''}</p>
         <button type="button" className={s.save} aria-pressed={saved} onClick={toggle} aria-label={f(saved ? m.listings.unsaveLabel : m.listings.saveLabel, { name: title })}>

@@ -86,6 +86,7 @@ function listingTopic(l: PetListing) {
     type: TYPE_TH[l.type],
     petName: l.name ?? null,
     species: l.species === 'other' ? (l.speciesOther ?? SPECIES_TH.other) : SPECIES_TH[l.species],
+    breed: l.breed ?? null,
     colors: l.colors.map((c) => coatColor(c)?.label.th ?? c),
     markings: l.markings ?? null,
     collar,

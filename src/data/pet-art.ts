@@ -1,11 +1,14 @@
 import type { MediaRef, Species } from '@/lib/types';
 import { coatColor, collarColor } from './colors';
+import { petPhotoFor } from './pet-photos';
 
 /**
- * ภาพประกอบสัตว์ที่วาดด้วยโค้ด (SVG) ใช้แทนภาพถ่ายจนกว่าทีมจะเพิ่มภาพถ่ายที่มีไลเซนส์ (PROMPT.md 15, CREDITS.md `art-pets`)
+ * แมวตาม record ใช้ภาพ AI สมจริงที่ผูกกับ ID; สัตว์อื่นใช้ภาพประกอบ SVG ชั่วคราว (PROMPT.md 15)
  * src รูปแบบ `art:<species>?c=<coat ids>&k=<collar id>&s=<seed>` อ่านโดย component PetImage
  */
 export function petArt(species: Species, colors: string[], opts: { collar?: string; seed?: string; speciesLabelTh?: string } = {}): MediaRef {
+  const photo = opts.seed ? petPhotoFor(opts.seed) : undefined;
+  if (photo) return photo;
   const params = new URLSearchParams();
   params.set('c', colors.join(','));
   if (opts.collar) params.set('k', opts.collar);

@@ -90,6 +90,7 @@ export function Header() {
           <div className={s.mobileControls}>
             <LocaleSwitch />
             <SoundToggle />
+            <HelpButton />
             <div onClick={closeMenu}><AccountButton /></div>
           </div>
         </div>

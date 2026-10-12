@@ -7,6 +7,7 @@
 .rounded {
   border-radius: 16px;
 }
+.photoSkeleton { position: absolute; inset: 0; }
 .art,
 .svg {
   width: 100%;
@@ -59,12 +60,17 @@
   font-weight: 600;
   overflow: visible;
 }
-.avatar img {
+.avatar img,
+.avatarPhoto {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  overflow: hidden;
 }
+.img, .svg, .avatarPhoto { animation: photoReady var(--cp-dur-base) var(--cp-ease-out) both; }
+@keyframes photoReady { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .img, .svg, .avatarPhoto { animation: none; } }
 .aiDot {
   position: absolute;
   right: -6px;

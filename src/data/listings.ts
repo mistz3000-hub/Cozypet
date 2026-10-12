@@ -1,8 +1,9 @@
 import type { PersonaRef, PetListing, Species, Urgency } from '@/lib/types';
 import { petArt } from './pet-art';
+import { VARIETY_LISTINGS } from './variety-listings';
 
 /**
- * ประกาศ seed (ข้อมูลสมมติ วันที่ตัวอย่าง) — สัตว์หาย 13 · พบสัตว์ 9 · หาบ้าน 6
+ * ประกาศ seed (ข้อมูลสมมติ วันที่ตัวอย่าง) — สัตว์หาย 13 · พบสัตว์ 9 · หาบ้าน 38 (D23)
  * - ประกาศพบสัตว์/หาบ้านของสถานสงเคราะห์ผูกกับช่องที่รอข้อมูลองค์กรจริงเท่านั้น (ไม่สร้างกิจกรรมแทนองค์กรจริง)
  * - กรณีมาตรฐานของหน้าสแกน: แมว ส้ม+ขาว ปลอกคอแดง พระโขนง → listing-001 “มะม่วง” (PROMPT.md 7.2)
  */
@@ -12,6 +13,7 @@ interface Seed {
   type: PetListing['type'];
   species: Species;
   speciesOther?: string;
+  breed?: string;
   name?: string;
   sex?: PetListing['sex'];
   colors: string[];
@@ -34,6 +36,7 @@ function make(s: Seed): PetListing {
     source: 'seed',
     species: s.species,
     speciesOther: s.speciesOther,
+    breed: s.breed ?? (s.species === 'cat' ? (s.id === 'listing-005' ? 'แมวไทยพันทางขนยาว' : 'แมวไทยพันทาง') : s.species === 'dog' ? (s.id === 'listing-013' ? 'พุดเดิลผสม' : 'สุนัขไทยพันทาง') : undefined),
     name: s.name,
     sex: s.sex ?? 'unknown',
     colors: s.colors,
@@ -59,6 +62,7 @@ const ind = (id: string): PersonaRef => ({ kind: 'individual', id });
 const shel = (id: string): PersonaRef => ({ kind: 'shelter', id });
 
 export const LISTINGS: readonly PetListing[] = [
+  ...VARIETY_LISTINGS,
   // ---------- สัตว์หาย ----------
   make({ id: 'listing-001', type: 'lost', species: 'cat', name: 'มะม่วง', sex: 'female', colors: ['orange', 'white'], markings: 'ปลายหางสีขาว หางงอเล็กน้อย', collar: { status: 'yes', detail: 'red' }, districtId: 'phra-khanong', eventAt: '2026-09-20T18:30:00+07:00', description: 'มะม่วงเป็นแมวขี้อาย หายจากหน้าบ้านตอนเย็น ถ้าเจอช่วยทักผ่านแชตใน Cozypet นะคะ', postedBy: own('owner-001') }),
   make({ id: 'listing-002', type: 'lost', species: 'cat', name: 'ถั่วดำ', sex: 'male', colors: ['black'], markings: 'ตาสีเหลืองอำพัน มีขนขาวจุดเล็กที่อก', collar: { status: 'no' }, districtId: 'bang-kapi', eventAt: '2026-09-14T21:00:00+07:00', description: 'ออกไปเดินเล่นแล้วไม่กลับมา ชอบหลบใต้รถ', postedBy: own('owner-002') }),

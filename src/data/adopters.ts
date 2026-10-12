@@ -1,6 +1,7 @@
 import type { Availability, CareMode, CurrentPet, HelperProfile, HomeInfo, Species } from '@/lib/types';
 import { ADOPTER_SOURCE } from './adopters.generated';
 import { personaImagesFor } from './persona-images';
+import { petPhotoFor } from './pet-photos';
 
 /**
  * ผู้รับดูแลรายบุคคล 100 ราย (บุคคลสมมติ) — ถอดจาก CODEX_IMAGE_PROMPTS.md หัวข้อ 5
@@ -10,7 +11,12 @@ function toProfile(src: (typeof ADOPTER_SOURCE)[number]): HelperProfile {
   const careModes = src.careModes as CareMode[];
   const availability = src.availability as Availability;
   const speciesAccepted = src.speciesAccepted as Species[];
-  const currentPets = src.currentPets as CurrentPet[];
+  const currentPets: CurrentPet[] = src.currentPets.map((p, index) => ({
+    ...p,
+    species: p.species as Species,
+    sex: p.sex as CurrentPet['sex'],
+    photo: petPhotoFor(`${src.id}-pet-${index + 1}`),
+  }));
   const home = src.home as HomeInfo;
   const particle = src.politeParticle === 'ครับ' ? 'ครับ' : 'ค่ะ';
   const conditions: string[] = [];

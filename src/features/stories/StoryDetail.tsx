@@ -28,6 +28,7 @@ export function StoryDetail({ id }: { id: string }) {
             <Badge tone="info">{m.common.demo}</Badge>
           </div>
           <h1 className={s.detailTitle}>{story.petName} <span className={s.species}>· {m.species[story.species]}</span></h1>
+          <p className={s.date}>{m.common.breed}: {story.breed || m.common.breedUnknown}</p>
           <p className={s.date}><Icon name="clock" size="1em" /> {m.common.sampleDate} {date(story.date)}</p>
           <p className={s.lead} lang="th">{story.summary}</p>
           {story.body.split(/\n{2,}/).map((para, i) => <p key={i} lang="th" className={s.para}>{para}</p>)}

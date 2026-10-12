@@ -175,6 +175,33 @@
 .pets {
   list-style: none;
   padding-left: 0;
+  gap: 12px;
+}
+.pet {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-card);
+  background: var(--cp-bg);
+}
+.petPhoto {
+  width: clamp(96px, 25vw, 144px) !important;
+  flex: none;
+}
+.petInfo {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 420px) {
+  .pet {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .petPhoto {
+    width: 100% !important;
+  }
 }
 .prefs {
   margin: 0;

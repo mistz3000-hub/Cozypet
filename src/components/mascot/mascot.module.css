@@ -3,7 +3,15 @@
   width: 100%;
   max-width: 560px;
   margin-inline: auto;
+  container-type: inline-size;
+  aspect-ratio: 400 / 320;
+  max-height: 300px;
 }
+.readyStage { height: 100%; }
+.readyStage[data-hidden='true'] { visibility: hidden; }
+.assetSkeleton { position: absolute; inset: 0; border-radius: 28px; }
+.assetError { position: absolute; inset: 0; display: grid; place-content: center; gap: 12px; text-align: center; border-radius: 28px; background: var(--cp-butter); }
+.assetError button { padding: 10px 20px; border: 1px solid var(--cp-border); border-radius: var(--cp-radius-pill); background: var(--cp-surface); color: var(--cp-ink); cursor: pointer; }
 .stage {
   position: relative;
   display: block;
@@ -14,12 +22,13 @@
   border: none;
   background: none;
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 28px;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 @media (min-width: 768px) {
+  .stageWrap { max-height: none; }
   .stage {
     max-height: none;
   }
@@ -61,19 +70,21 @@
 .leaving :global([data-part='body']),
 .leaving :global([data-part='tail']) {
   transform: translateY(150px) !important;
+  transition-duration: var(--cp-dur-slow);
+  transition-timing-function: var(--cp-ease-in-out);
 }
 .leaving :global([data-part='paw-l']),
 .leaving :global([data-part='paw-r']) {
   opacity: 0;
 }
 .leaving {
-  transition: opacity var(--cp-dur-base) linear;
+  transition: opacity var(--cp-dur-slow) var(--cp-ease-in-out);
 }
 .entering :global([data-part='head']),
 .entering :global([data-part='body']),
 .entering :global([data-part='paw-l']),
 .entering :global([data-part='paw-r']) {
-  animation: rise var(--cp-dur-base) var(--cp-ease-out) both;
+  animation: rise var(--cp-dur-slow) var(--cp-ease-in-out) both;
 }
 @keyframes rise {
   from {
@@ -106,6 +117,10 @@
 /* reaction */
 .stage[data-reacting='true'] :global([data-active='true'] [data-part='eyes-open']) {
   opacity: 0;
+}
+.stage :global([data-part='eyes-open']),
+.stage :global([data-part='eyes-happy']) {
+  transition: opacity var(--cp-dur-instant) var(--cp-ease-out);
 }
 .stage[data-reacting='true'] :global([data-active='true'] [data-part='eyes-happy']) {
   opacity: 1 !important;
@@ -176,42 +191,19 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 8%;
-  height: 40%;
+  inset-block: 0;
+  z-index: 4;
   pointer-events: none;
 }
+.hearts[data-anchor='photo'] { --heart-anchor-y: 4%; }
 .heart {
   position: absolute;
-  top: 40%;
+  top: var(--heart-anchor-y, 7%);
+  width: clamp(20px, 6.5cqw, var(--heart-size));
+  height: auto;
   color: var(--cp-heart);
-  transform: translate(-50%, 0) scale(0.6);
-  opacity: 0;
-  animation: heartFloat var(--heart-ms) var(--cp-ease-out) forwards;
-}
-.heart[data-reduced='true'] {
-  transform: translate(-50%, -20px);
-  animation: heartFade var(--heart-ms) linear forwards;
-}
-@keyframes heartFloat {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(0.6) rotate(0);
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -70px) scale(1) rotate(var(--rot));
-  }
-}
-@keyframes heartFade {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  opacity: 1;
+  filter: drop-shadow(0 3px 5px color-mix(in srgb, var(--cp-heart) 28%, transparent));
 }
 
 .static {
@@ -220,7 +212,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stage :global([data-part]) {
+  .stage :global([data-part]),
+  .mini :global([data-part]) {
     animation: none !important;
   }
 }
@@ -243,6 +236,12 @@
 }
 .mini[data-tap='true'] :global([data-part='mini-paw']) {
   animation: miniTap var(--cp-dur-base) var(--cp-ease-out);
+}
+.mini[data-tap='true'] :global([data-part='paw-l']) {
+  animation: miniTap var(--cp-dur-base) var(--cp-ease-out);
+}
+.mini[data-idle='true'] :global([data-part='head']) {
+  animation: miniBob 4s ease-in-out infinite;
 }
 @keyframes miniTap {
   50% {

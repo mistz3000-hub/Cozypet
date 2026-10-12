@@ -53,6 +53,7 @@ export function ListingForm({ editId }: { editId?: string }) {
   const [species, setSpecies] = useState<Species | null>(existing?.species ?? fromScan?.species ?? null);
   const [speciesOther, setSpeciesOther] = useState(existing?.speciesOther ?? fromScan?.speciesOther ?? '');
   const [name, setName] = useState(existing?.name ?? '');
+  const [breed, setBreed] = useState(existing?.breed ?? '');
   const [sex, setSex] = useState<'male' | 'female' | 'unknown'>(existing?.sex ?? 'unknown');
   const [colors, setColors] = useState<string[]>(existing?.colors ?? fromScan?.colors ?? []);
   const [markings, setMarkings] = useState(existing?.markings ?? fromScan?.markings ?? '');
@@ -113,6 +114,7 @@ export function ListingForm({ editId }: { editId?: string }) {
       runNumber: existing?.runNumber ?? run?.run ?? 1,
       species: species!,
       speciesOther: species === 'other' ? speciesOther.trim() : undefined,
+      breed: breed.trim() || undefined,
       name: name.trim() || undefined,
       sex,
       colors,
@@ -154,8 +156,6 @@ export function ListingForm({ editId }: { editId?: string }) {
         }
       } else photoRef = photo;
     }
-    // loading สั้น ๆ ให้เห็นสถานะ (400–800ms)
-    await new Promise((r) => window.setTimeout(r, 500));
     const listing = build(photoRef);
     const r = saveUserListing(listing);
     if (r === 'quota') {
@@ -202,6 +202,7 @@ export function ListingForm({ editId }: { editId?: string }) {
               <dl className={s.previewFacts}>
                 <div><dt>{m.listings.modeLabel}</dt><dd>{mode === 'found' ? m.listings.modeFound : m.listings.modeLost}</dd></div>
                 <div><dt>{m.listings.name}</dt><dd>{listingTitle(preview, m, f)}</dd></div>
+                <div><dt>{m.common.breed}</dt><dd>{breed || m.common.breedUnknown}</dd></div>
                 <div><dt>{m.listings.fSpecies}</dt><dd>{speciesLabel(preview, m)} · {m.sex[sex]}</dd></div>
                 <div><dt>{m.listings.fColors}</dt><dd>{colorsText(colors, loc)}</dd></div>
                 <div><dt>{m.listings.fCollar}</dt><dd>{collarText(preview, m, loc)}</dd></div>
@@ -269,6 +270,9 @@ export function ListingForm({ editId }: { editId?: string }) {
             ) : null}
             <Field id={`${id}-name`} label={m.listings.name} required={mode === 'lost'} hint={mode === 'found' ? m.listings.nameHintFound : undefined} error={shown.name}>
               <TextInput id={`${id}-name`} value={name} maxLength={40} onChange={(e) => setName(e.target.value)} aria-invalid={!!shown.name} aria-describedby={[mode === 'found' ? `${id}-name-hint` : null, shown.name ? `${id}-name-error` : null].filter(Boolean).join(' ') || undefined} />
+            </Field>
+            <Field id={`${id}-breed`} label={m.common.breed} hint={m.common.breedHint}>
+              <TextInput id={`${id}-breed`} value={breed} maxLength={60} onChange={(e) => setBreed(e.target.value)} aria-describedby={`${id}-breed-hint`} />
             </Field>
             <RadioGroup<'male' | 'female' | 'unknown'> name={`${id}-sex`} legend={m.listings.fSex} value={sex} onChange={setSex}
               options={[{ value: 'male', label: m.sex.male }, { value: 'female', label: m.sex.female }, { value: 'unknown', label: m.listings.sexUnknown }]} />

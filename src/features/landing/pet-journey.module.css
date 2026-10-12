@@ -1,0 +1,84 @@
+.journey {
+  position: relative;
+  height: 190svh;
+  background: var(--cp-bg);
+}
+.stage {
+  --animal-size: 560px;
+  --animal-center-y: 50%;
+  position: sticky;
+  top: calc(var(--cp-header-h) + 8px);
+  height: calc(100svh - var(--cp-header-h) - 104px);
+  min-height: 520px;
+  max-height: 900px;
+  margin: 0 auto;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--cp-bg);
+}
+.halo { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(600px, 94vw); aspect-ratio: 1.08; border-radius: 48% 52% 55% 45% / 55% 40% 60% 45%; background: radial-gradient(ellipse at 38% 30%, var(--cp-butter), var(--cp-peach) 110%); }
+.decor { position: absolute; inset: 0; pointer-events: none; color: var(--cp-gold-700); }
+.decor > :nth-child(1) { position: absolute; left: calc(50% - 300px); top: 30%; opacity: 0.24; rotate: -18deg; }
+.decor > :nth-child(2) { position: absolute; left: calc(50% + 280px); top: 62%; opacity: 0.18; rotate: 18deg; }
+.decor > :nth-child(3) { position: absolute; left: calc(50% + 225px); top: 26%; color: var(--cp-heart); opacity: 0.32; }
+.eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: var(--cp-text-sm); font-weight: 600; color: var(--cp-gold-700); }
+.skip:focus { position: absolute; inset: 16px auto auto 16px; width: auto; height: auto; clip: auto; clip-path: none; overflow: visible; z-index: 5; padding: 10px 18px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: var(--cp-radius-pill); }
+.animal {
+  position: absolute;
+  width: var(--animal-size);
+  height: var(--animal-size);
+  left: 50%; top: var(--animal-center-y);
+  translate: -50% -50%;
+  z-index: 1;
+  will-change: transform;
+}
+.pet { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.petTrigger { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: none; border-radius: 24px; background: transparent; cursor: pointer; container-type: inline-size; }
+.petTrigger:disabled { cursor: default; }
+.petTrigger:focus-visible { outline: 3px solid var(--cp-ink); outline-offset: 3px; }
+.portal { position: absolute; inset: 0; z-index: 2; background: var(--cp-mouth); will-change: opacity; pointer-events: none; }
+.portal[data-entered='true'] { pointer-events: auto; }
+.imageError { display: grid; place-content: center; height: 100%; gap: 12px; text-align: center; }
+.portalSurface { position: absolute; inset: 0; background: var(--cp-bg); pointer-events: none; }
+.siteWindow { position: absolute; inset: 24px; padding: clamp(20px, 4vw, 56px); display: flex; flex-direction: column; justify-content: center; gap: 28px; transform-origin: 50% 50%; background: linear-gradient(140deg, var(--cp-bg) 55%, var(--cp-bg-alt)); border-radius: 28px; box-shadow: 0 12px 60px color-mix(in srgb, var(--cp-mouth) 12%, transparent); }
+.siteTop { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--cp-border); padding: 0 0 16px; }
+.siteTop strong { font-family: var(--cp-font-heading); font-size: 28px; letter-spacing: -1px; }
+.siteTop strong span { color: var(--cp-gold-700); }
+.siteTop > span { font-size: var(--cp-text-sm); color: var(--cp-ink-muted); display: inline-flex; align-items: center; gap: 6px; }
+.siteHero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.siteHero h3 { font-size: clamp(30px, 3.8vw, 54px); line-height: 1.2; max-width: 11em; margin: 14px 0; }
+.siteHero p { color: var(--cp-ink-muted); margin: 0 0 18px; }
+.pictureFrame { position: relative; width: min(100%, 300px); margin: 8px 0 20px; justify-self: center; rotate: 3deg; padding: 8px; border-radius: 32px; background: var(--cp-surface); box-shadow: 0 12px 36px color-mix(in srgb, var(--cp-ink) 8%, transparent); }
+.previewPet { border-radius: 26px; }
+.pictureFrame figcaption { position: absolute; bottom: -18px; left: -20px; right: 10px; display: flex; align-items: center; gap: 8px; padding: 12px 16px; border: 1px solid var(--cp-border); border-radius: var(--cp-radius-pill); background: var(--cp-surface); color: var(--cp-ink); font-size: var(--cp-text-sm); rotate: -3deg; box-shadow: var(--cp-shadow); }
+.pictureFrame figcaption svg { flex: none; color: var(--cp-heart); }
+.ctas { display: flex; flex-wrap: wrap; gap: 8px; }
+.helpers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.helper { display: flex; align-items: center; gap: 10px; background: var(--cp-surface); border: 1px solid var(--cp-border); padding: 12px; border-radius: 18px; color: var(--cp-ink); text-decoration: none; min-width: 0; }
+.helper > span:nth-child(2) { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.helper { transition: transform var(--cp-dur-quick) var(--cp-ease-out), border-color var(--cp-dur-quick) var(--cp-ease-out); }
+.helper:hover { transform: translateY(-2px); border-color: var(--cp-gold-500); }
+.helper small { font-size: 12px; color: var(--cp-ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 767px) {
+  .journey { height: 205svh; }
+  .stage { --animal-size: 340px; min-height: 500px; }
+  .decor > :nth-child(1) { left: 9%; top: 26%; }
+  .decor > :nth-child(2) { left: 86%; top: 65%; }
+  .decor > :nth-child(3) { left: 82%; top: 24%; }
+  .animal { top: var(--animal-center-y); }
+  .siteWindow { inset: 16px; padding: 20px; gap: 20px; border-radius: 24px; }
+  .siteTop { padding-bottom: 12px; }
+  .siteTop > span { display: none; }
+  .siteHero { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .siteHero h3 { font-size: 32px; margin-block: 12px; }
+  .siteHero p { font-size: var(--cp-text-sm); margin-bottom: 12px; }
+  .pictureFrame { display: none; }
+  .helpers { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .helper { padding: 8px 10px; }
+}
+@media (min-width: 768px) and (max-height: 800px) {
+  .stage { --animal-size: 440px; }
+  .pictureFrame { width: min(100%, 230px); }
+  .siteWindow { padding: 24px; gap: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .helper:hover { transform: none; } }

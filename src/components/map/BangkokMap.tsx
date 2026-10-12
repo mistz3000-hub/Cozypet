@@ -7,6 +7,9 @@ import { useI18n } from '@/i18n/provider';
 import { m as motionEl } from '@/lib/motion';
 import { SPRING } from '@/lib/motion-tokens';
 import { StatusShape } from '@/components/ui/StatusBadge';
+import { RadarWaves } from '@/components/RadarWaves';
+import { getHelper } from '@/data';
+import { AtlasPhoto } from '@/components/AtlasPhoto';
 import { MAP_H, MAP_W, PX_PER_KM, project, riverPath, viewFor } from './projection';
 import s from './map.module.css';
 
@@ -88,12 +91,15 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
           const pt = project(p.location);
           if (!inView(pt.x, pt.y)) return null;
           const selected = p.id === selectedId;
+          const helper = p.kind === 'place' ? undefined : getHelper(p.id);
+          const photo = helper?.kind === 'shelter' ? helper.images.place?.[0] : helper?.images.profile;
           const common = {
             className: s.pin,
             'data-kind': p.kind,
             'data-level': p.level,
             'data-selected': selected ? 'true' : undefined,
             'data-dim': p.dim ? 'true' : undefined,
+            'data-photo': photo ? 'true' : undefined,
             style: { left: `${left(pt.x)}%`, top: `${top(pt.y)}%` },
           } as const;
           const body = (
@@ -105,6 +111,7 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
               ) : (
                 <span className={s.area} aria-hidden="true" />
               )}
+              {photo ? <span className={s.pinPhoto}><AtlasPhoto media={photo} cover /></span> : null}
               <span className={s.pinShape} aria-hidden="true"><StatusShape level={p.level} size={mini ? 10 : 14} /></span>
               {selected ? <motionEl.span className={s.ring} aria-hidden="true" initial={{ scale: 0.6, opacity: 0.9 }} animate={{ scale: 1.8, opacity: 0 }} transition={{ duration: 0.7 }} /> : null}
             </>
@@ -117,7 +124,7 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
             <span key={p.id} {...common} aria-hidden="true">{body}</span>
           );
         })}
-        {sp && searching ? <span className={s.radar} style={{ left: `${left(sp.x)}%`, top: `${top(sp.y)}%` }} aria-hidden="true" /> : null}
+        {sp && searching ? <RadarWaves className={s.mapRadar} style={{ left: `${left(sp.x)}%`, top: `${top(sp.y)}%` }} /> : null}
         {sp ? (
           <span className={s.search} style={{ left: `${left(sp.x)}%`, top: `${top(sp.y)}%` }} aria-hidden="true">
             <span className={s.searchDot} />

@@ -40,10 +40,12 @@ export function Dialog({ open, onClose, title, children, footer, variant = 'dial
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        // An open combobox consumes the first Escape before closing its dialog.
+        if ((e.target as HTMLElement)?.closest('[role="combobox"][aria-expanded="true"]')) return;
         e.stopPropagation();
         onClose();
       } else if (e.key === 'Tab' && panel.current) {
-        const items = Array.from(panel.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.offsetParent !== null);
+        const items = Array.from(panel.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.offsetParent !== null && el.tabIndex >= 0 && el.getAttribute('aria-hidden') !== 'true');
         if (!items.length) return;
         const first = items[0];
         const last = items[items.length - 1];

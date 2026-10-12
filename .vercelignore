@@ -1,0 +1,11 @@
+.git/
+node_modules/
+.next/
+out/
+.env
+.env.*
+team.local.json
+*.local.csv
+coverage/
+test-results/
+playwright-report/

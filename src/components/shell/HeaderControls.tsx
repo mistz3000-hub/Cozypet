@@ -11,6 +11,8 @@ import { Icon } from '@/components/ui/Icon';
 import { playSfx } from '@/lib/audio/sfx';
 import { setSoundOverride } from '@/lib/audio/engine';
 import { useAnnounce } from '@/components/providers/Announcer';
+import { m as motionEl, useReducedMotion } from '@/lib/motion';
+import { T } from '@/lib/motion-tokens';
 import s from './header.module.css';
 
 export const OPEN_TOUR_EVENT = 'cozypet:open-tour';
@@ -25,7 +27,8 @@ export function RunBadge() {
   return (
     <Link href={run ? '/profile' : '/start'} className={s.runBadge} aria-label={run ? `${label} — ${m.header.runBadgeLabel}` : label} data-tour="header-run">
       <Icon name="paw" size="1em" />
-      <span suppressHydrationWarning>{label}</span>
+      <span className={s.runLabel} suppressHydrationWarning>{label}</span>
+      <span className={s.runLabelCompact} suppressHydrationWarning>{run ? f(m.header.runBadgeCompact, { run: formatRun(run) }) : m.common.demo}</span>
     </Link>
   );
 }
@@ -33,9 +36,12 @@ export function RunBadge() {
 export function LocaleSwitch() {
   const { m, locale, setLocale } = useI18n();
   const announce = useAnnounce();
+  const reduced = useReducedMotion();
   return (
     <div className={s.locale} role="group" aria-label={m.locale.label} data-tour="header-locale">
       <span className={s.localeLabel} aria-hidden="true">{m.locale.label}:</span>
+      <div className={s.localeOptions}>
+      <motionEl.span className={s.localeThumb} aria-hidden="true" initial={false} animate={{ x: locale === 'en' ? '100%' : '0%' }} transition={reduced ? { duration: 0 } : T.switch} />
       {(['th', 'en'] as const).map((l) => (
         <button
           key={l}
@@ -52,6 +58,7 @@ export function LocaleSwitch() {
           {l === 'th' ? m.locale.th : m.locale.en}
         </button>
       ))}
+      </div>
     </div>
   );
 }

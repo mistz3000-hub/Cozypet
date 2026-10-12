@@ -4,24 +4,35 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from 're
 import type { MascotKind } from '@/lib/types';
 import { useDemoSession, useHydrated } from '@/lib/store';
 import { useReducedMotion } from '@/lib/motion';
+import { mascotImages, retryImages, useImagesReady } from '@/lib/image-loading';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useI18n } from '@/i18n/provider';
-import { playSfx } from '@/lib/audio/sfx';
 import { MascotArt } from './MascotArt';
 import { MascotErrorBoundary, MascotStatic } from './MascotErrorBoundary';
 import { MASCOT } from './mascot-config';
+import { PetHearts } from './PetHearts';
+import { usePetReaction } from './usePetReaction';
 import s from './mascot.module.css';
 
-interface Heart { id: number; x: number; rot: number; delay: number; size: number }
-
 /** hero mascot: มองตาม pointer, reaction เมื่อกด, หัวใจ, idle (PROMPT.md 6.3–6.6, 6.8) */
-export function MascotStage({ forceError = false }: { forceError?: boolean }) {
+export function MascotStage({ forceError = false, kind: fixedKind }: { forceError?: boolean; kind?: MascotKind }) {
   const hydrated = useHydrated();
   const [session] = useDemoSession();
-  const kind: MascotKind | null = hydrated ? session.mascot : null;
+  const kind: MascotKind | null = fixedKind ?? (hydrated ? session.mascot : null);
+  const { m } = useI18n();
+  const assets = mascotImages(kind ?? 'cat');
+  const loading = useImagesReady(assets);
+  const [lastReady, setLastReady] = useState<MascotKind | null>(null);
+  if (kind && loading.ready && kind !== lastReady) setLastReady(kind);
+  const busy = !kind || loading.loading;
   return (
-    <div className={s.stageWrap}>
+    <div className={s.stageWrap} aria-busy={busy} data-mascot-loading={busy ? 'true' : undefined}>
       <MascotErrorBoundary kind={kind ?? 'cat'}>
-        {kind ? <StageInner kind={kind} forceError={forceError} /> : <MascotStatic kind="cat" emptyTable />}
+        <div className={s.readyStage} data-hidden={busy || loading.error ? 'true' : undefined} inert={busy || loading.error}>
+          {lastReady ? <StageInner kind={lastReady} forceError={forceError} /> : <MascotStatic kind="cat" emptyTable />}
+        </div>
+        {busy ? <Skeleton className={s.assetSkeleton} /> : null}
+        {loading.error ? <div className={s.assetError} role="status"><span>{m.mascot.loadFailed}</span><button type="button" onClick={() => retryImages(assets)}>{m.common.retry}</button></div> : null}
       </MascotErrorBoundary>
     </div>
   );
@@ -40,10 +51,10 @@ function StageInner({ kind, forceError }: { kind: MascotKind; forceError: boolea
   const current = useRef({ ex: 0, ey: 0, hr: 0, hx: 0, hy: 0 });
   const idleTimer = useRef<number | null>(null);
   const visible = useRef(true);
-  const reacting = useRef(false);
-  const [reaction, setReaction] = useState(false);
-  const [hearts, setHearts] = useState<Heart[]>([]);
-  const heartSeq = useRef(0);
+  const { reaction, hearts, react, reacting } = usePetReaction(kind, !!reduced);
+  useEffect(() => () => {
+    if (idleTimer.current !== null) window.clearTimeout(idleTimer.current);
+  }, []);
 
   // สลับ mascot: ตัวเดิมย่อหลังโต๊ะ ตัวใหม่โผล่ขึ้น (ปรับ state ระหว่าง render ตามแบบ React)
   const [shown, setShown] = useState<MascotKind>(kind);
@@ -63,7 +74,8 @@ function StageInner({ kind, forceError }: { kind: MascotKind; forceError: boolea
     if (!root) return;
     const c = current.current;
     root.querySelectorAll<SVGGElement>('[data-active="true"] [data-part="pupil"]').forEach((p) => {
-      p.style.transform = `translate(${c.ex}px, ${c.ey}px)`;
+      const ratio = p.closest('[data-photo-cat], [data-photo-dog]') ? MASCOT.photoEyeScale : 1;
+      p.style.transform = `translate(${c.ex * ratio}px, ${c.ey * ratio}px)`;
     });
     const head = root.querySelector<SVGGElement>('[data-active="true"] [data-part="head"]');
     if (head) head.style.transform = `translate(${c.hx}px, ${c.hy}px) rotate(${c.hr}deg)`;
@@ -196,9 +208,12 @@ function StageInner({ kind, forceError }: { kind: MascotKind; forceError: boolea
     let earT = 0;
     const rand = (a: number, b: number) => a + Math.random() * (b - a);
     const blink = () => {
-      if (visible.current) {
-        artBox.current?.querySelectorAll<SVGRectElement>('[data-active="true"] [data-part="lid"]').forEach((lid) => {
-          lid.animate([{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }, { transform: 'scaleY(0)' }], { duration: MASCOT.blinkMs, easing: 'ease-in-out' });
+      if (visible.current && !reacting.current) {
+        artBox.current?.querySelectorAll<SVGGraphicsElement>('[data-active="true"] [data-part="lid"]').forEach((lid) => {
+          const frames = lid.tagName.toLowerCase() === 'image'
+            ? [{ opacity: 0 }, { opacity: 1 }, { opacity: 0 }]
+            : [{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }, { transform: 'scaleY(0)' }];
+          lid.animate(frames, { duration: MASCOT.blinkMs, easing: 'ease-in-out' });
         });
       }
       blinkT = window.setTimeout(blink, rand(MASCOT.blinkMinMs, MASCOT.blinkMaxMs));
@@ -220,27 +235,6 @@ function StageInner({ kind, forceError }: { kind: MascotKind; forceError: boolea
       window.clearTimeout(earT);
     };
   }, [reduced, shown]);
-
-  const react = useCallback(() => {
-    if (reacting.current) return; // กดซ้ำระหว่าง reaction ไม่สร้างหัวใจชุดใหม่
-    reacting.current = true;
-    setReaction(true);
-    playSfx(kind === 'dog' ? 'woof' : 'meow');
-    const n = reduced ? 1 : 3;
-    const batch: Heart[] = Array.from({ length: n }, (_, i) => ({
-      id: ++heartSeq.current,
-      x: reduced ? 0 : (i - 1) * 46 + (i === 1 ? 0 : (Math.random() - 0.5) * 10),
-      rot: reduced ? 0 : (Math.random() * 24 - 12),
-      delay: i * MASCOT.heartGapMs,
-      size: reduced ? 36 : 28 + Math.round(Math.random() * 20),
-    }));
-    setHearts(batch);
-    window.setTimeout(() => setReaction(false), reduced ? MASCOT.reducedReactionMs : MASCOT.reactionMs);
-    window.setTimeout(() => {
-      setHearts([]);
-      reacting.current = false;
-    }, MASCOT.reactionLockMs);
-  }, [kind, reduced]);
 
   // พื้นที่เล่นบน stage: ลากนิ้วแล้วมองตาม
   const onStagePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
@@ -285,21 +279,8 @@ function StageInner({ kind, forceError }: { kind: MascotKind; forceError: boolea
           <MascotArt kind={shown} />
         </div>
       </div>
-      <span className={s.hearts} aria-hidden="true">
-        {hearts.map((h) => (
-          <svg
-            key={h.id}
-            className={s.heart}
-            data-reduced={reduced ? 'true' : undefined}
-            viewBox="0 0 24 24"
-            width={h.size}
-            height={h.size}
-            style={{ left: `calc(50% + ${h.x}px)`, animationDelay: `${h.delay}ms`, '--rot': `${h.rot}deg` } as CSSProperties}
-          >
-            <path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z" fill="currentColor" />
-          </svg>
-        ))}
-      </span>
+      <PetHearts hearts={hearts} reduced={!!reduced} />
+      <span className="visually-hidden" role="status">{reaction ? m.mascot.petLoved : ''}</span>
     </button>
   );
 }

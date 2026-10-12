@@ -114,6 +114,7 @@ function Chat({ conv }: { conv: Conversation }) {
   };
 
   const deliver = async (userMsg: ChatMessage, history: { role: 'user' | 'assistant'; text: string }[]): Promise<boolean> => {
+    setTyping(true);
     const res = await sendChat({
       conversationId: conv.id,
       persona: conv.persona,
@@ -127,6 +128,7 @@ function Chat({ conv }: { conv: Conversation }) {
       handoffCompleted: convHandoffs.length > 0,
       locale,
     });
+    setTyping(false);
     if (!res.ok) {
       patchMessage(conv.id, userMsg.id, { status: 'failed' });
       setError(res.error ?? m.chat.errorKeep);
@@ -136,10 +138,6 @@ function Chat({ conv }: { conv: Conversation }) {
     const readAt = new Date().toISOString();
     patchMessage(conv.id, userMsg.id, { status: 'read', readAt });
     playSfx('read');
-    setTyping(true);
-    const delay = reduced ? 400 : Math.min(1200, Math.max(400, 300 + data.reply.length * 6));
-    await new Promise((r) => window.setTimeout(r, delay));
-    setTyping(false);
     const reply: ChatMessage = {
       id: newId('msg'), role: 'assistant', text: data.reply, createdAt: new Date().toISOString(), status: 'read',
       source: data.source, provider: data.provider ?? undefined, model: data.model ?? undefined, fallbackReason: data.fallbackReason ?? undefined,
@@ -224,7 +222,7 @@ function Chat({ conv }: { conv: Conversation }) {
     <div className={s.root}>
       <header className={s.head}>
         <ButtonLink href={helper ? `/helpers/${helper.id}` : listing ? `/listings/${listing.id}` : '/'} variant="ghost" small iconOnly icon="arrowLeft" aria-label={m.chat.back}>{m.chat.back}</ButtonLink>
-        <Avatar name={name} media={helper?.images.profile} size={40} aiLabel />
+        <Avatar name={name} media={owner?.photo ?? helper?.images.profile} size={40} aiLabel />
         <div className={s.headText}>
           <h1 className={s.name}>{name}</h1>
           <p className={s.role}>{m.chat.role[conv.persona.kind]} · {f(m.chat.topic, { topic })}</p>
@@ -260,7 +258,7 @@ function Chat({ conv }: { conv: Conversation }) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={T.quick}
                 >
-                  {!mine ? (i === 0 ? <span className={s.miniAvatar}><Avatar name={name} media={helper?.images.profile} size={28} /></span> : <span className={s.avatarGap} />) : null}
+                  {!mine ? (i === 0 ? <span className={s.miniAvatar}><Avatar name={name} media={owner?.photo ?? helper?.images.profile} size={28} /></span> : <span className={s.avatarGap} />) : null}
                   <div className={s.bubble} data-mine={mine ? 'true' : undefined} data-failed={msg.status === 'failed' ? 'true' : undefined}>
                     {msg.text}
                   </div>
@@ -280,7 +278,7 @@ function Chat({ conv }: { conv: Conversation }) {
         <AnimatePresence>
           {typing ? (
             <motionEl.div key="typing" className={s.row} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: T.exit }} transition={T.quick}>
-              <span className={s.miniAvatar}><Avatar name={name} media={helper?.images.profile} size={28} /></span>
+              <span className={s.miniAvatar}><Avatar name={name} media={owner?.photo ?? helper?.images.profile} size={28} /></span>
               <div className={`${s.bubble} ${s.typing}`} aria-label={m.chat.typing} role="status">
                 {reduced ? <span>{m.chat.typing}</span> : <><i /><i /><i /></>}
               </div>
@@ -393,7 +391,7 @@ export function ChatLinkList({ items }: { items: Conversation[] }) {
         return (
           <li key={c.id}>
             <Link href={`/chat/${c.id}`} className={s.convItem}>
-              <Avatar name={name} media={h?.images.profile} size={36} />
+              <Avatar name={name} media={o?.photo ?? h?.images.profile} size={36} />
               <span className={s.convText}>
                 <strong>{name}</strong>
                 <span>{last ? last.text.slice(0, 60) : m.chat.started}</span>

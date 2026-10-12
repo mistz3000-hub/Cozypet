@@ -3,10 +3,25 @@
  */
 
 export type Species = 'cat' | 'dog' | 'other';
+/** UI groups for the demo catalogue; backend matching retains the three Species values. */
+export type AnimalKind = 'cat' | 'dog' | 'rabbit' | 'bird' | 'guinea-pig' | 'hamster' | 'other';
 export type MascotKind = 'cat' | 'dog';
 export type DistrictId = string; // ต้องมีอยู่ใน src/data/districts.ts
 export interface GeoPoint { lat: number; lng: number }
-export interface MediaRef { src: string; alt: string; creditId?: string; aiGenerated?: boolean }
+export interface MediaRef {
+  src: string;
+  alt: string;
+  creditId?: string;
+  aiGenerated?: boolean;
+  /** ภาพถ่ายหลายช่องในไฟล์เดียว: index นับซ้ายไปขวา บนลงล่าง เริ่ม 0 */
+  atlas?: {
+    columns: number;
+    rows: number;
+    index: number;
+    /** Native crop for sheets whose generated grid has uneven row heights. */
+    crop?: { x: number; y: number; width: number; height: number; sheetWidth: number; sheetHeight: number };
+  };
+}
 
 export type PersonaRef =
   | { kind: 'owner'; id: string }
@@ -25,6 +40,7 @@ export interface OwnerProfile {
   displayName: string;
   districtId: DistrictId;
   listingIds: string[];
+  photo?: MediaRef;
   persona: PersonaVoice;
   isDemo: true;
 }
@@ -38,6 +54,8 @@ export interface PetListing {
   runNumber?: number;
   species: Species;
   speciesOther?: string;
+  breed?: string;
+  breedId?: string;
   name?: string;
   sex?: 'male' | 'female' | 'unknown';
   colors: string[]; // id จาก src/data/colors.ts
@@ -62,6 +80,7 @@ export interface SuccessStory {
   listingId?: string;
   petName: string;
   species: Species;
+  breed?: string;
   outcome: 'adopted' | 'reunited';
   date: string;
   summary: string;
@@ -84,6 +103,7 @@ export interface CurrentPet {
   sex: 'male' | 'female';
   ageYears: number;
   note?: string;
+  photo?: MediaRef;
 }
 export interface CarePreferences { colors: string[]; breeds: string[]; reason: string }
 export interface HelperImages {

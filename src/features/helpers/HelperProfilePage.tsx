@@ -113,7 +113,7 @@ function Profile({ id }: { id: string }) {
           </p>
           {!isShelter && h.age ? (
             <p className={s.meta}>
-              <Icon name="user" size="1em" /> {f(m.helper.age, { age: h.age })}{h.sex ? ` · ${m.sex[h.sex]}` : ''}
+              <Icon name="user" size="1em" /> {f(m.helper.age, { age: h.age })}{h.sex ? ` · ${m.personSex[h.sex]}` : ''}
             </p>
           ) : null}
           <div className={s.statusRow} data-tour="helper-status">
@@ -185,9 +185,12 @@ function Profile({ id }: { id: string }) {
               {h.currentPets?.length ? (
                 <ul className={s.pets}>
                   {h.currentPets.map((p) => (
-                    <li key={p.name}>
-                      <Icon name="paw" size="1em" /> {f(m.helper.petLine, { name: p.name, species: m.species[p.species], breed: p.breed, color: p.color, sex: m.sex[p.sex], age: p.ageYears })}
-                      {p.note ? <span className={s.small}> · {p.note}</span> : null}
+                    <li key={p.name} className={s.pet}>
+                      {p.photo ? <PetImage media={p.photo} ratio="1 / 1" className={s.petPhoto} /> : null}
+                      <div className={s.petInfo}>
+                        <Icon name="paw" size="1em" /> {f(m.helper.petLine, { name: p.name, species: m.species[p.species], breed: p.breed, color: p.color, sex: m.sex[p.sex], age: p.ageYears })}
+                        {p.note ? <p className={s.small}>{p.note}</p> : null}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -204,6 +207,7 @@ function Profile({ id }: { id: string }) {
 
           <section className={s.section} aria-labelledby={`${uid}-img`}>
             <h2 id={`${uid}-img`}>{m.helper.images}</h2>
+            {isShelter && h.images.place?.length ? <p className={s.small}>{m.common.shelterImageNote}</p> : null}
             {images.length ? (
               <div className={s.gallery}>
                 {images.map((x, i) => (

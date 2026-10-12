@@ -1,8 +1,10 @@
 'use client';
 
-import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import { useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react';
 import { useI18n } from '@/i18n/provider';
 import { Icon } from './Icon';
+import { m as motionEl, useReducedMotion } from '@/lib/motion';
+import { T } from '@/lib/motion-tokens';
 import s from './field.module.css';
 
 export function Field({ label, required, hint, error, children, id, counter }: {
@@ -17,12 +19,12 @@ export function Field({ label, required, hint, error, children, id, counter }: {
   const { m } = useI18n();
   return (
     <div className={s.field} data-invalid={error ? 'true' : undefined}>
-      <label htmlFor={id} className={s.label}>
+      <label id={`${id}-label`} htmlFor={id} className={s.label}>
         {label}
         {required ? <span className={s.req}> * <span className={s.reqText}>{m.common.required}</span></span> : null}
       </label>
-      {hint ? <p id={`${id}-hint`} className={s.hint}>{hint}</p> : null}
       {children}
+      {hint ? <p id={`${id}-hint`} className={s.hint}>{hint}</p> : null}
       <div className={s.meta}>
         {error ? (
           <p id={`${id}-error`} className={s.error}>
@@ -45,14 +47,7 @@ export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
 export function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea {...props} className={[s.input, s.textarea, props.className].filter(Boolean).join(' ')} />;
 }
-export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <div className={s.selectWrap}>
-      <select {...props} className={[s.input, s.select, props.className].filter(Boolean).join(' ')} />
-      <Icon name="chevronDown" className={s.selectIcon} />
-    </div>
-  );
-}
+export { ThemedSelect as Select } from './ThemedSelect';
 
 /** radio group แบบการ์ด/ชิป */
 export function RadioGroup<T extends string>({ name, legend, value, onChange, options, layout = 'row', required, error, hint }: {
@@ -144,8 +139,11 @@ export function Checkbox({ checked, onChange, children, id, required, error }: {
 
 /** segmented control (radio group) */
 export function Segmented<T extends string>({ label, value, onChange, options, name }: { label: string; value: T; onChange: (v: T) => void; options: { value: T; label: ReactNode }[]; name: string }) {
+  const reduced = useReducedMotion();
+  const index = Math.max(0, options.findIndex((option) => option.value === value));
   return (
-    <div role="radiogroup" aria-label={label} className={s.segmented}>
+    <div role="radiogroup" aria-label={label} className={s.segmented} style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}>
+      <motionEl.span aria-hidden="true" className={s.segThumb} style={{ width: `calc((100% - 4px) / ${options.length})` }} initial={false} animate={{ x: `${index * 100}%` }} transition={reduced ? { duration: 0 } : T.switch} />
       {options.map((o) => (
         <label key={o.value} className={s.segItem} data-checked={value === o.value ? 'true' : undefined}>
           <input type="radio" name={name} value={o.value} checked={value === o.value} onChange={() => onChange(o.value)} />

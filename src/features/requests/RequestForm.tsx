@@ -136,7 +136,6 @@ function Form({ type, helperId, listingId }: { type: RequestType; helperId: stri
       return;
     }
     setSending(true);
-    await new Promise((r) => window.setTimeout(r, 500));
     const ts = new Date().toISOString();
     const answers: CareRequest['answers'] = type === 'intake'
       ? chosen

@@ -2,12 +2,14 @@
 
 import type { PetListing } from '@/lib/types';
 import { coatColor, collarColor } from '@/data/colors';
+import { animalKindOf } from '@/data/animal-catalog';
 import type { Messages } from '@/i18n';
 
 type Loc = (t: { th: string; en: string }) => string;
 
 export function speciesLabel(l: Pick<PetListing, 'species' | 'speciesOther'>, m: Messages): string {
-  return l.species === 'other' ? l.speciesOther || m.species.other : m.species[l.species];
+  const kind = animalKindOf(l);
+  return kind === 'other' ? l.speciesOther || m.species.other : m.animalKind[kind];
 }
 
 export function listingTitle(l: PetListing, m: Messages, f: (t: string, p: Record<string, string | number>) => string): string {

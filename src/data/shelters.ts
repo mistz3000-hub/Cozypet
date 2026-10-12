@@ -1,4 +1,5 @@
 import type { HelperProfile, Species } from '@/lib/types';
+import { GENERATED_MEDIA } from './generated-media';
 
 /**
  * สถานสงเคราะห์ 20 ช่อง (PROMPT.md D10, CODEX_IMAGE_PROMPTS.md หัวข้อ 6)
@@ -9,7 +10,7 @@ import type { HelperProfile, Species } from '@/lib/types';
  *   พร้อมตำแหน่งและตัวเลขสาธิต เพื่อให้ flow ทดสอบได้ครบ
  * - ความจุ บริจาค ฉุกเฉิน Verified ทุกช่องเป็น **ค่าสาธิต** จากตารางใน CODEX_IMAGE_PROMPTS.md (ไม่ใช่ข้อมูลจริงขององค์กร)
  *   fixture: 001 = 95/100 เปิดรับบริจาค · 002 = 37/40 · 007 เต็ม (เป็นช่องรอข้อมูล ไม่ให้องค์กรจริงอยู่ในสถานะเต็ม)
- * - ไม่มีภาพจากช่องทางทางการใน repo ยัง (ใช้ placeholder อุ้งเท้า + ชื่อองค์กร ตาม PROMPT.md 15)
+ * - D22: ใช้ภาพพื้นที่ดูแลสาธิตที่สร้างด้วย AI 20 ช่อง ไม่ใช่ภาพสถานที่จริงขององค์กร
  */
 
 interface ShelterSlot {
@@ -114,7 +115,8 @@ function slotNumber(id: string) {
 
 function toProfile(slot: ShelterSlot): HelperProfile {
   const real = slot.real;
-  const species: Species[] = real?.speciesAccepted ?? ['dog', 'cat'];
+  // Only the five final demo slots support small pets; official organisations retain their recorded species.
+  const species: Species[] = real?.speciesAccepted ?? (Number(slotNumber(slot.id)) >= 16 ? ['dog', 'cat', 'other'] : ['dog', 'cat']);
   const displayName = real ? real.displayName : `ช่องสถานสงเคราะห์ ${slotNumber(slot.id)} (รอข้อมูลองค์กรจริง)`;
   return {
     id: slot.id,
@@ -134,7 +136,7 @@ function toProfile(slot: ShelterSlot): HelperProfile {
     description: real
       ? `${real.summary} · ตัวเลขความจุ สถานะบริจาค และป้าย Verified ใน Cozypet เป็นข้อมูลสาธิต`
       : 'ช่องนี้รอทีมเติมชื่อ ที่ตั้ง และลิงก์ทางการขององค์กรจริง ตำแหน่งและตัวเลขทั้งหมดเป็นข้อมูลสาธิตสำหรับทดสอบ flow',
-    images: {},
+    images: { place: [GENERATED_MEDIA[`shelters:${slot.id}`]] },
     isRealOrganization: true,
     isPlaceholder: !real,
     verification: real?.verification,

@@ -2,10 +2,11 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useId, useMemo } from 'react';
-import type { ListingType, Species } from '@/lib/types';
+import type { AnimalKind, ListingType } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
 import { HELPERS } from '@/data';
 import { coatColor } from '@/data/colors';
+import { ANIMAL_KINDS, animalBreedKey, animalBreedLabel, animalBreedOf, matchesAnimalKind } from '@/data/animal-catalog';
 import { getDistrict } from '@/data/districts';
 import { rankAdoptions } from '@/lib/balancer';
 import { useStore } from '@/lib/store';
@@ -24,7 +25,7 @@ const TABS: ListingType[] = ['lost', 'found', 'adoption'];
 const helperMap = new Map(HELPERS.map((h) => [h.id, h]));
 
 export function ListingsFeed() {
-  const { m, f, num } = useI18n();
+  const { m, f, num, loc, locale } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -35,7 +36,9 @@ export function ListingsFeed() {
 
   const tab = (TABS.includes(params.get('tab') as ListingType) ? params.get('tab') : 'lost') as ListingType;
   const q = params.get('q') ?? '';
-  const species = (params.get('species') ?? '') as Species | '';
+  const speciesParam = params.get('species');
+  const species = ANIMAL_KINDS.includes(speciesParam as AnimalKind) ? speciesParam as AnimalKind : '';
+  const breed = params.get('breed') ?? '';
   const district = params.get('district') ?? '';
   const status = (params.get('status') ?? 'open') as 'open' | 'closed' | 'all';
   const sortParam = params.get('sort');
@@ -53,13 +56,15 @@ export function ListingsFeed() {
   const { items, ranks } = useMemo(() => {
     const needle = q.trim().toLowerCase();
     let list = all.filter((l) => l.type === tab);
-    if (species) list = list.filter((l) => l.species === species);
+    if (species) list = list.filter((l) => matchesAnimalKind(l, species));
+    if (breed) list = list.filter((l) => animalBreedKey(l) === breed);
     if (district) list = list.filter((l) => l.districtId === district);
     if (status !== 'all') list = list.filter((l) => l.status === status);
     if (needle) {
       list = list.filter((l) => {
         const d = getDistrict(l.districtId);
-        const hay = [l.name, l.markings, l.description, l.speciesOther, d?.nameTh, d?.nameEn, ...l.colors.flatMap((c) => [coatColor(c)?.label.th, coatColor(c)?.label.en])].filter(Boolean).join(' ').toLowerCase();
+        const b = animalBreedOf(l);
+        const hay = [l.name, l.markings, l.description, l.speciesOther, l.species, l.breed, b?.label.th, b?.label.en, d?.nameTh, d?.nameEn, ...l.colors.flatMap((c) => [coatColor(c)?.label.th, coatColor(c)?.label.en])].filter(Boolean).join(' ').toLowerCase();
         return hay.includes(needle);
       });
     }
@@ -73,10 +78,20 @@ export function ListingsFeed() {
       list = [...list].sort((a, b) => (sort === 'oldest' ? a.eventAt.localeCompare(b.eventAt) : b.eventAt.localeCompare(a.eventAt)) || a.id.localeCompare(b.id));
     }
     return { items: list, ranks: rankMap };
-  }, [all, tab, species, district, status, q, sort, history, now]);
+  }, [all, tab, species, breed, district, status, q, sort, history, now]);
+
+  const breeds = useMemo(() => {
+    const options = new Map<string, string>();
+    for (const pet of all) {
+      if (pet.type !== tab || (species && !matchesAnimalKind(pet, species))) continue;
+      const key = animalBreedKey(pet);
+      if (key) options.set(key, animalBreedLabel(pet, loc, m.common.breedUnknown));
+    }
+    return [...options].sort((a, b) => a[1].localeCompare(b[1], locale));
+  }, [all, tab, species, loc, locale, m.common.breedUnknown]);
 
   const from = params.toString();
-  const filtersActive = !!(q || species || district || status !== 'open');
+  const filtersActive = !!(q || species || breed || district || status !== 'open');
 
   return (
     <div className="cp-container cp-page">
@@ -99,7 +114,7 @@ export function ListingsFeed() {
             type="button"
             aria-selected={tab === t}
             className={s.tab}
-            onClick={() => set({ tab: t, sort: null })}
+            onClick={() => set({ tab: t, sort: null, breed: null })}
           >
             {t === 'lost' ? m.listings.tabLost : t === 'found' ? m.listings.tabFound : m.listings.tabAdoption}
           </button>
@@ -111,11 +126,15 @@ export function ListingsFeed() {
           <TextInput id={`${id}-q`} type="search" value={q} placeholder={m.listings.searchPh} onChange={(e) => set({ q: e.target.value })} />
         </Field>
         <Field id={`${id}-sp`} label={m.listings.filterSpecies}>
-          <Select id={`${id}-sp`} value={species} onChange={(e) => set({ species: e.target.value })}>
+          <Select id={`${id}-sp`} value={species} onChange={(e) => set({ species: e.target.value, breed: null })}>
             <option value="">{m.listings.all}</option>
-            <option value="cat">{m.species.cat}</option>
-            <option value="dog">{m.species.dog}</option>
-            <option value="other">{m.species.other}</option>
+            {ANIMAL_KINDS.map((kind) => <option key={kind} value={kind}>{m.animalKind[kind]}</option>)}
+          </Select>
+        </Field>
+        <Field id={`${id}-breed`} label={m.listings.filterBreed}>
+          <Select id={`${id}-breed`} value={breed} onChange={(e) => set({ breed: e.target.value })}>
+            <option value="">{m.listings.all}</option>
+            {breeds.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </Select>
         </Field>
         <Field id={`${id}-d`} label={m.listings.filterDistrict}>
@@ -139,7 +158,7 @@ export function ListingsFeed() {
 
       <div className={s.countRow}>
         <p className={s.count} aria-live="polite">{f(m.listings.resultCount, { n: num(items.length) })}</p>
-        {filtersActive ? <Button small variant="ghost" icon="x" onClick={() => set({ q: null, species: null, district: null, status: null })}>{m.listings.clearFilters}</Button> : null}
+        {filtersActive ? <Button small variant="ghost" icon="x" onClick={() => set({ q: null, species: null, breed: null, district: null, status: null })}>{m.listings.clearFilters}</Button> : null}
       </div>
 
       {items.length ? (
@@ -159,7 +178,7 @@ export function ListingsFeed() {
           <Icon name="search" size={34} />
           <p>{m.listings.empty}</p>
           <div className={s.headActions}>
-            <Button icon="x" onClick={() => set({ q: null, species: null, district: null, status: null })}>{m.listings.clearFilters}</Button>
+            <Button icon="x" onClick={() => set({ q: null, species: null, breed: null, district: null, status: null })}>{m.listings.clearFilters}</Button>
             <ButtonLink href={`/listings/new?mode=${tab === 'lost' ? 'lost' : 'found'}`} variant="primary" icon="plus">{tab === 'lost' ? m.listings.postLost : m.listings.postFound}</ButtonLink>
           </div>
         </div>

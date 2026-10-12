@@ -1,0 +1,46 @@
+.radar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 85%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 3;
+}
+.grid, .sweep, .wave { position: absolute; inset: 0; border-radius: 50%; }
+.grid {
+  background: repeating-radial-gradient(circle, transparent 0 23%, rgb(244 180 0 / 25%) 24% 25%);
+  border: 1px solid rgb(244 180 0 / 35%);
+}
+.sweep {
+  background: conic-gradient(from 0deg, transparent 0deg 230deg, rgb(244 180 0 / 8%) 250deg, rgb(244 180 0 / 38%) 360deg);
+  animation: rotate var(--cp-radar-ms) linear infinite;
+}
+.wave {
+  border: 3px solid var(--cp-gold-500);
+  background: radial-gradient(circle, transparent 55%, rgb(244 180 0 / 18%) 100%);
+  animation: expand var(--cp-radar-ms) linear infinite;
+}
+.wave:nth-of-type(4) { animation-delay: calc(var(--cp-radar-gap-ms) * -1); }
+.wave:nth-of-type(5) { animation-delay: calc(var(--cp-radar-gap-ms) * -2); }
+.beacon {
+  position: absolute;
+  left: 50%; top: 50%; translate: -50% -50%;
+  width: 14px; height: 14px;
+  background: var(--cp-gold-500);
+  border: 3px solid var(--cp-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 7px rgb(244 180 0 / 25%);
+}
+@keyframes expand { from { transform: scale(0.08); opacity: 0.95; } to { transform: scale(1); opacity: 0; } }
+@keyframes rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .wave, .sweep { animation: none; }
+  .wave { transform: scale(0.5); opacity: 0.5; }
+  .wave:nth-of-type(4) { transform: scale(0.75); }
+  .wave:nth-of-type(5) { transform: scale(1); }
+  .sweep { background: rgb(244 180 0 / 10%); }
+}

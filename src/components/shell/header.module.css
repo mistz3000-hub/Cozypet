@@ -12,6 +12,7 @@
   box-shadow: 0 2px 12px rgb(43 33 24 / 5%);
 }
 .inner {
+  max-width: 1440px;
   height: var(--cp-header-h);
   display: flex;
   align-items: center;
@@ -108,6 +109,8 @@
   display: none;
 }
 .login {
+  flex: 0 0 auto;
+  padding-inline: 16px;
   background: var(--cp-ink);
   color: var(--cp-bg);
   border-color: var(--cp-ink);
@@ -115,6 +118,12 @@
 .login:hover {
   background: #4a3a2c;
   color: var(--cp-bg);
+}
+.runLabelCompact {
+  display: none;
+}
+.login > * {
+  flex-shrink: 0;
 }
 .cta {
   display: inline-flex;
@@ -146,6 +155,8 @@
   color: var(--cp-ink-muted);
   padding: 0 4px 0 8px;
 }
+.localeOptions { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); isolation: isolate; }
+.localeThumb { position: absolute; inset-block: 0; left: 0; width: 50%; border-radius: var(--cp-radius-pill); background: var(--cp-gold-500); z-index: -1; pointer-events: none; }
 .localeBtn {
   min-height: 40px;
   min-width: 44px;
@@ -157,9 +168,9 @@
   font-size: var(--cp-text-sm);
   cursor: pointer;
   color: var(--cp-ink-muted);
+  transition: color var(--cp-dur-slow) var(--cp-ease-in-out);
 }
 .localeBtn[aria-pressed='true'] {
-  background: var(--cp-gold-500);
   color: var(--cp-ink);
 }
 .wideOnly,
@@ -265,10 +276,23 @@
   .runBadge {
     padding: 4px 8px;
   }
+  .right > .help {
+    display: none;
+  }
 }
-@media (min-width: 768px) {
+@media (max-width: 600px) {
+  .runLabel {
+    display: none;
+  }
+  .runLabelCompact {
+    display: inline;
+  }
+}
+@media (min-width: 900px) {
   .wideOnly {
-    display: contents;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
   }
   .helpTextCompact {
     display: inline;
@@ -278,11 +302,14 @@
   }
 }
 @media (min-width: 1024px) {
-  .anchors {
-    display: flex;
-  }
   .desktopOnly {
     display: inline-flex;
+  }
+}
+@media (min-width: 1400px) {
+  .anchors {
+    display: flex;
+    flex: 0 0 auto;
   }
   .menuBtn {
     display: none;

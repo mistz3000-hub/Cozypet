@@ -56,6 +56,27 @@
 }
 .heroArt {
   width: 100%;
+  min-width: 0;
+}
+.heroPets {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: end;
+}
+.heroPet {
+  min-width: 0;
+  margin: 0;
+}
+.heroPet figcaption {
+  text-align: center;
+  padding-top: 12px;
+  display: grid;
+  gap: 3px;
+}
+.heroPet figcaption span {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
 }
 @media (min-width: 1024px) {
   .hero {

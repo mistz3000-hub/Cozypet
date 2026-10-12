@@ -21,6 +21,8 @@ import { BangkokMap, type MapPin } from '@/components/map/BangkokMap';
 import { StoryCard } from '@/features/stories/StoryCard';
 import { StoryFilmSection } from '@/features/story/StoryFilmSection';
 import { PhoneTourSection } from '@/features/motion/howto/PhoneTourSection';
+import { PetMouthJourney } from './PetMouthJourney';
+import { PetVarietySection } from './PetVarietySection';
 import s from './landing.module.css';
 
 export function LandingPage() {
@@ -28,6 +30,7 @@ export function LandingPage() {
   const params = useSearchParams();
   const hydrated = useHydrated();
   const [session] = useDemoSession();
+  const mascot = hydrated ? session.mascot : 'cat';
   const run = hydrated ? session.runNumber : null;
   const finding = run ? session.findingIndexByRun[formatRun(run)] ?? 1 : 1;
   const point = run ? buildFindingSession(run, finding, 'run_seed', undefined, '').searchPoint : null;
@@ -67,10 +70,17 @@ export function LandingPage() {
             </p>
           </div>
           <div className={s.heroArt}>
-            <MascotStage forceError={params.get('mascotError') === '1'} />
+            <div className={s.heroPets}>
+              <figure className={s.heroPet}>
+                <MascotStage forceError={params.get('mascotError') === '1'} />
+                <figcaption><strong>{mascot === 'cat' ? m.mascot.cat : m.mascot.dog}</strong><span>{mascot === 'cat' ? m.mascot.catBreed : m.mascot.dogBreed}</span></figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </section>
+
+      <PetMouthJourney />
 
       {/* 2 How it works */}
       <section id="how-it-works" className={s.section} aria-labelledby="how-title">
@@ -102,6 +112,8 @@ export function LandingPage() {
           </ol>
         </div>
       </section>
+
+      <PetVarietySection />
 
       {/* 3 Find location */}
       <section id="find-location" className={`${s.section} ${s.alt}`} aria-labelledby="find-title">

@@ -34,6 +34,8 @@
   margin: 10px 0 0;
   color: var(--cp-ink-muted);
 }
+.loadingResult { display: grid; grid-template-rows: repeat(3, 18px); gap: 12px; padding: 20px; margin-top: 14px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 18px; }
+.loadingResult > :global([data-skeleton]) { border-radius: 8px; }
 .spinner {
   width: 16px;
   height: 16px;

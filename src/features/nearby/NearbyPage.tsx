@@ -69,6 +69,8 @@ export function NearbyPage() {
   const [popup, setPopup] = useState<PopupRequest | null>(null);
   const [whyRec, setWhyRec] = useState<{ rec: Recommendation; name: string } | null>(null);
   const [limit5, setLimit5] = useState(false);
+  const searchTimer = useRef<number | null>(null);
+  useEffect(() => () => { if (searchTimer.current !== null) window.clearTimeout(searchTimer.current); }, []);
 
   // รอบค้นหาปัจจุบัน (refresh ไม่เพิ่มรอบ)
   const findingIndex = run.finding;
@@ -97,7 +99,8 @@ export function NearbyPage() {
     setSelected(null);
     announce(f(m.nearby.searching, { district: district(target.districtId) }));
     playSfx('ping');
-    window.setTimeout(() => {
+    if (searchTimer.current !== null) window.clearTimeout(searchTimer.current);
+    searchTimer.current = window.setTimeout(() => {
       searchedRounds.add(`${run.run}:${target.findingIndex}`);
       setPhase('results');
       playSfx('chime');

@@ -1,4 +1,5 @@
 import type { OwnerProfile } from '@/lib/types';
+import { GENERATED_MEDIA } from './generated-media';
 
 /** เจ้าของที่กำลังตามหาสัตว์ (บุคคลสมมติทั้งหมด) — หนึ่งคนต่อประกาศสัตว์หาย seed */
 function owner(id: string, displayName: string, districtId: string, listingId: string, particle: 'ค่ะ' | 'ครับ', tone: string, facts: string[] = []): OwnerProfile {
@@ -7,6 +8,7 @@ function owner(id: string, displayName: string, districtId: string, listingId: s
     displayName,
     districtId,
     listingIds: [listingId],
+    photo: GENERATED_MEDIA[`owners:${id}`],
     persona: { speakerLabel: 'เจ้าของน้อง', politeParticle: particle, tone, facts },
     isDemo: true,
   };

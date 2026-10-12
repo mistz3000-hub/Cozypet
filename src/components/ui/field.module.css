@@ -46,6 +46,7 @@
 }
 .input {
   width: 100%;
+  min-width: 0;
   min-height: 48px;
   padding: 10px 14px;
   border-radius: 14px;
@@ -184,29 +185,32 @@
   accent-color: var(--cp-ink);
 }
 .segmented {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  padding: 4px;
+  position: relative;
+  display: inline-grid;
+  gap: 0;
+  padding: 2px;
+  isolation: isolate;
   border-radius: var(--cp-radius-pill);
   background: var(--cp-bg-alt);
   border: 1px solid var(--cp-border);
 }
+.segThumb { position: absolute; inset-block: 2px; left: 2px; border-radius: var(--cp-radius-pill); background: var(--cp-gold-500); box-shadow: var(--cp-shadow); z-index: -1; pointer-events: none; }
 .segItem {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 40px;
   padding: 6px 16px;
   border-radius: var(--cp-radius-pill);
   cursor: pointer;
   font-weight: 600;
   color: var(--cp-ink-muted);
+  text-align: center;
+  transition: color var(--cp-dur-slow) var(--cp-ease-in-out);
 }
 .segItem[data-checked='true'] {
-  background: var(--cp-gold-500);
   color: var(--cp-ink);
-  box-shadow: var(--cp-shadow);
 }
 .summary {
   border: 2px solid var(--cp-error-ink);

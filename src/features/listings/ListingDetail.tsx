@@ -21,6 +21,7 @@ import { statusInfo } from '@/lib/status';
 import { helperName } from '@/features/helpers/helper-text';
 import { closeUserListing } from './actions';
 import { colorsText, collarText, listingTitle, speciesLabel } from './listing-text';
+import { animalBreedLabel } from '@/data/animal-catalog';
 import s from './detail.module.css';
 
 type Reason = NonNullable<PetListing['closedReason']>;
@@ -77,6 +78,7 @@ export function ListingDetail({ id }: { id: string }) {
           <h1 className={s.title}>{title}</h1>
           <dl className={s.facts}>
             <div><dt>{m.listings.fSpecies}</dt><dd>{speciesLabel(listing, m)}</dd></div>
+            <div><dt>{m.common.breed}</dt><dd>{animalBreedLabel(listing, loc, m.common.breedUnknown)}</dd></div>
             <div><dt>{m.listings.fSex}</dt><dd>{m.sex[listing.sex ?? 'unknown']}</dd></div>
             <div><dt>{m.listings.fColors}</dt><dd>{colorsText(listing.colors, loc) || '—'}</dd></div>
             <div><dt>{m.listings.fCollar}</dt><dd>{collarText(listing, m, loc)}</dd></div>

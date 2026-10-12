@@ -6,7 +6,7 @@ import { LazyMotion, MotionConfig } from 'motion/react';
 import type { ReactNode } from 'react';
 import { T } from './motion-tokens';
 
-export { m, AnimatePresence, useReducedMotion, animate, useScroll, useTransform, useMotionValue, useSpring, useInView, LayoutGroup } from 'motion/react';
+export { m, AnimatePresence, useReducedMotion, animate, useScroll, useTransform, useMotionValue, useSpring, useInView, LayoutGroup, MotionConfig } from 'motion/react';
 
 const loadFeatures = () => import('./motion-features').then((r) => r.default);
 const loadMax = () => import('./motion-features-max').then((r) => r.default);

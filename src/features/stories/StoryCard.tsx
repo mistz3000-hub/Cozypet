@@ -30,6 +30,7 @@ export function StoryCard({ story }: { story: SuccessStory }) {
         <h3 className={s.name}>
           {story.petName} <span className={s.species}>· {m.species[story.species]}</span>
         </h3>
+        <p className={s.date}>{m.common.breed}: {story.breed || m.common.breedUnknown}</p>
         <p className={s.summary} lang="th">{story.summary}{locale === 'en' ? <span className={s.thai}> {m.common.thaiOnly}</span> : null}</p>
         <p className={s.date}><Icon name="clock" size="1em" /> {m.common.sampleDate} {date(story.date)}</p>
       </div>

@@ -3,6 +3,7 @@
 import { Component, type ReactNode } from 'react';
 import type { MascotKind } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
+import { MascotArt } from './MascotArt';
 import s from './mascot.module.css';
 
 /** ภาพนิ่ง fallback (ใช้ก่อน hydrate, เมื่อ component error หรือ asset โหลดไม่ได้) */
@@ -13,15 +14,17 @@ export function MascotStatic({ kind, emptyTable }: { kind: MascotKind; emptyTabl
       <div className={s.stage} aria-hidden="true">
         <span className={s.blob} />
         <svg viewBox="0 0 400 320" className={s.static}>
-          <rect x="0" y="236" width="400" height="84" rx="10" fill="#D9B98C" />
-          <rect x="0" y="236" width="400" height="16" rx="8" fill="#E8CFA6" />
+          <rect x="0" y={kind === 'cat' ? 262 : 236} width="400" height={kind === 'cat' ? 58 : 84} rx="10" fill="var(--cp-table-wood)" />
+          <rect x="0" y={kind === 'cat' ? 262 : 236} width="400" height="14" rx="8" fill="var(--cp-table-edge)" />
         </svg>
       </div>
     );
   }
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img className={s.static} src={`/mascot/${kind}-static.svg`} alt={kind === 'dog' ? m.mascot.altDog : m.mascot.altCat} width={400} height={320} />
+    <div className={s.stage} role="img" aria-label={kind === 'dog' ? m.mascot.altDog : m.mascot.altCat}>
+      <span className={s.blob} aria-hidden="true" />
+      <div className={s.art} aria-hidden="true"><MascotArt kind={kind} /></div>
+    </div>
   );
 }
 

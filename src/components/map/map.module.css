@@ -211,6 +211,40 @@
   animation: radar var(--cp-dur-hero) linear infinite;
   pointer-events: none;
 }
+.mapRadar { width: 68%; max-width: 480px; }
+.pin[data-photo='true'] { width: 42px; height: 50px; }
+.pin[data-photo='true'][data-kind='individual'] { width: 42px; height: 42px; }
+.pinPhoto {
+  position: absolute;
+  width: 32px; height: 32px;
+  left: 5px; top: 4px;
+  border-radius: 9px;
+  border: 2px solid var(--cp-surface);
+  background: var(--cp-bg-alt);
+  overflow: hidden;
+}
+.pinPhoto svg, .pinPhoto img { width: 100%; height: 100%; display: block; }
+.pin[data-kind='individual'] .pinPhoto { border-radius: 50%; top: 5px; }
+.pin[data-photo='true'] .pinShape {
+  position: absolute;
+  right: -4px; bottom: 2px;
+  margin: 0;
+  background: currentColor;
+  color: var(--cp-ink);
+  border: 2px solid var(--cp-surface);
+  border-radius: 50%;
+  padding: 2px;
+  width: 20px; height: 20px;
+}
+.pin[data-photo='true'][data-level='open'] .pinShape { background: var(--cp-pin-open); }
+.pin[data-photo='true'][data-level='tight'] .pinShape { background: var(--cp-pin-tight); }
+.pin[data-photo='true'][data-level='full'] .pinShape { background: var(--cp-pin-full); }
+.pin[data-photo='true'][data-selected='true'] .pinPhoto { outline: 3px solid var(--cp-ink); outline-offset: 1px; }
+.mini .pin[data-photo='true'] { width: 25px; height: 30px; }
+.mini .pin[data-photo='true'][data-kind='individual'] { width: 24px; height: 24px; }
+.mini .pinPhoto { width: 19px; height: 19px; left: 3px; top: 3px; border-radius: 5px; border-width: 1px; }
+.mini .pin[data-kind='individual'] .pinPhoto { top: 3px; }
+.mini .pin[data-photo='true'] .pinShape { right: -3px; bottom: -2px; width: 12px; height: 12px; border-width: 1px; padding: 0; }
 @keyframes radar {
   to {
     rotate: 360deg;

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge, Notice } from '@/components/ui/Badge';
 import { Field, TextArea } from '@/components/ui/Field';
 import { Icon } from '@/components/ui/Icon';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { DistrictSelect } from '@/features/shared/DistrictSelect';
 import { requestIntake } from './assist-client';
 import s from './assist.module.css';
@@ -87,7 +88,7 @@ export function AssistBox({ onApply, compact = false, tourTarget }: { onApply: (
         </div>
       </form>
       <div aria-live="polite">
-        {loading ? <p className={s.loading}><span className={s.spinner} aria-hidden="true" /> {m.assist.loading}</p> : null}
+        {loading ? <div className={s.loadingResult} aria-busy="true" role="status" aria-label={m.assist.loading}><span className="visually-hidden">{m.assist.loading}</span><Skeleton /><Skeleton style={{ width: '85%' }} /><Skeleton style={{ width: '60%' }} /></div> : null}
         <AnimatePresence>
           {result ? (
             <motionEl.div key="result" className={s.result} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: T.exit }} transition={SPRING.soft}>

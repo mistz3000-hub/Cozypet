@@ -5,6 +5,9 @@ import { useDemoSession, useHydrated } from '@/lib/store';
 import { useI18n } from '@/i18n/provider';
 import { useAnnounce } from '@/components/providers/Announcer';
 import { useToast } from '@/components/providers/Toast';
+import { m as motionEl, useReducedMotion } from '@/lib/motion';
+import { T } from '@/lib/motion-tokens';
+import { mascotImages, useImagesReady } from '@/lib/image-loading';
 import s from './switch.module.css';
 
 /** segmented control “น้องแมว / น้องหมา” (radio group) PROMPT.md 6.4 */
@@ -15,6 +18,8 @@ export function MascotSwitch({ compact = false, idSuffix = '' }: { compact?: boo
   const announce = useAnnounce();
   const toast = useToast();
   const value: MascotKind = hydrated ? session.mascot : 'cat';
+  const reduced = useReducedMotion();
+  const assets = useImagesReady(mascotImages(value));
   const choose = (k: MascotKind) => {
     if (k === value) return;
     const r = update({ mascot: k });
@@ -23,7 +28,8 @@ export function MascotSwitch({ compact = false, idSuffix = '' }: { compact?: boo
   };
   const name = `mascot-switch${idSuffix}`;
   return (
-    <div role="radiogroup" aria-label={m.mascot.groupLabel} className={[s.switch, compact && s.compact].filter(Boolean).join(' ')}>
+    <div role="radiogroup" aria-label={m.mascot.groupLabel} aria-busy={assets.loading} className={[s.switch, compact && s.compact].filter(Boolean).join(' ')}>
+      <motionEl.span aria-hidden="true" className={s.thumb} initial={false} animate={{ x: value === 'dog' ? '100%' : '0%' }} transition={reduced ? { duration: 0 } : T.switch} />
       {(['cat', 'dog'] as MascotKind[]).map((k) => (
         <label key={k} className={s.item} data-checked={value === k ? 'true' : undefined}>
           <input type="radio" name={name} value={k} checked={value === k} onChange={() => choose(k)} />

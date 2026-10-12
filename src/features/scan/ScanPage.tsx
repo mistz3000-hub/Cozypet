@@ -9,7 +9,8 @@ import { useAnnounce } from '@/components/providers/Announcer';
 import { useReducedMotion, m as motionEl, AnimatePresence } from '@/lib/motion';
 import { SPRING, T, staggerDelay } from '@/lib/motion-tokens';
 import { COAT_COLORS, COLLAR_COLORS, coatColor, collarColor } from '@/data/colors';
-import { petArt } from '@/data/pet-art';
+import { petPhotoFor } from '@/data/pet-photos';
+import { animalBreedLabel } from '@/data/animal-catalog';
 import { findCandidates, type MatchCandidate, type MatchReason } from '@/lib/matching';
 import { canDecode, readAsDataUrl, validateImageFile } from '@/lib/image';
 import { setScanDraft, getScanDraft } from '@/lib/drafts';
@@ -19,6 +20,7 @@ import { useAllListings } from '@/features/shared/data-hooks';
 import { DistrictSelect } from '@/features/shared/DistrictSelect';
 import { AssistBox } from '@/features/assist/AssistBox';
 import { PetImage } from '@/components/PetImage';
+import { RadarWaves } from '@/components/RadarWaves';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Badge, Card, Notice } from '@/components/ui/Badge';
 import { ChipGroup, Field, RadioGroup, TextArea, TextInput, ErrorSummary } from '@/components/ui/Field';
@@ -103,17 +105,20 @@ export function ScanPage() {
     }
   };
 
-  const useSample = () => {
-    setPhoto({ ...petArt('cat', ['orange', 'white'], { collar: 'red', seed: 'scan-sample' }), alt: m.scan.sampleAlt });
+  const useSample = (kind: 'cat' | 'dog') => {
+    const sample = petPhotoFor(kind === 'cat' ? 'listing-001' : 'listing-006');
+    if (!sample) return;
+    setPhoto({ ...sample, alt: kind === 'cat' ? m.scan.sampleAlt : m.scan.sampleDogAlt });
     setPhotoError(null);
-    // กรอกกรณีมาตรฐานสำหรับนำเสนอให้ (แก้ได้)
-    if (!species) setSpecies('cat');
-    if (!colors.length) setColors(['orange', 'white']);
-    if (collarStatus === 'unknown') {
-      setCollarStatus('yes');
-      setCollarColorId('red');
-    }
-    if (!districtId) setDistrictId('phra-khanong');
+    // Fixture metadata, never inferred from the image. Choosing another sample resets its observations.
+    setSpecies(kind);
+    setSpeciesOther('');
+    setColors(kind === 'cat' ? ['orange', 'white'] : ['golden']);
+    setMarkings('');
+    setCollarStatus('yes');
+    setCollarColorId('red');
+    setCollarDetail('');
+    setDistrictId(kind === 'cat' ? 'phra-khanong' : 'lat-phrao');
     playSfx('shutter');
   };
 
@@ -196,13 +201,16 @@ export function ScanPage() {
                   <div className={s.photoActions}>
                     <Button small icon="image" onClick={() => fileInput.current?.click()}>{m.scan.changePhoto}</Button>
                     <Button small variant="ghost" icon="trash" onClick={() => setPhoto(null)}>{m.scan.removePhoto}</Button>
+                    <Button small variant="ghost" icon="paw" onClick={() => useSample('cat')}>{m.scan.useSample}</Button>
+                    <Button small variant="ghost" icon="paw" onClick={() => useSample('dog')}>{m.scan.useDogSample}</Button>
                   </div>
                 </div>
               ) : (
                 <div className={s.pickers} id={`${id}-photo`} tabIndex={-1}>
                   <Button icon="camera" onClick={() => cameraInput.current?.click()}>{m.scan.takePhoto}</Button>
                   <Button icon="image" onClick={() => fileInput.current?.click()}>{m.scan.choosePhoto}</Button>
-                  <Button variant="primary" icon="sparkle" onClick={useSample} data-tour-safe="true">{m.scan.useSample}</Button>
+                  <Button variant="primary" icon="paw" onClick={() => useSample('cat')} data-tour-safe="true">{m.scan.useSample}</Button>
+                  <Button icon="paw" onClick={() => useSample('dog')}>{m.scan.useDogSample}</Button>
                 </div>
               )}
               <input ref={cameraInput} type="file" accept="image/*" capture="environment" className="visually-hidden" tabIndex={-1} onChange={(e) => { void onFile(e.target.files?.[0]); e.target.value = ''; }} aria-label={m.scan.takePhoto} />
@@ -290,9 +298,9 @@ export function ScanPage() {
             {!reduced ? (
               <>
                 <span className={s.scanLine} aria-hidden="true" />
-                <span className={s.radar} aria-hidden="true" />
               </>
             ) : null}
+            <RadarWaves />
           </div>
           <div className={s.scanSide}>
             <h2>{m.scan.scanning}</h2>
@@ -340,6 +348,7 @@ export function ScanPage() {
                             <Badge tone="info">{m.common.demo}</Badge>
                           </div>
                           <h3>{l.name ?? m.species[l.species]}</h3>
+                          <p className={s.traits}>{m.common.breed}: {animalBreedLabel(l, loc, m.common.breedUnknown)}</p>
                           <p className={s.traits}>
                             {l.species === 'other' ? l.speciesOther ?? m.species.other : m.species[l.species]} · {l.colors.map((c) => coatColor(c) ? loc(coatColor(c)!.label) : c).join(', ')}
                             {' · '}{l.collar.status === 'yes' && collarColor(l.collar.detail) ? `${m.scan.collarShort.yes} (${loc(collarColor(l.collar.detail)!.label)})` : m.scan.collarShort[l.collar.status]}

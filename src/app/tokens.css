@@ -1,5 +1,7 @@
 /* Design tokens — PROMPT.md 3.3 และ MOTION.md 2 (ค่าเวลา/easing ต้องตรงกับ src/lib/motion-tokens.ts) */
 :root {
+  --cp-radar-ms: 1800ms;
+  --cp-radar-gap-ms: 600ms;
   /* สี */
   --cp-bg: #fffdf8;
   --cp-bg-alt: #fbf7ef;
@@ -12,6 +14,10 @@
   --cp-butter: #fff3d1;
   --cp-peach: #ffe6d5;
   --cp-heart: #f0707a;
+  --cp-mouth: #281518;
+  --cp-table-wood: #d9b98c;
+  --cp-table-edge: #e8cfa6;
+  --cp-table-grain: #c9a574;
   --cp-border: #efe6d6;
   --cp-border-strong: #8c7b6b;
   --cp-reunited-ink: #1f6b4f;

@@ -14,6 +14,7 @@ export const DUR = {
 } as const;
 
 export const EASE = {
+  linear: [0, 0, 1, 1],
   out: [0.22, 1, 0.36, 1],
   inOut: [0.65, 0, 0.35, 1],
   in: [0.5, 0, 0.75, 0],
@@ -49,6 +50,7 @@ export const CSS_TOKENS: Record<string, string> = {
 
 /** transition มาตรฐาน */
 export const T = {
+  switch: { duration: DUR.slow, ease: EASE.inOut },
   page: { duration: DUR.base, ease: EASE.out },
   quick: { duration: DUR.quick, ease: EASE.out },
   base: { duration: DUR.base, ease: EASE.out },

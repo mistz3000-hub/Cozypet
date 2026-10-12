@@ -2,7 +2,7 @@ import type { LocalizedText } from '@/lib/types';
 
 /**
  * คำควบคุมสี/ลายของสัตว์ (chip ในฟอร์มและข้อมูลประกาศ) — PetListing.colors เก็บเป็น id
- * swatch ใช้วาดภาพประกอบสัตว์ (ภาพวาดในโค้ด ไม่ใช่ภาพถ่าย)
+ * swatch ใช้ในชิปเลือกสี; ภาพสัตว์สาธิตเป็นภาพถ่ายที่สร้างใหม่
  */
 export interface ColorTerm { id: string; label: LocalizedText; swatch: string; pattern?: 'calico' | 'tabby' | 'spots' }
 
@@ -14,6 +14,8 @@ export const COAT_COLORS: readonly ColorTerm[] = [
   { id: 'brown', label: { th: 'น้ำตาล', en: 'brown' }, swatch: '#8A5A3C' },
   { id: 'cream', label: { th: 'ครีม', en: 'cream' }, swatch: '#EAD7B5' },
   { id: 'golden', label: { th: 'ทอง', en: 'golden' }, swatch: '#D6A04A' },
+  { id: 'yellow', label: { th: 'เหลือง', en: 'yellow' }, swatch: '#E8C23A' },
+  { id: 'green', label: { th: 'เขียว', en: 'green' }, swatch: '#72A551' },
   { id: 'calico', label: { th: 'สามสี', en: 'calico' }, swatch: '#E8913A', pattern: 'calico' },
   { id: 'tabby', label: { th: 'ลายสลิด', en: 'tabby' }, swatch: '#B98A5A', pattern: 'tabby' },
   { id: 'spotted', label: { th: 'ลายจุด', en: 'spotted' }, swatch: '#FBF8F2', pattern: 'spots' },
