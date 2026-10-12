@@ -11,7 +11,9 @@
 - Deployment `dpl_GgNwphzFf99cEuHy4juhz5iMZpy2` เป็น READY; build บน Vercel ผ่านพร้อม TypeScript
 - ตรวจ HTTP โดยไม่ใช้ cookie/token: หน้าแรก, `/scan` และ `/mascot/cat-neutral.png` ตอบ 200 บน production alias ไม่มีหน้า Vercel login ขวาง
 - เผยแพร่ด้วย Vercel CLI จากไฟล์ปัจจุบัน ใช้ค่าเริ่มต้น demo ไม่ได้ตั้ง API key หรือระบบบัญชี Supabase เพิ่ม
-- การเชื่อม GitHub เพื่อ deploy อัตโนมัติยังรอเจ้าของเพิ่ม GitHub Login Connection ใน Vercel จึงยังไม่อ้างว่า push แล้วเว็บอัปเดตเอง
+- โค้ดและภาพเวอร์ชันนี้ commit/push ขึ้น branch `claude/wizardly-cori-i4qnh9` แล้ว (`fcf3870`); หน้า About ของ GitHub repo มีลิงก์ production URL
+- เชื่อม GitHub Login Connection และติดตั้ง Vercel GitHub App แล้ว; Vercel API ยืนยัน Git link `mistz3000-hub/Cozypet` และ Production Branch `main`
+- `main` เดิมเป็น ancestor ของโค้ดล่าสุด จึงเผยแพร่โค้ดที่ build ผ่านด้วย fast-forward ไม่ force-push; การอัปเดต `main` ต่อจากนี้เป็น production deployment ส่วน branch งานเดิมคงไว้
 - การ build ทำใน `out/deploy-ready-2026-10-12` เพื่อไม่กระทบ `.next` ของเว็บที่กำลังเปิดในเครื่อง สำเนานี้ไม่รวม `.env.local` หรือข้อมูลทีมส่วนตัว
 
 ## วิธีเผยแพร่ที่รักษาฟังก์ชันเดิม
@@ -19,7 +21,7 @@
 ใช้ GitHub เก็บ source และใช้ Vercel Hobby เป็นเว็บโฮสต์ โปรเจกต์นี้ใช้ Next.js App Router, cookies, Supabase server routes และ `/api/chat`/`/api/assist` จึงต้องมี server runtime
 
 1. เข้าสู่ Vercel ด้วยบัญชี GitHub ที่เป็นเจ้าของ repository แล้วใช้แผน Hobby สำหรับงานส่วนตัวไม่เชิงพาณิชย์
-2. อัปโหลดโค้ดและรูปเวอร์ชันปัจจุบันขึ้น branch ของงานก่อนนำเข้าผ่าน GitHub หรือ deploy สำเนาปัจจุบันด้วย Vercel CLI หลัง login
+2. ทำงานบน branch ของงาน แล้วส่งเวอร์ชันที่พร้อมเผยแพร่เข้า `main` ซึ่งเป็น Production Branch ของ Vercel; เมื่อ push/merge เข้า main ระบบจะเริ่ม deploy
 3. ใช้ framework Next.js และค่า build มาตรฐาน เริ่มด้วย `AI_PROVIDER=demo` และไม่ตั้ง Supabase/AI keys เพื่อเปิดเว็บต้นแบบโดยไม่ต้องเสียค่า API
 4. เมื่อ deployment เป็น Ready เปิด production URL และใช้ URL นั้นส่งให้ผู้ทดลอง
 5. หากเปิดบัญชีผู้ใช้จริงภายหลัง ตั้ง `SITE_URL` เป็น production URL และตั้ง Supabase redirect URLs ให้ตรงกัน คีย์อยู่ใน Vercel Environment Variables ฝั่ง server เท่านั้น
@@ -33,7 +35,20 @@ Repository ที่เป็น Public ไม่ทำให้โปรแก�
 - ติดตั้ง Vercel CLI 63.1.2 แบบ global และตรวจ `whoami` สำเร็จ
 - ติดตั้ง `vercel@openai-curated` ผ่าน Codex marketplace แบบ user scope; `codex plugin list --json` ยืนยัน installed/enabled
 - เพิ่ม shared MCP endpoint `https://mcp.vercel.com` แบบ user scope ใน Codex โดยเก็บ configuration อื่นไว้ และเปิดการยืนยันสำหรับเครื่องมือที่เขียนข้อมูลด้วย `default_tools_approval_mode = "writes"`
-- OAuth ของ MCP และการตรวจ `list_teams` ผ่าน MCP ยังรอขั้นเชื่อมต่อ; ไม่เหมารวมสถานะ CLI login ว่า MCP authenticated แล้ว
+- Codex MCP OAuth สำเร็จ (`authStatus: o_auth`); เรียก `search_vercel_documentation` และ `list_teams` ผ่าน shared MCP endpoint สำเร็จ ทีมที่คืนมาคือ CozyPet (`cozy-pet`)
+- ตรวจไฟล์ plugin แล้วมี `commands/status.md`, `commands/deploy.md` และคำสั่งอื่นครบ; plugin ใน native Codex marketplace เป็น installed/enabled ส่วนรายการคำสั่ง/เครื่องมือในแชตที่เปิดก่อนติดตั้งอาจต้องเปิด session ใหม่เพื่อโหลด
 - ไม่ต้องใช้ standalone skills ซ้ำกับ plugin และไม่มีการเปลี่ยน plan ไป Pro
+
+## สถานะการตั้งค่า agent ที่ยืนยันแล้ว
+
+```text
+CLI: 63.1.2, authenticated as mistz3000-1017
+Guidance: vercel@openai-curated plugin, user scope, installed/enabled
+MCP: OAuth authenticated, shared endpoint https://mcp.vercel.com
+MCP config: C:\Users\Administrator\.codex\config.toml
+Authenticated MCP check: search_vercel_documentation and list_teams succeeded
+MCP mutation confirmation: default_tools_approval_mode = "writes"
+Reload: open a new session to load plugin commands into a chat started before installation
+```
 
 อ้างอิง: [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [Vercel Hobby](https://vercel.com/docs/plans/hobby), [Vercel for GitHub](https://vercel.com/docs/git/vercel-for-github)
