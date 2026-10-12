@@ -332,11 +332,14 @@
   gap: 16px;
   align-items: center;
 }
-.boxArt {
-  width: 120px;
-  height: 80px;
+.envelopeArt {
+  --envelope-paper: var(--cp-butter);
+  width: 140px;
+  height: auto;
+  aspect-ratio: 160 / 136;
   flex: none;
 }
+.envelopeArt[data-pet='dog'] { --envelope-paper: var(--cp-peach); }
 .afterSup {
   flex: 1;
   min-width: 220px;

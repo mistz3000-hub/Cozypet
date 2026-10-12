@@ -321,6 +321,13 @@ PetMouthJourney ใช้ matchMedia + useSyncExternalStore เพื่อเ�
 
 ## D25 — เลื่อนเข้าปากอัตโนมัติและหัวใจเหนือหัว
 
+### D27 — การ์ด Profile Credit และซองจดหมาย
+
+- กรอบโปรไฟล์ใช้รอยอุ้งเท้า SVG: แมวมีนิ้วกลมและไม่มีเล็บ หมาอุ้งเท้ากว้างและมีเล็บเล็ก ๆ ตาม mascot ใน demoSession เดียวกับแถบล่าง ไม่เปลี่ยนยอด/ประวัติเมื่อสลับสัตว์
+- รอยอุ้งเท้าสลับด้วย opacity ผ่าน LazyMotion/m + T.switch (400ms ease-in-out); reduced motion เปลี่ยนทันที รอยตกแต่ง aria-hidden และ pointer-events none ไม่บังปุ่ม/ข้อความ
+- ซองรับของใช้ SVG วาดในโค้ด พื้นครีม มีตราอุ้งเท้าแมว/หมาและซีลตามสัตว์ที่เลือก ปรากฏด้วย T.slow (opacity/translateY/rotate); reduced motion ไม่ขยับ ไม่ใช่สถานะกำลังโหลด
+- การ์ดเร่งด่วนเป็น flex column และ actions มี margin-top auto ภาพอัตราส่วนเดียวกันแบบ cover เพื่อให้ปุ่มและขอบล่างตรงกันเมื่อข้อมูลทรายแมวต่างกัน
+
 ### D26 — โมเดลรายได้และชุมชน
 
 ต่อยอด UI/วิดีโอจาก [BUSINESS_DEMO.md หัวข้อ 9](docs/BUSINESS_DEMO.md#9-motion-และ-video-สำหรับ-claude): ตัวเลขกองอาหาร, timeline แบ่งเงิน, แบนเนอร์, CSR, กระดานรับของ และเครดิตส่วนตัว ใช้ tokens/reduced motion เดิม ไม่ animate layout property หรือหน่วง skeleton ปลอม ทุกปุ่มที่เปลี่ยน record ต้องหยุดก่อนยืนยันใน autopilot

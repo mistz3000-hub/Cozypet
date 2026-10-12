@@ -12,13 +12,14 @@ import { useI18n } from '@/i18n/provider';
 import s from './petimage.module.css';
 
 /** All known demo animals resolve to generated photographs, including old locally saved records. */
-export function PetImage({ media, ratio = '4 / 3', className, fallbackLabel, rounded = true }: {
+export function PetImage({ media, ratio = '4 / 3', className, fallbackLabel, rounded = true, cover = false }: {
   media?: MediaRef | null;
   ratio?: string;
   className?: string;
   label?: string | null;
   fallbackLabel?: string;
   rounded?: boolean;
+  cover?: boolean;
 }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const legacy = media ? parseArtSrc(media.src) : null;
@@ -35,7 +36,7 @@ export function PetImage({ media, ratio = '4 / 3', className, fallbackLabel, rou
           {fallbackLabel ? <span className={s.fallbackText}>{fallbackLabel}</span> : null}
         </div>
       ) : busy ? <Skeleton className={s.photoSkeleton} /> : (
-        <AtlasPhoto media={display!} className={display!.atlas ? s.svg : s.img} onError={() => setFailedSrc(display!.src)} />
+        <AtlasPhoto media={display!} className={display!.atlas ? s.svg : s.img} cover={cover} onError={() => setFailedSrc(display!.src)} />
       )}
     </div>
   );

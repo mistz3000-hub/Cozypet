@@ -8,7 +8,7 @@ import { getPackage } from '@/data/packages';
 import { ORDER_ARRIVED_STEP, ORDER_STEPS } from '@/lib/balancer-config';
 import { canCancelOrder, orderStepIndex, orderStepTime, orderTotalTHB } from '@/lib/orders';
 import { supplyLevel } from '@/lib/status';
-import { updateValue, useHydrated } from '@/lib/store';
+import { updateValue, useHydrated, useDemoSession } from '@/lib/store';
 import { useNow } from '@/lib/useNow';
 import { playSfx } from '@/lib/audio/sfx';
 import { useToast } from '@/components/providers/Toast';
@@ -24,6 +24,7 @@ import { DemoModeBar } from '@/features/shared/DemoModeBar';
 import s from './donate.module.css';
 import { MoneyFlow } from '@/features/business/BusinessWidgets';
 import { useDonationOrders } from '@/features/business/hooks';
+import { CareEnvelope } from './CareEnvelope';
 
 export function OrderPage({ id }: { id: string }) {
   const hydrated = useHydrated();
@@ -45,6 +46,7 @@ export function OrderPage({ id }: { id: string }) {
 /** timeline 5 ขั้น เวลาคำนวณจาก createdAt (ไม่เก็บ) — PROMPT.md 7.12 */
 function Order({ order }: { order: DonationOrder }) {
   const { m, f, loc, money, time, locale } = useI18n();
+  const [session] = useDemoSession();
   const toast = useToast();
   const helper = getHelper(order.helperId);
   const pkg = getPackage(order.packageId);
@@ -117,12 +119,7 @@ function Order({ order }: { order: DonationOrder }) {
 
           {step >= ORDER_ARRIVED_STEP ? (
             <Card flat className={s.arrived}>
-              <svg viewBox="0 0 120 80" className={s.boxArt} role="img" aria-label={m.orders.arrivedArt}>
-                <rect x="30" y="30" width="60" height="40" rx="4" fill="var(--cp-wood)" />
-                <path d="M30 30 L60 18 L90 30 L60 42 Z" fill="var(--cp-gold-500)" />
-                <path d="M60 42 V70" stroke="var(--cp-wood-dark)" strokeWidth="3" />
-                <path d="M52 12 q8 -10 16 0 q-8 8 -16 0" fill="var(--cp-heart)" />
-              </svg>
+              <CareEnvelope mascot={session.mascot} label={m.orders.arrivedArt} brand={m.common.brand} />
               {sup ? (
                 <div className={s.afterSup}>
                   <p className={s.h3}>{m.donate.afterSupplies}</p>

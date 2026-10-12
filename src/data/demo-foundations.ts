@@ -3,9 +3,9 @@ import { GENERATED_MEDIA } from './generated-media';
 
 /** Separate from the 20 real/placeholder shelter slots; invented for business demonstrations. */
 const seeds = [
-  { id: 'foundation-demo-001', th: 'มูลนิธิบ้านอุ่นใจ (สมมติ)', en: 'Warm Home Foundation (fictional)', district: 'din-daeng', lat: 13.770, lng: 100.552, count: 95, capacity: 100, food: 1, litter: 2, species: ['cat', 'dog'] as const },
-  { id: 'foundation-demo-002', th: 'มูลนิธิอุ้งเท้าพักใจ (สมมติ)', en: 'Gentle Paws Foundation (fictional)', district: 'chatuchak', lat: 13.827, lng: 100.560, count: 48, capacity: 60, food: 2, litter: 3, species: ['cat'] as const },
-  { id: 'foundation-demo-003', th: 'มูลนิธิเพื่อนสี่ขา (สมมติ)', en: 'Four Paws Foundation (fictional)', district: 'bang-kapi', lat: 13.766, lng: 100.648, count: 40, capacity: 40, food: 1, litter: undefined, species: ['dog'] as const },
+  { id: 'foundation-demo-001', th: 'มูลนิธิบ้านอุ่นใจ', en: 'Warm Home Foundation', district: 'din-daeng', lat: 13.770, lng: 100.552, count: 95, capacity: 100, food: 1, litter: 2, species: ['cat', 'dog'] as const },
+  { id: 'foundation-demo-002', th: 'มูลนิธิอุ้งเท้าพักใจ', en: 'Gentle Paws Foundation', district: 'chatuchak', lat: 13.827, lng: 100.560, count: 48, capacity: 60, food: 2, litter: 3, species: ['cat'] as const },
+  { id: 'foundation-demo-003', th: 'มูลนิธิเพื่อนสี่ขา', en: 'Four Paws Foundation', district: 'bang-kapi', lat: 13.766, lng: 100.648, count: 40, capacity: 40, food: 1, litter: undefined, species: ['dog'] as const },
 ];
 export const DEMO_FOUNDATIONS: readonly HelperProfile[] = seeds.map((s, i) => ({
   id: s.id, kind: 'shelter', displayName: s.th, displayNameEn: s.en,

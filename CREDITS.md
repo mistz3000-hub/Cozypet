@@ -1,5 +1,9 @@
 # CREDITS.md — ที่มาและไลเซนส์ของภาพ ฟอนต์ ไอคอน และ animation
 
+## D27: อุ้งเท้าและซองจดหมาย
+
+`profile-paw-prints` / `care-envelope`: SVG วาดขึ้นใน source (`src/components/ui/PawPrint.tsx`, `src/features/donate/CareEnvelope.tsx`) ใช้กรอบ Profile Credit และภาพซองแจ้งแพ็กเกจถึงผู้ดูแล ไม่มี asset ภายนอก ไม่มีการสร้างภาพหลักฐานว่าจัดส่งจริง ใช้ design tokens และระบบ Motion เดิม
+
 ## D26: ภาพในโมเดลรายได้และชุมชน
 
 มูลนิธิสมมติ `foundation-demo-001..003` และแบนเนอร์แบรนด์สมมติใช้ภาพพื้นที่ดูแลสาธิตชุด `ai-shelters-01` tile 0–2 จากทะเบียนเดิม และไอคอน SVG เดิม (`icons`) ไม่ใช่ภาพองค์กรจริงหรือโลโก้แบรนด์จริง ภาพในกระดานรับของเป็นไฟล์ที่ผู้ทดลองเลือกและเก็บเฉพาะในเบราว์เซอร์ ไม่บรรจุใน repo และไม่ถือเป็นหลักฐานการบริจาคจริง ดู [BUSINESS_DEMO.md](docs/BUSINESS_DEMO.md)
