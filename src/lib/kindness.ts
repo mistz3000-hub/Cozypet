@@ -19,6 +19,7 @@ export interface KindnessRecords {
   careRequests: readonly CareRequest[];
   handoffs: readonly Handoff[];
   donationOrders: readonly DonationOrder[];
+  microDonations?: readonly import('./types').MicroDonation[];
   caretakerPlace?: CaretakerPlace | null;
 }
 
@@ -45,6 +46,7 @@ export function computeActivities(r: KindnessRecords): ActivityEntry[] {
     if (o.status === 'cancelled') continue;
     raw.push({ kind: 'order', refId: o.id, at: o.createdAt, points: Math.floor(orderTotalTHB(o) / 10) });
   }
+  for (const d of r.microDonations ?? []) raw.push({ kind: 'micro', refId: d.id, at: d.createdAt, points: Math.floor(d.amountTHB / 10) });
   const place = r.caretakerPlace;
   if (place) {
     const days = new Set(place.updateDays ?? [bangkokDay(place.updatedAt)]);

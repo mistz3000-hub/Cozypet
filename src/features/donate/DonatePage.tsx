@@ -2,17 +2,19 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 import type { DonationOrder, Species } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
-import { HELPERS, getHelper } from '@/data';
+import { getHelper } from '@/data';
+import { DONATION_TARGETS, DONATION_SUPPLY_MAP } from '@/data/business';
 import { BRANDS } from '@/data/brands';
 import { PACKAGES, getPackage } from '@/data/packages';
-import { SUPPLIES } from '@/data/supplies';
-import { donationTargetDetail, rankDonationTargets } from '@/lib/balancer';
+import { canReceivePackages, donationTargetDetail, rankDonationTargets } from '@/lib/balancer';
 import { orderTotalTHB } from '@/lib/orders';
 import { statusInfo, supplyLevel } from '@/lib/status';
-import { newId, updateValue, useStore } from '@/lib/store';
+import { newId, updateValue } from '@/lib/store';
+import { useDonationOrders } from '@/features/business/hooks';
+import { MoneyFlow } from '@/features/business/BusinessWidgets';
 import { useNow } from '@/lib/useNow';
 import { playSfx } from '@/lib/audio/sfx';
 import { useToast } from '@/components/providers/Toast';
@@ -31,7 +33,7 @@ import { helperName } from '@/features/helpers/helper-text';
 import { DemoModeBar } from '@/features/shared/DemoModeBar';
 import s from './donate.module.css';
 
-const SUPPLY_MAP = new Map(SUPPLIES.map((x) => [x.helperId, x]));
+const SUPPLY_MAP = DONATION_SUPPLY_MAP;
 type SpeciesFilter = 'all' | Species;
 
 /** ส่งแพ็กเกจของใช้ (จำลอง) — PROMPT.md 7.12 · ไม่มีช่องชำระเงิน ไม่มี QR ไม่มีเลขบัญชี */
@@ -41,14 +43,16 @@ export function DonatePage() {
   const router = useRouter();
   const toast = useToast();
   const run = useRun()!;
-  const orders = useStore('donationOrders');
+  const orders = useDonationOrders();
   const now = useNow(orders.some((o) => o.status === 'active'));
   const id = useId();
 
   const paramHelper = getHelper(params.get('helper'));
   const paramSpecies = params.get('species');
   const [species, setSpecies] = useState<SpeciesFilter>(paramSpecies === 'cat' || paramSpecies === 'dog' || paramSpecies === 'other' ? paramSpecies : 'all');
-  const eligibleParam = paramHelper && paramHelper.kind === 'individual' && paramHelper.acceptsSupplyPackages ? paramHelper.id : null;
+  const eligibleParam = paramHelper && canReceivePackages(paramHelper) ? paramHelper.id : null;
+  const [recipientType, setRecipientType] = useState<'all' | 'foundation' | 'individual'>('all');
+  const confirming = useRef(false);
   const [helperId, setHelperId] = useState<string | null>(eligibleParam);
   const paramPkg = getPackage(params.get('package') ?? '');
   const [packageId, setPackageId] = useState<string | null>(paramPkg?.id ?? null);
@@ -59,8 +63,8 @@ export function DonatePage() {
   const [whyId, setWhyId] = useState<string | null>(null);
 
   const ranking = useMemo(() => rankDonationTargets({
-    helpers: HELPERS, supplies: SUPPLY_MAP, orders, packages: PACKAGE_MAP, now: new Date(now || 0), species: species === 'all' ? null : species,
-  }), [orders, now, species]);
+    helpers: DONATION_TARGETS.filter((h) => recipientType === 'all' || (recipientType === 'foundation' ? h.isFictionalFoundation : h.kind === 'individual')), supplies: SUPPLY_MAP, orders, packages: PACKAGE_MAP, now: new Date(now || 0), species: species === 'all' ? null : species,
+  }), [orders, now, species, recipientType]);
 
   const helper = helperId ? getHelper(helperId) : undefined;
   const pkgs = helper ? PACKAGES.filter((p) => p.species.some((x) => helper.speciesAccepted.includes(x))) : [];
@@ -72,14 +76,17 @@ export function DonatePage() {
 
   const confirm = () => {
     setTried(true);
-    if (!ack || !helper || !pkg) return;
+    if (!ack || !helper || !pkg || confirming.current || !pkg.species.some((sp) => helper.speciesAccepted.includes(sp)) || !Number.isInteger(qty) || qty < 1 || qty > 5) return;
     // ตรวจซ้ำ: สถานสงเคราะห์จริงไม่เป็นปลายทางเด็ดขาด
-    if (helper.kind !== 'individual' || !helper.acceptsSupplyPackages) return;
+    if (!canReceivePackages(helper)) return;
+    confirming.current = true;
     const order: DonationOrder = {
       id: newId('order'), runNumber: run.run, helperId: helper.id, packageId: pkg.id, quantity: qty, unitPriceTHB: pkg.priceTHB,
       recommendedRank: rank >= 0 ? rank + 1 : undefined, status: 'active', createdAt: new Date().toISOString(), isDemo: true,
+      source: 'donor', platformSharePct: pkg.platformSharePct, settlementStage: 'received',
     };
-    updateValue('donationOrders', (prev) => [order, ...prev]);
+    const result = updateValue('donationOrders', (prev) => [order, ...prev]);
+    if (result === 'quota') { confirming.current = false; toast(m.business.failed); return; }
     playSfx('box');
     toast(m.donate.created);
     router.push(`/donate/orders/${order.id}`);
@@ -90,7 +97,7 @@ export function DonatePage() {
       <DemoModeBar next="/donate" />
       <p className={s.bar} data-tour="donate-notice"><Icon name="info" size="1em" /> {m.donate.bar}</p>
       <h1>{m.donate.title}</h1>
-      {paramHelper && paramHelper.kind === 'shelter' ? (
+      {paramHelper && paramHelper.kind === 'shelter' && !paramHelper.isFictionalFoundation ? (
         <Notice tone="butter" icon="info">
           {f(m.donate.realShelter, { name: helperName(paramHelper, locale) })}
           {paramHelper.officialUrl ? <> · <a href={paramHelper.officialUrl} target="_blank" rel="noopener noreferrer">{m.helper.officialLink}</a></> : null}
@@ -111,6 +118,7 @@ export function DonatePage() {
           <h2 id={`${id}-t`} className={s.h2}>{m.donate.targetsTitle}</h2>
           <p className={s.muted}>{m.donate.targetsIntro}</p>
           <div className={s.filter}>
+            <Segmented name={`${id}-type`} label={m.business.recipientType} value={recipientType} onChange={setRecipientType} options={[{ value: 'all', label: m.business.all }, { value: 'foundation', label: m.business.foundations }, { value: 'individual', label: m.business.caregivers }]} />
             <Segmented<SpeciesFilter> name={`${id}-sp`} label={m.donate.speciesFilter} value={species} onChange={setSpecies}
               options={[{ value: 'all', label: m.donate.all }, { value: 'cat', label: m.species.cat }, { value: 'dog', label: m.species.dog }]} />
           </div>
@@ -129,6 +137,7 @@ export function DonatePage() {
                         <div className={s.badges}>
                           {i < 3 ? <Badge tone="gold" icon="star">{f(m.listings.recommendedRank, { n: i + 1 })}</Badge> : null}
                           <StatusBadge level={st.level} closed={st.closed} demo />
+                          {h.isFictionalFoundation ? <Badge tone="butter">{m.business.foundation}</Badge> : null}
                         </div>
                         <p className={s.targetName}><Link href={`/helpers/${h.id}`}>{name}</Link></p>
                         <p className={s.muted}>{district(h.districtId)} · {h.speciesAccepted.map((x) => m.species[x]).join(', ')}</p>
@@ -213,6 +222,7 @@ export function DonatePage() {
             </ul>
           </Card>
           <p className={s.paymentOff}><Icon name="shield" size="1em" /> {m.donate.paymentOff}</p>
+          <MoneyFlow preview order={{ id: 'quote', runNumber: run.run, helperId: helper.id, packageId: pkg.id, quantity: qty, unitPriceTHB: pkg.priceTHB, platformSharePct: pkg.platformSharePct, status: 'active', createdAt: '', isDemo: true }} />
           <Checkbox checked={ack} onChange={setAck} required error={tried && !ack ? m.requests.ackRequired : null}>{m.donate.ack}</Checkbox>
           <div className={s.nav}>
             <Button icon="arrowLeft" onClick={() => setStep(2)}>{m.donate.back}</Button>

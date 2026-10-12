@@ -14,7 +14,6 @@ import { SUPPLY_CRITICAL_DAYS, TIGHT_RATIO } from '@/lib/balancer-config';
 import { formatRun } from '@/lib/run';
 import { orderTotalTHB } from '@/lib/orders';
 import { statusInfo } from '@/lib/status';
-import { useStore } from '@/lib/store';
 import { useNow } from '@/lib/useNow';
 import { Badge, Card } from '@/components/ui/Badge';
 import { ButtonLink, LinkButton } from '@/components/ui/Button';
@@ -34,6 +33,9 @@ import { listingTitle, speciesLabel } from '@/features/listings/listing-text';
 import { ActivityList, DemoModeBar } from '@/features/shared/DemoModeBar';
 import { useKindness } from '@/features/shared/records';
 import s from './dashboard.module.css';
+import { RevenuePanel, MicroDonationTracker, CrisisCards, SponsorBanner } from '@/features/business/BusinessWidgets';
+import { useDonationOrders } from '@/features/business/hooks';
+import { orderArrived } from '@/lib/orders';
 
 const SUPPLY_MAP = new Map(SUPPLIES.map((x) => [x.helperId, x]));
 const HELPER_MAP = new Map(HELPERS.map((h) => [h.id, h]));
@@ -52,7 +54,7 @@ export function DashboardPage() {
   const { user } = useAuth();
   const run = useRun()!;
   const listings = useAllListings();
-  const orders = useStore('donationOrders');
+  const orders = useDonationOrders();
   const kindness = useKindness();
   const now = useNow(orders.some((o) => o.status === 'active'));
   const [why, setWhy] = useState(false);
@@ -62,7 +64,7 @@ export function DashboardPage() {
     listings, helpers: HELPER_MAP, supplies: SUPPLY_MAP, orders, packages: PACKAGE_MAP, now: new Date(now || 0),
   }), [listings, orders, now]);
 
-  const mine = orders.filter((o) => o.status === 'active');
+  const mine = orders.filter((o) => orderArrived(o, new Date(now || 0)));
   const mineTotal = mine.reduce((n, o) => n + orderTotalTHB(o), 0);
   const minePackages = mine.reduce((n, o) => n + o.quantity, 0);
   const totalTHB = DONATION_BASELINE.totalTHB + mineTotal;
@@ -86,6 +88,10 @@ export function DashboardPage() {
         </div>
       </header>
 
+      <MicroDonationTracker />
+      <SponsorBanner placement="dashboard" />
+      <CrisisCards />
+      <RevenuePanel />
       <div className={s.grid}>
         <div className={s.col}>
           <section aria-labelledby={`${id}-sc`} data-tour="dash-shortcuts">

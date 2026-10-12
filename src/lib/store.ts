@@ -25,6 +25,7 @@ const DEFAULTS: { [K in StoreKey]: () => StoreShape[K] } = {
   caretakerPlace: () => [],
   searchHistory: () => [],
   tourState: () => EMPTY_TOUR,
+  businessState: () => ({ bookings: [], microDonations: [], reviews: [], receipts: [] }),
 };
 
 // ค่า default ต้องคงที่ต่อ key เพื่อไม่ให้ useSyncExternalStore วนซ้ำ

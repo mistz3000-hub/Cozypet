@@ -41,15 +41,17 @@ export function ThemedSelect(props: SelectHTMLAttributes<HTMLSelectElement>) {
   const [local, setLocal] = useState(String(props.defaultValue ?? all[0]?.value ?? ''));
   const value = String(props.value ?? local);
   const selected = all.find((o) => o.value === value);
-  const [open, setOpen] = useState(false);
+  const [requestedOpen, setOpen] = useState(false);
+  const open = requestedOpen && !props.disabled;
   const [active, setActive] = useState(0);
   const [position, setPosition] = useState<Position | null>(null);
   const reduced = useReducedMotion();
-  const portalHost = trigger.current?.closest('[role="dialog"]') ?? (typeof document !== 'undefined' ? document.body : null);
+  const [portalHost, setPortalHost] = useState<Element | null>(null);
 
   const place = useCallback(() => {
     const button = trigger.current;
     if (!button) return;
+    setPortalHost(button.closest('[role="dialog"]') ?? document.body);
     const rect = button.getBoundingClientRect();
     const viewport = window.visualViewport;
     const topEdge = (viewport?.offsetTop ?? 0) + 12;
@@ -89,8 +91,6 @@ export function ThemedSelect(props: SelectHTMLAttributes<HTMLSelectElement>) {
   useEffect(() => {
     if (open) panel.current?.querySelector<HTMLElement>(`[data-choice-index="${active}"]`)?.scrollIntoView({ block: 'nearest' });
   }, [active, open, position?.maxHeight]);
-
-  useEffect(() => { if (props.disabled) setOpen(false); }, [props.disabled]);
 
   const show = () => {
     if (props.disabled || !choices.some((o) => !o.disabled)) return;

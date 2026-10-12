@@ -4,10 +4,11 @@ import { ADOPTERS } from './adopters';
 import { OWNERS } from './owners';
 import { LISTINGS } from './listings';
 import { STORIES } from './stories';
+import { DEMO_FOUNDATIONS } from './demo-foundations';
 
 export { SHELTERS, ADOPTERS, OWNERS, LISTINGS, STORIES };
 
-export const HELPERS: readonly HelperProfile[] = [...SHELTERS, ...ADOPTERS];
+export const HELPERS: readonly HelperProfile[] = [...SHELTERS, ...ADOPTERS, ...DEMO_FOUNDATIONS];
 
 const HELPER_BY_ID = new Map(HELPERS.map((h) => [h.id, h]));
 const OWNER_BY_ID = new Map(OWNERS.map((o) => [o.id, o]));

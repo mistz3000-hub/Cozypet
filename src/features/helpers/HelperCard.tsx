@@ -69,7 +69,7 @@ export function HelperCard({ helper: h, distanceKm, rank, reasons, species, urge
             {rank ? <Badge tone="gold" icon="star">{f(m.listings.recommendedRank, { n: rank })}</Badge> : null}
             {personaBadge ? <Badge tone="butter" icon="user">{personaBadge}</Badge> : null}
             {h.isUserPlace ? <Badge tone="butter" icon="home">{m.nearby.yourPlace}</Badge> : null}
-            <Badge tone={isShelter ? 'info' : 'neutral'}>{isShelter ? m.helper.shelterBadge : m.helper.individualBadge}</Badge>
+            <Badge tone={isShelter ? 'info' : 'neutral'}>{h.isFictionalFoundation ? m.business.foundation : isShelter ? m.helper.shelterBadge : m.helper.individualBadge}</Badge>
             {h.demoVerified ? <Badge tone="reunited" icon="shield" title={m.helper.verifiedInfo}>{m.helper.verified}</Badge> : null}
           </div>
           <h3 className={s.cardTitle}>

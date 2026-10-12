@@ -24,6 +24,7 @@ import { PhoneTourSection } from '@/features/motion/howto/PhoneTourSection';
 import { PetMouthJourney } from './PetMouthJourney';
 import { PetVarietySection } from './PetVarietySection';
 import s from './landing.module.css';
+import { MicroDonationTracker, CrisisCards, SponsorBanner } from '@/features/business/BusinessWidgets';
 
 export function LandingPage() {
   const { m, f, district } = useI18n();
@@ -114,6 +115,7 @@ export function LandingPage() {
       </section>
 
       <PetVarietySection />
+      <section className={s.section} id="community-support"><div className="cp-container"><MicroDonationTracker /><SponsorBanner placement="home" /><CrisisCards /></div></section>
 
       {/* 3 Find location */}
       <section id="find-location" className={`${s.section} ${s.alt}`} aria-labelledby="find-title">

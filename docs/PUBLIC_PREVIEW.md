@@ -52,3 +52,14 @@ Reload: open a new session to load plugin commands into a chat started before in
 ```
 
 อ้างอิง: [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [Vercel Hobby](https://vercel.com/docs/plans/hobby), [Vercel for GitHub](https://vercel.com/docs/git/vercel-for-github)
+# D26: โมเดลรายได้และชุมชน (12 ต.ค. 2026)
+
+หน้าใหม่: `/partners`, `/profile`, `/agreements/adoption`, `/requests/[id]/agreement` และรายละเอียด `/helpers/foundation-demo-001..003` พร้อมส่วน `#micro-donations`, `#crisis-cases`, `#sponsor-home`, `#platform-revenue` ที่เชื่อมจากหน้าแรก/Dashboard
+
+เวอร์ชันนี้ใช้ source ของ branch `claude/wizardly-cori-i4qnh9` และเผยแพร่แบบ manual production ไปยัง https://cozypet-iota.vercel.app/ ตามคำสั่งเผยแพร่เดิมของผู้ใช้ การเชื่อม GitHub/Vercel และ production branch เดิมคงอยู่
+
+- TypeScript ผ่าน, lint ไม่มี error (warnings เดิม 7 ข้อ), production build ผ่านทั้งใน snapshot และ Vercel
+- การเผยแพร่ D26 ครั้งแรกเป็น `dpl_FpNsc8fe9c8b5CffYmP2uGxkJG14` สถานะ READY และตรวจ HTTP แบบไม่ส่ง cookies พบ 200 ที่หน้าแรก รายละเอียดมูลนิธิสมมติ และ `/partners`
+- ตรวจที่ HTTP ยืนยันหน้า/โมดูลเผยแพร่ ไม่ใช่หลักฐานว่าได้ทดสอบคลิกทุก flow ไม่มีการรัน unit/E2E tests ในรอบนี้ตามคำสั่งการทำงาน
+- ไม่มี key/Supabase/payment gateway ใหม่ ไม่มีการเปิด billing ทุกยอดและการส่งของเป็นการจำลอง `businessState` อยู่ใน browser เท่านั้น
+- ข้อกำหนด/ข้อมูล: [BUSINESS_DEMO.md](BUSINESS_DEMO.md) · คู่มือกดดูหัวข้อที่ได้รับ: [FEATURE_WALKTHROUGH.md](FEATURE_WALKTHROUGH.md)

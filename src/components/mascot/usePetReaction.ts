@@ -11,13 +11,14 @@ export interface Heart { id: number; x: number; drift: number; rot: number; dela
 export function usePetReaction(kind: MascotKind, reduced: boolean) {
   const [reaction, setReaction] = useState(false);
   const [hearts, setHearts] = useState<Heart[]>([]);
+  const scope = `${kind}:${reduced}`;
+  const [stateScope, setStateScope] = useState(scope);
+  if (stateScope !== scope) { setStateScope(scope); setReaction(false); setHearts([]); }
   const reacting = useRef(false);
   const timers = useRef<number[]>([]);
   const sequence = useRef(0);
   useEffect(() => {
     reacting.current = false;
-    setReaction(false);
-    setHearts([]);
     return () => { timers.current.forEach((timer) => window.clearTimeout(timer)); timers.current = []; };
   }, [kind, reduced]);
 

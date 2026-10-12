@@ -49,6 +49,8 @@
 
 ## 5. วิธีทำงาน
 
+- D26 เพิ่มงานธุรกิจ/ชุมชนตาม [docs/BUSINESS_DEMO.md](docs/BUSINESS_DEMO.md): อนุญาตมูลนิธิสมมติที่มี isFictionalFoundation และการแบ่งเงินจำลอง ไม่มีการรับ/โอนเงินจริง สถานสงเคราะห์จริงยังไม่เป็นปลายทาง ไม่มีการรับรองการจดทะเบียนจาก badge/review อ่าน flow และกติกา Motion/Video ก่อนแก้ส่วนนี้
+
 - เริ่มจาก `git status` และตรวจงานเดิม ห้ามลบหรือเขียนทับการแก้ไขที่ไม่เกี่ยวข้อง
 - แยกข้อมูล (`src/data`), logic (`src/lib`), server (`src/server`) และ UI ตาม `PROMPT.md` หัวข้อ 14 และใช้ types จาก `src/lib/types.ts` เท่านั้น
 - ใช้ design tokens จาก `PROMPT.md` หัวข้อ 3.3 ห้าม hard-code สี

@@ -2,15 +2,16 @@ import type { DonationOrder, DonationPackage, HelperSupplies } from './types';
 import { ORDER_ARRIVED_STEP, ORDER_SHIPPING_STEP, ORDER_STEP_SECONDS, ORDER_STEPS } from './balancer-config';
 
 /** เวลาของขั้น k (คำนวณจาก createdAt ไม่เก็บ) */
-export function orderStepTime(order: Pick<DonationOrder, 'createdAt'>, step: number): Date {
-  return new Date(new Date(order.createdAt).getTime() + step * ORDER_STEP_SECONDS * 1000);
+export function orderStepTime(order: Pick<DonationOrder, 'createdAt' | 'fulfillmentStartedAt'>, step: number): Date {
+  return new Date(new Date(step > 0 ? order.fulfillmentStartedAt ?? order.createdAt : order.createdAt).getTime() + step * ORDER_STEP_SECONDS * 1000);
 }
 
 /** ขั้นล่าสุดที่ผ่านแล้ว (0 = ยืนยันคำสั่ง … 4 = ผู้ดูแลขอบคุณ) หรือ -1 ถ้ายกเลิก */
 export function orderStepIndex(order: DonationOrder, now: Date): number {
   if (order.status === 'cancelled') return -1;
+  if (order.settlementStage && order.settlementStage !== 'partner_paid') return 0;
   if (order.fastForwarded) return ORDER_STEPS - 1;
-  const elapsed = (now.getTime() - new Date(order.createdAt).getTime()) / 1000;
+  const elapsed = (now.getTime() - new Date(order.fulfillmentStartedAt ?? order.createdAt).getTime()) / 1000;
   return Math.max(0, Math.min(ORDER_STEPS - 1, Math.floor(elapsed / ORDER_STEP_SECONDS)));
 }
 
@@ -19,7 +20,7 @@ export function orderArrived(order: DonationOrder, now: Date): boolean {
 }
 
 export function canCancelOrder(order: DonationOrder, now: Date): boolean {
-  return order.status === 'active' && orderStepIndex(order, now) < ORDER_SHIPPING_STEP;
+  return !order.sponsorshipBookingId && order.source !== 'micro' && order.status === 'active' && orderStepIndex(order, now) < ORDER_SHIPPING_STEP;
 }
 
 export function orderTotalTHB(order: Pick<DonationOrder, 'quantity' | 'unitPriceTHB'>): number {

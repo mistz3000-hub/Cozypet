@@ -6,7 +6,7 @@
  */
 import type {
   CaretakerPlace, CareRequest, Conversation, DemoSession, DonationOrder, FindingSession, Handoff, PetListing,
-  SavedItem, SearchHistoryEntry, TourState,
+  SavedItem, SearchHistoryEntry, TourState, BusinessState,
 } from './types';
 
 export interface StoreShape {
@@ -22,15 +22,16 @@ export interface StoreShape {
   caretakerPlace: CaretakerPlace[];
   searchHistory: SearchHistoryEntry[];
   tourState: TourState;
+  businessState: BusinessState;
 }
 export type StoreKey = keyof StoreShape;
 
 export const STORE_KEYS: readonly StoreKey[] = [
   'demoSession', 'findingSessions', 'userListings', 'careRequests', 'conversations', 'handoffs', 'saved',
-  'noticeDismissed', 'donationOrders', 'caretakerPlace', 'searchHistory', 'tourState',
+  'noticeDismissed', 'donationOrders', 'caretakerPlace', 'searchHistory', 'tourState', 'businessState',
 ];
 /** key ที่อยู่ในเครื่องเท่านั้น ไม่ซิงก์ขึ้นบัญชี */
-export const LOCAL_ONLY_KEYS: ReadonlySet<StoreKey> = new Set(['noticeDismissed', 'tourState']);
+export const LOCAL_ONLY_KEYS: ReadonlySet<StoreKey> = new Set(['noticeDismissed', 'tourState', 'businessState']);
 export const SYNC_KEYS: readonly StoreKey[] = STORE_KEYS.filter((k) => !LOCAL_ONLY_KEYS.has(k));
 export const MAX_SYNC_BYTES = 256 * 1024;
 

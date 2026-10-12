@@ -2,7 +2,9 @@
  * ข้อความ UI ภาษาไทย (ค่าเริ่มต้น) — ห้าม hard-code ข้อความไทยใน component (PROMPT.md 7.17, AC-75)
  * en.ts ต้องมีทุก key ของไฟล์นี้ (type Messages)
  */
+import { businessTh } from './business-th';
 export const th = {
+  business: businessTh,
   meta: {
     title: 'Cozypet — ทุกการพบเจอ อาจพาน้องกลับบ้าน',
     description: 'เว็บต้นแบบ Final Project ช่วยเทียบสัตว์ที่พบกับประกาศตามหาตัวอย่าง และกระจายความช่วยเหลือด้วย Smart Load Balancer (ข้อมูลตัวอย่างทั้งหมด)',
@@ -983,6 +985,7 @@ export const th = {
       request_care: 'ส่งคำขออุปถัมภ์/รับเลี้ยง',
       handoff: 'ยืนยันส่งต่อน้อง (จำลอง)',
       order: 'ส่งแพ็กเกจของใช้ (จำลอง)',
+      micro: 'สมทบกองอาหาร (จำลอง)',
       place_update: 'อัปเดตสถานที่ของฉัน (ทดลอง)',
     },
     plus: '+{n}',
@@ -1123,6 +1126,7 @@ export const th = {
     title: 'ติดตามคำสั่งจำลอง',
     steps: ['ยืนยันคำสั่ง', 'แบรนด์รับออเดอร์', 'แพ็กและจัดส่ง', 'ถึงผู้ดูแล', 'ผู้ดูแลขอบคุณ'],
     stepAt: 'เวลาจำลอง {time}',
+    stepPending: 'รอขั้นก่อนหน้า (จำลอง)',
     fastForward: 'เร่งเวลา (จำลอง)',
     cancel: 'ยกเลิกคำสั่ง',
     cancelConfirm: 'ยกเลิกคำสั่งจำลองนี้? (ยกเลิกได้ก่อนขั้นแพ็กและจัดส่ง)',

@@ -14,6 +14,7 @@ export function Footer() {
     ['/listings', m.footer.listings],
     ['/stories', m.footer.stories],
     ['/donate', m.footer.donate],
+    ['/partners', m.business.partners],
     ['/insights', m.footer.insights],
     ['/how-to', m.footer.howTo],
     ['/profile#reset', m.footer.reset],

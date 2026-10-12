@@ -5,7 +5,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { ExclusionKey, FindingSession, Recommendation, Species, Urgency } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
 import { HELPERS, getHelper } from '@/data';
-import { isDistrictId } from '@/data/districts';
+import { isDistrictId, DISTRICTS } from '@/data/districts';
 import { availableSlots } from '@/lib/capacity';
 import { distanceKm } from '@/lib/geo';
 import { helperBlocker, placeToCandidate, rankHelpers } from '@/lib/balancer';
@@ -29,7 +29,7 @@ import { BangkokMap, type MapPin } from '@/components/map/BangkokMap';
 import { Badge, Card, Notice, Skeleton } from '@/components/ui/Badge';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
-import { Field, Select, Checkbox } from '@/components/ui/Field';
+import { Field, Select, Checkbox, TextInput } from '@/components/ui/Field';
 import { Icon } from '@/components/ui/Icon';
 import s from './nearby.module.css';
 
@@ -64,6 +64,8 @@ export function NearbyPage() {
   const [urgency, setUrgency] = useState<Urgency>((['normal', 'soon', 'emergency'] as Urgency[]).includes(params.get('urgency') as Urgency) ? (params.get('urgency') as Urgency) : 'normal');
   const [sort, setSort] = useState<SortKey>('recommended');
   const [chosenDistrict, setChosenDistrict] = useState(paramDistrict);
+  const [districtQuery, setDistrictQuery] = useState('');
+  const [districtError, setDistrictError] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'searching' | 'results'>('idle');
   const [selected, setSelected] = useState<string | null>(null);
   const [popup, setPopup] = useState<PopupRequest | null>(null);
@@ -274,6 +276,21 @@ export function NearbyPage() {
             </div>
             <Checkbox checked={emergencyOnly} onChange={setEmergencyOnly}>{m.nearby.emergencyOnly}</Checkbox>
             <div className={s.districtRow}>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const query = districtQuery.trim().replace(/^เขต\s*/, '').toLowerCase();
+                const matches = DISTRICTS.filter((d) => d.nameTh.toLowerCase().includes(query) || d.nameEn.toLowerCase().includes(query) || d.id === query);
+                const found = matches.find((d) => d.nameTh.toLowerCase() === query || d.nameEn.toLowerCase() === query || d.id === query) ?? (matches.length === 1 ? matches[0] : undefined);
+                if (!found || !query) { setDistrictError(true); return; }
+                setDistrictError(false); setChosenDistrict(found.id); doSearch(startNewRound('district_choice', found.id));
+              }}>
+                <Field id={`${id}-location`} label={m.business.location} error={districtError ? m.business.locationMissing : undefined}>
+                  <TextInput id={`${id}-location`} placeholder={m.business.locationPlaceholder} value={districtQuery} onChange={(e) => { setDistrictQuery(e.target.value); setDistrictError(false); }} />
+                </Field>
+                {districtQuery.trim() ? <div className={s.searchBtns}>{DISTRICTS.filter((d) => d.nameTh.includes(districtQuery.trim().replace(/^เขต\s*/, '')) || d.nameEn.toLowerCase().includes(districtQuery.trim().toLowerCase())).slice(0, 5).map((d) => <Button key={d.id} small variant="soft" disabled={shownPhase === 'searching'} onClick={() => { setDistrictQuery(locale === 'en' ? d.nameEn : d.nameTh); setChosenDistrict(d.id); setDistrictError(false); doSearch(startNewRound('district_choice', d.id)); }}>{district(d.id)}</Button>)}</div> : null}
+                <Button type="submit" small icon="search" disabled={shownPhase === 'searching'}>{m.business.locationGo}</Button>
+                <p className={s.muted}>{m.business.mapNote}</p>
+              </form>
               <Field id={`${id}-d`} label={m.nearby.changeDistrict}>
                 <DistrictSelect id={`${id}-d`} value={chosenDistrict || session.districtId} onChange={(e) => setChosenDistrict(e.target.value)} />
               </Field>

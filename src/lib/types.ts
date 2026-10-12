@@ -139,6 +139,8 @@ export interface HelperProfile {
   currentPets?: CurrentPet[];
   preferences?: CarePreferences;
   isRealOrganization?: boolean;
+  /** Business demo only; never an assertion about a registered organisation. */
+  isFictionalFoundation?: true;
   /** shelter: ช่องที่ยังรอทีมเติมข้อมูลองค์กรจริง (ห้ามแต่งองค์กร) */
   isPlaceholder?: boolean;
   /** shelter: ที่มาและสถานะการตรวจข้อมูลองค์กรจริง */
@@ -306,7 +308,41 @@ export interface DonationOrder {
   status: 'active' | 'cancelled';
   createdAt: string;
   fastForwarded?: boolean;
+  platformSharePct?: number;
+  settlementStage?: 'received' | 'commissioned' | 'partner_paid';
+  fulfillmentStartedAt?: string;
+  source?: 'donor' | 'csr' | 'micro';
+  sponsorshipBookingId?: string;
   isDemo: true;
+}
+
+export interface PartnerBooking {
+  id: string;
+  runNumber: number;
+  brandId: string;
+  kind: 'advertisement' | 'csr';
+  placement: 'home' | 'dashboard';
+  species: Species | 'all';
+  durationDays: number;
+  feeTHB: number;
+  aidBudgetTHB: number;
+  campaignId?: string;
+  aidOrder?: DonationOrder;
+  status: 'active' | 'cancelled';
+  createdAt: string;
+  isDemo: true;
+}
+export interface MicroDonation {
+  id: string; runNumber: number; helperId: string; amountTHB: number; createdAt: string; isDemo: true;
+}
+export interface CareReview {
+  id: string; runNumber: number; helperId: string; rating: number; comment: string; createdAt: string; isDemo: true;
+}
+export interface DeliveryReceipt {
+  id: string; runNumber: number; helperId: string; orderId: string; image: MediaRef; note: string; createdAt: string; isDemo: true;
+}
+export interface BusinessState {
+  bookings: PartnerBooking[]; microDonations: MicroDonation[]; reviews: CareReview[]; receipts: DeliveryReceipt[];
 }
 
 export interface CaretakerPlace {
@@ -334,7 +370,7 @@ export type UrgentCase =
   | { kind: 'supplies'; helperId: string; level: SupplyLevel; reasons: Reason[] }
   | { kind: 'listing'; listingId: string; urgency: Urgency; reasons: Reason[] };
 
-export type ActivityKind = 'listing_found' | 'listing_lost' | 'request_intake' | 'request_care' | 'handoff' | 'order' | 'place_update';
+export type ActivityKind = 'listing_found' | 'listing_lost' | 'request_intake' | 'request_care' | 'handoff' | 'order' | 'micro' | 'place_update';
 export interface ActivityEntry {
   kind: ActivityKind;
   refId: string;

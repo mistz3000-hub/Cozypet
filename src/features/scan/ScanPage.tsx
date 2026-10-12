@@ -105,7 +105,7 @@ export function ScanPage() {
     }
   };
 
-  const useSample = (kind: 'cat' | 'dog') => {
+  const chooseSample = (kind: 'cat' | 'dog') => {
     const sample = petPhotoFor(kind === 'cat' ? 'listing-001' : 'listing-006');
     if (!sample) return;
     setPhoto({ ...sample, alt: kind === 'cat' ? m.scan.sampleAlt : m.scan.sampleDogAlt });
@@ -201,16 +201,16 @@ export function ScanPage() {
                   <div className={s.photoActions}>
                     <Button small icon="image" onClick={() => fileInput.current?.click()}>{m.scan.changePhoto}</Button>
                     <Button small variant="ghost" icon="trash" onClick={() => setPhoto(null)}>{m.scan.removePhoto}</Button>
-                    <Button small variant="ghost" icon="paw" onClick={() => useSample('cat')}>{m.scan.useSample}</Button>
-                    <Button small variant="ghost" icon="paw" onClick={() => useSample('dog')}>{m.scan.useDogSample}</Button>
+                    <Button small variant="ghost" icon="paw" onClick={() => chooseSample('cat')}>{m.scan.useSample}</Button>
+                    <Button small variant="ghost" icon="paw" onClick={() => chooseSample('dog')}>{m.scan.useDogSample}</Button>
                   </div>
                 </div>
               ) : (
                 <div className={s.pickers} id={`${id}-photo`} tabIndex={-1}>
                   <Button icon="camera" onClick={() => cameraInput.current?.click()}>{m.scan.takePhoto}</Button>
                   <Button icon="image" onClick={() => fileInput.current?.click()}>{m.scan.choosePhoto}</Button>
-                  <Button variant="primary" icon="paw" onClick={() => useSample('cat')} data-tour-safe="true">{m.scan.useSample}</Button>
-                  <Button icon="paw" onClick={() => useSample('dog')}>{m.scan.useDogSample}</Button>
+                  <Button variant="primary" icon="paw" onClick={() => chooseSample('cat')} data-tour-safe="true">{m.scan.useSample}</Button>
+                  <Button icon="paw" onClick={() => chooseSample('dog')}>{m.scan.useDogSample}</Button>
                 </div>
               )}
               <input ref={cameraInput} type="file" accept="image/*" capture="environment" className="visually-hidden" tabIndex={-1} onChange={(e) => { void onFile(e.target.files?.[0]); e.target.value = ''; }} aria-label={m.scan.takePhoto} />

@@ -149,6 +149,10 @@ export interface RankDonationInput {
 
 export interface DonationTargetDetail { foodDays: number; litterDays?: number; recentTotal: number }
 
+export function canReceivePackages(h: HelperProfile): boolean {
+  return !!h.acceptsSupplyPackages && !h.isRealOrganization && (h.kind === 'individual' || h.isFictionalFoundation === true);
+}
+
 export function donationTargetDetail(helperId: string, base: HelperSupplies, input: Pick<RankDonationInput, 'orders' | 'packages' | 'now'>): DonationTargetDetail {
   const eff = effectiveSupplies(base, helperId, input.orders, input.packages, input.now);
   return { ...eff, recentTotal: base.recentPackages30d + userOrdersToHelperWithin30d(helperId, input.orders, input.now) };
@@ -157,7 +161,7 @@ export function donationTargetDetail(helperId: string, base: HelperSupplies, inp
 export function rankDonationTargets(input: RankDonationInput): RankingResult {
   const items: Recommendation[] = [];
   for (const h of input.helpers) {
-    if (h.kind !== 'individual' || !h.acceptsSupplyPackages) continue; // สถานสงเคราะห์จริงไม่เป็นปลายทางเด็ดขาด
+    if (!canReceivePackages(h)) continue;
     if (input.species && !h.speciesAccepted.includes(input.species)) continue;
     const base = input.supplies.get(h.id);
     if (!base) continue;

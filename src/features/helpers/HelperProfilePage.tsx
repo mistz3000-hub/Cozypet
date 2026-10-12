@@ -28,6 +28,8 @@ import { DonationDialog } from './DonationDialog';
 import { helperName } from './helper-text';
 import { useHelperSupplies } from './supplies';
 import s from './profile.module.css';
+import { FoundationPage } from '@/features/business/FoundationPage';
+import { CommunityPanel } from '@/features/business/CommunityPanel';
 
 /** โปรไฟล์ผู้ช่วยดูแล (PROMPT.md 7.5) */
 export function HelperProfilePage({ id }: { id: string }) {
@@ -43,7 +45,7 @@ export function HelperProfilePage({ id }: { id: string }) {
       </div>
     );
   }
-  return <Profile id={h.id} />;
+  return h.isFictionalFoundation ? <FoundationPage helper={h} /> : <Profile id={h.id} />;
 }
 
 function Profile({ id }: { id: string }) {
@@ -286,6 +288,7 @@ function Profile({ id }: { id: string }) {
         </aside>
       </div>
 
+      <CommunityPanel helper={h} />
       {run && finding ? (
         <RecommendPopup
           request={popup}

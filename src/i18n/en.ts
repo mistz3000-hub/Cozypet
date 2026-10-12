@@ -1,7 +1,9 @@
 import type { Messages } from './types';
+import { businessEn } from './business-en';
 
 /** English UI strings — must contain every key of th.ts (typechecked) */
 export const en: Messages = {
+  business: businessEn,
   meta: {
     title: 'Cozypet — Every encounter could bring a pet home',
     description: 'A Final Project prototype that compares a found animal with sample lost-pet notices and spreads help with a Smart Load Balancer (all data is sample data).',
@@ -980,6 +982,7 @@ export const en: Messages = {
       request_care: 'Sent a fostering/adoption request',
       handoff: 'Confirmed a handoff (simulated)',
       order: 'Sent a supply package (simulated)',
+      micro: 'Contributed to a food pool (simulated)',
       place_update: 'Updated my place (trial)',
     },
     plus: '+{n}',
@@ -1120,6 +1123,7 @@ export const en: Messages = {
     title: 'Track simulated order',
     steps: ['Order confirmed', 'Brand accepted', 'Packed and shipped', 'Delivered to caregiver', 'Caregiver says thanks'],
     stepAt: 'Simulated time {time}',
+    stepPending: 'Waiting for previous step (simulated)',
     fastForward: 'Fast-forward (simulated)',
     cancel: 'Cancel order',
     cancelConfirm: 'Cancel this simulated order? (possible before “Packed and shipped”)',
