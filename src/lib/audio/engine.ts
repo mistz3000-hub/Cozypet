@@ -1,6 +1,6 @@
 'use client';
 /**
- * Web Audio engine — เสียงทั้งหมดสังเคราะห์ในโค้ด (PROMPT.md 3.7, CREDITS.md `sound-synth`)
+ * Web Audio engine — UI/music synth plus CC0 pet recordings (CREDITS.md D28).
  * ปิดเสียงเป็นค่าเริ่มต้น และเริ่มได้หลังผู้ใช้กดเท่านั้น
  */
 import { read } from '../storage';
@@ -16,10 +16,10 @@ export function getAudio(): { ctx: AudioContext; out: GainNode } | null {
       if (!AC) return null;
       ctx = new AC();
       master = ctx.createGain();
-      master.gain.value = 0.5;
+      master.gain.value = isSoundEnabled() ? 0.5 : 0;
       master.connect(ctx.destination);
     }
-    if (ctx.state === 'suspended') void ctx.resume();
+    if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
     return { ctx, out: master! };
   } catch {
     return null;
@@ -27,14 +27,19 @@ export function getAudio(): { ctx: AudioContext; out: GainNode } | null {
 }
 
 export function isSoundEnabled(): boolean {
+  if (soundOverride !== null) return soundOverride;
   const session = read('demoSession');
-  return session ? !!session.soundEnabled : soundOverride;
+  return session ? !!session.soundEnabled : false;
 }
 
-let soundOverride = false;
-/** ใช้เมื่อ storage ใช้ไม่ได้ */
+let soundOverride: boolean | null = null;
+/** Sync the visible sound setting, including when persistent storage is unavailable. */
 export function setSoundOverride(on: boolean) {
   soundOverride = on;
+  if (ctx && master) {
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setTargetAtTime(on ? 0.5 : 0, ctx.currentTime, 0.015);
+  }
 }
 
 export interface Tone { freq: number; to?: number; dur: number; type?: OscillatorType; gain?: number; delay?: number }

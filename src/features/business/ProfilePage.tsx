@@ -17,7 +17,7 @@ import { Dialog } from '@/components/ui/Dialog';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { PawPrint } from '@/components/ui/PawPrint';
 import { CountUp } from '@/components/ui/CountUp';
-import { PetFrame } from './PetFrame';
+import { PetFrame, PetStat } from './PetFrame';
 import s from './business.module.css';
 import p from './profile-credit.module.css';
 
@@ -50,7 +50,7 @@ export function ProfilePage() {
     <header className={p.pageHeader}><div><Badge tone="butter">{f(m.business.reviewer, { run: String(run.run).padStart(3, '0') })}</Badge><h1>{m.business.profileTitle}</h1><p className={s.lead}>{m.business.profileNote}</p></div><span className={p.petChip} data-pet={mascot}><PawPrint kind={mascot} />{mascot === 'cat' ? m.mascot.cat : m.mascot.dog}</span></header>
     <PetFrame mascot={mascot} id="profile-credit" data-tour="profile-credit">
       <div className={p.creditHeader}><div className={p.creditHeading}><span className={p.seal}><PawPrint kind={mascot} /></span><div><span className={p.eyebrow}>{m.business.creditEyebrow}</span><h2>{m.business.creditTitle}</h2><p>{m.business.creditIntro}</p></div></div><span className={p.levelBadge}><Icon name="heart" size={16} />{m.kindness.level[kindness.level]}</span></div>
-      <dl className={p.creditGrid}>{stats.map((x) => <div key={x.label} className={p.creditStat}><dt><Icon name={x.icon} size={18} />{x.label}</dt><dd><CountUp value={x.value} format={x.format} /></dd><PawPrint kind={mascot} className={p.statPaw} /></div>)}</dl>
+      <dl className={p.creditGrid}>{stats.map((x) => <PetStat key={x.label} mascot={mascot} label={x.label} icon={x.icon}><CountUp value={x.value} format={x.format} /></PetStat>)}</dl>
     </PetFrame>
     <PetFrame mascot={mascot} id="kindness"><div className={p.kindnessHeader}><div><span className={p.eyebrow}>{m.business.kindnessEyebrow}</span><h2>{m.kindness.historyTitle}</h2></div><div className={p.kindnessScore}><PawPrint kind={mascot} width={32} height={32} /><strong><CountUp value={kindness.total} /></strong><span>{m.business.pointsUnit}</span></div></div><p className={s.muted}>{m.kindness.note}</p>{kindness.activities.length ? <ActivityList items={kindness.activities} /> : <p className={p.empty}>{m.kindness.empty}</p>}</PetFrame>
     <PetFrame mascot={mascot}><h2>{m.business.profileOrders}</h2>{donorOrders.length ? <ul className={s.list}>{donorOrders.map((o) => { const h = getHelper(o.helperId); const pkg = getPackage(o.packageId); return <li key={o.id} className={s.row}><Link href={`/donate/orders/${o.id}`}>{pkg ? loc(pkg.name) : o.packageId} × {o.quantity}<p className={s.muted}>{h ? helperName(h, locale) : o.helperId} · {dateTime(o.createdAt)}</p></Link><span>{o.status === 'cancelled' ? m.orders.cancelled : money(orderTotalTHB(o))}</span></li>; })}</ul> : <p className={p.empty}>{m.business.profileEmpty}</p>}</PetFrame>

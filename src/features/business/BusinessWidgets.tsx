@@ -25,7 +25,9 @@ import { Icon } from '@/components/ui/Icon';
 import { Meter } from '@/components/ui/Meter';
 import { CountUp } from '@/components/ui/CountUp';
 import { useDonationOrders } from './hooks';
+import { PetFrame, PetStat } from './PetFrame';
 import s from './business.module.css';
+import p from './profile-credit.module.css';
 
 export function SponsorBanner({ placement, preview }: { placement: 'home' | 'dashboard'; preview?: PartnerBooking }) {
   const { m, loc, f } = useI18n();
@@ -66,6 +68,7 @@ export function MoneyFlow({ order, preview = false, onAdvance }: { order: Donati
 
 export function MicroDonationTracker({ helperId: preset }: { helperId?: string }) {
   const { m, f, money, locale, loc } = useI18n();
+  const [{ mascot }] = useDemoSession();
   const state = useStore('businessState');
   const run = useRun();
   const id = useId();
@@ -84,18 +87,22 @@ export function MicroDonationTracker({ helperId: preset }: { helperId?: string }
     const result = updateValue('businessState', (s) => ({ ...s, microDonations: [...s.microDonations, { id: newId('micro'), runNumber: run.run, helperId, amountTHB, createdAt: new Date().toISOString(), isDemo: true }] }));
     toast(result === 'quota' ? m.business.failed : m.business.saved);
   };
-  return <section id="micro-donations" className={`${s.panel} ${s.micro}`} data-tour="micro-donation">
+  return <PetFrame mascot={mascot} id="micro-donations" className={s.micro} data-tour="micro-donation">
     <div className={s.head}><h2>{m.business.microTitle}</h2><Badge tone="butter" icon="heart">{m.business.demo}</Badge></div>
     <p className={s.lead}>{m.business.microIntro}</p>
     <div className={s.microSummary}><div><p className={s.muted}>{m.business.microTotal}</p><p className={s.money}><CountUp value={total} format={money} /></p></div><Badge tone="info">{f(m.business.microCount, { n: state.microDonations.length })}</Badge></div>
     {!preset ? <Field id={`${id}-target`} label={m.donate.recipient}><Select id={`${id}-target`} value={helperId} onChange={(e) => setHelperId(e.target.value)}>{DEMO_FOUNDATIONS.map((h) => <option key={h.id} value={h.id}>{helperName(h, locale)}</option>)}</Select></Field> : <h3>{helperName(h, locale)}</h3>}
-    <dl className={s.stats}><div className={s.stat}><dt>{m.business.microPool}</dt><dd>{money(pool.balance)}</dd></div><div className={s.stat}><dt>{m.business.microSpent}</dt><dd>{money(pool.spent)}</dd></div><div className={s.stat}><dt>{m.business.microCount.replace('{n} ', '')}</dt><dd>{donations.length}</dd></div></dl>
+    <dl className={`${p.creditGrid} ${p.compactStats}`} data-pool-credit>
+      <PetStat mascot={mascot} label={m.business.microPool} icon="heart"><CountUp value={pool.balance} format={money} /></PetStat>
+      <PetStat mascot={mascot} label={m.business.microSpent} icon="box"><CountUp value={pool.spent} format={money} /></PetStat>
+      <PetStat mascot={mascot} label={m.business.microCount.replace('{n} ', '')} icon="paw"><CountUp value={donations.length} /></PetStat>
+    </dl>
     <p>{f(m.business.microNext, { package: loc(pkg.name), price: money(pkg.priceTHB) })}</p>
     <Meter value={pool.balance} max={pkg.priceTHB} label={m.business.microPool} level="gold" valueText={`${money(pool.balance)} / ${money(pkg.priceTHB)}`} />
     {run ? <><Checkbox checked={ack} onChange={setAck}>{m.business.microAck}</Checkbox><div className={s.actions}>{[50, 100].map((n) => <Button key={n} disabled={!ack} variant="primary" icon="heart" onClick={() => give(n)}>{f(m.business.microGive, { amount: money(n) })}</Button>)}</div></> : <ButtonLink href="/start?next=/dashboard" variant="primary" icon="heart">{m.start.submit}</ButtonLink>}
     <p className={s.note}>{m.business.liveNote}</p>
     {orders.length ? <><h3>{m.business.microOrders}</h3><ul className={s.list}>{orders.slice(-3).reverse().map((o) => <li key={o.id} className={s.row}><Link href={`/donate/orders/${o.id}`}>{loc(pkg.name)}</Link><span>{money(o.unitPriceTHB)}</span></li>)}</ul></> : null}
-  </section>;
+  </PetFrame>;
 }
 
 export function CrisisCards() {

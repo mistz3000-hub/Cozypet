@@ -93,11 +93,11 @@ export function PartnersPage() {
           const b = state.bookings.find((b) => b.campaignId === c.id && bookingActive(b, new Date(now || 0)));
           const brand = BRANDS.find((brand) => brand.id === b?.brandId);
           const delivered = deliveredOrders(orders, h.id, new Date(now || 0)).filter((o) => o.packageId === p.id).reduce((n, o) => n + o.quantity, 0);
-          return <article key={c.id} className={s.case}><PetImage media={h.images.place?.[0]} ratio="16 / 9" rounded={false} /><div className={s.caseBody}><Badge tone="butter">{m.business.foundation}</Badge><h3>{loc(c.title)}</h3><p>{helperName(h, locale)}</p><p className={s.muted}>{f(m.business.campaignGoal, { n: c.goalPackages })} · {loc(p.name)}</p><Meter value={Math.min(delivered, c.goalPackages)} max={c.goalPackages} label={loc(c.title)} level="gold" valueText={f(m.business.campaignProgress, { n: delivered, goal: c.goalPackages })} />
+          return <article key={c.id} className={s.case}><PetImage media={h.images.place?.[0]} ratio="16 / 9" rounded={false} cover /><div className={s.caseBody}><Badge tone="butter">{m.business.foundation}</Badge><h3>{loc(c.title)}</h3><p>{helperName(h, locale)}</p><p className={s.muted}>{f(m.business.campaignGoal, { n: c.goalPackages })} · {loc(p.name)}</p><Meter value={Math.min(delivered, c.goalPackages)} max={c.goalPackages} label={loc(c.title)} level="gold" valueText={f(m.business.campaignProgress, { n: delivered, goal: c.goalPackages })} />
             <dl className={s.list}><div><dt>{m.business.aidBudget}</dt><dd>{money(p.priceTHB * c.goalPackages)}</dd></div><div><dt>{m.business.csrFee}</dt><dd>{money(c.promotionFeeTHB)}</dd></div><div><dt>{m.business.sponsorTotal}</dt><dd><strong>{money(p.priceTHB * c.goalPackages + c.promotionFeeTHB)}</strong></dd></div></dl>
-            {brand ? <Badge tone="open" icon="star">{f(m.business.sponsorBrand, { brand: loc(brand.name) })}</Badge> : <Button variant="primary" disabled={!ack} onClick={() => save(c.id)}>{m.business.sponsor}</Button>}
+            <div className={s.caseActions}>{brand ? <Badge tone="open" icon="star">{f(m.business.sponsorBrand, { brand: loc(brand.name) })}</Badge> : <Button variant="primary" disabled={!ack} onClick={() => save(c.id)}>{m.business.sponsor}</Button>}
             {b?.aidOrder ? <ButtonLink small href={`/donate/orders/${b.aidOrder.id}`} icon="box">{m.business.sponsoredOrder}</ButtonLink> : null}<ButtonLink small variant="ghost" href={`/helpers/${h.id}`} iconRight="arrowRight">{m.chat.viewHelper}</ButtonLink>
-          </div></article>;
+            </div></div></article>;
         })}</div>
       </>}
       {problem ? <Notice tone="error" role="alert">{problem}</Notice> : null}

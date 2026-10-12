@@ -1,5 +1,14 @@
 # CREDITS.md — ที่มาและไลเซนส์ของภาพ ฟอนต์ ไอคอน และ animation
 
+## D28: เสียงสัตว์เมื่อกดลูบ
+
+| ID / ไฟล์ | ผู้สร้าง / ต้นฉบับ | สิทธิ์ | การใช้ |
+| --- | --- | --- | --- |
+| `pet-cat-purr` · `public/audio/cat-purr.wav` | Joseph SARDIN · [Cat Purr #436](https://bigsoundbank.com/cat-purr-s0436.html) · MP3 ต้นฉบับ `/UPLOAD/mp3/0436.mp3` | CC0 ตามหน้าต้นฉบับ ตรวจ 12 ต.ค. 2026 | ตัด 1.35 วินาที แปลง mono 22050 Hz ปรับระดับและ fade หัวท้าย ใช้ตอนกดแมวขณะ Sound on |
+| `pet-dog-pant` · `public/audio/dog-pant.wav` | Joseph SARDIN · [Dogs Breathing #1547](https://bigsoundbank.com/dogs-breathing-s1547.html) · MP3 ต้นฉบับ `/UPLOAD/mp3/1547.mp3` | CC0 ตามหน้าต้นฉบับ ตรวจ 12 ต.ค. 2026 | ตัด 1.25 วินาที แปลง mono 22050 Hz ปรับระดับและ fade หัวท้าย ใช้ตอนกดหมาขณะ Sound on ต้นฉบับเป็นเสียงหมาสองตัวหอบ ไม่ใช่หลักฐานอารมณ์ฟิน |
+
+ไฟล์เสียงนี้เป็นข้อยกเว้นของ `sound-synth` ตามคำขอล่าสุด ใช้ Web Audio เล่นจาก asset ในเว็บ ไม่มี hotlink ค่า API หรือเพลงภายนอก ปิดเสียงเป็นค่าเริ่มต้น
+
 ## D27: อุ้งเท้าและซองจดหมาย
 
 `profile-paw-prints` / `care-envelope`: SVG วาดขึ้นใน source (`src/components/ui/PawPrint.tsx`, `src/features/donate/CareEnvelope.tsx`) ใช้กรอบ Profile Credit และภาพซองแจ้งแพ็กเกจถึงผู้ดูแล ไม่มี asset ภายนอก ไม่มีการสร้างภาพหลักฐานว่าจัดส่งจริง ใช้ design tokens และระบบ Motion เดิม

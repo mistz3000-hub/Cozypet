@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MascotKind } from '@/lib/types';
-import { playSfx } from '@/lib/audio/sfx';
+import { playPetSound, stopPetSound } from '@/lib/audio/pets';
 import { MASCOT } from './mascot-config';
 
 export interface Heart { id: number; x: number; drift: number; rot: number; delay: number; size: number }
@@ -19,7 +19,7 @@ export function usePetReaction(kind: MascotKind, reduced: boolean) {
   const sequence = useRef(0);
   useEffect(() => {
     reacting.current = false;
-    return () => { timers.current.forEach((timer) => window.clearTimeout(timer)); timers.current = []; };
+    return () => { timers.current.forEach((timer) => window.clearTimeout(timer)); timers.current = []; stopPetSound(); };
   }, [kind, reduced]);
 
   const react = useCallback(() => {
@@ -27,7 +27,7 @@ export function usePetReaction(kind: MascotKind, reduced: boolean) {
     timers.current.forEach((timer) => window.clearTimeout(timer));
     reacting.current = true;
     setReaction(true);
-    playSfx(kind === 'dog' ? 'woof' : 'meow');
+    void playPetSound(kind);
     setHearts(Array.from({ length: reduced ? 2 : 3 }, (_, i) => ({
       id: ++sequence.current,
       x: (i - (reduced ? 0.5 : 1)) * MASCOT.heartSpread,

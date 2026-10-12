@@ -8,6 +8,7 @@ import { useToast } from '@/components/providers/Toast';
 import { m as motionEl, useReducedMotion } from '@/lib/motion';
 import { T } from '@/lib/motion-tokens';
 import { mascotImages, useImagesReady } from '@/lib/image-loading';
+import { preparePetSound, stopPetSound } from '@/lib/audio/pets';
 import s from './switch.module.css';
 
 /** segmented control “น้องแมว / น้องหมา” (radio group) PROMPT.md 6.4 */
@@ -22,7 +23,9 @@ export function MascotSwitch({ compact = false, idSuffix = '' }: { compact?: boo
   const assets = useImagesReady(mascotImages(value));
   const choose = (k: MascotKind) => {
     if (k === value) return;
+    stopPetSound();
     const r = update({ mascot: k });
+    preparePetSound(k);
     announce(k === 'dog' ? m.mascot.changedDog : m.mascot.changedCat);
     if (r === 'memory' || r === 'quota') toast(m.mascot.noRemember, { tone: 'info', icon: 'info' });
   };

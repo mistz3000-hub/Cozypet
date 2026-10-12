@@ -4,6 +4,7 @@ import type { MascotKind } from '@/lib/types';
 import { AnimatePresence, m as motionEl, useReducedMotion } from '@/lib/motion';
 import { T } from '@/lib/motion-tokens';
 import { PawPrint } from '@/components/ui/PawPrint';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import s from './profile-credit.module.css';
 
 export function PetFrame({ mascot, children, className, ...props }: { mascot: MascotKind } & ComponentPropsWithoutRef<'section'>) {
@@ -16,4 +17,13 @@ export function PetFrame({ mascot, children, className, ...props }: { mascot: Ma
     </AnimatePresence></div>
     <div className={s.content}>{children}</div>
   </section>;
+}
+
+/** A metric in a definition list, shared by profile credit and donation pools. */
+export function PetStat({ mascot, label, icon, children, className, ...props }: { mascot: MascotKind; label: string; icon: IconName } & ComponentPropsWithoutRef<'div'>) {
+  return <div className={[s.creditStat, className].filter(Boolean).join(' ')} {...props}>
+    <dt><Icon name={icon} size={18} />{label}</dt>
+    <dd>{children}</dd>
+    <PawPrint kind={mascot} className={s.statPaw} />
+  </div>;
 }

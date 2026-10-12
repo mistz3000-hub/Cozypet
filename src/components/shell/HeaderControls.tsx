@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/AuthContext';
 import { Icon } from '@/components/ui/Icon';
 import { playSfx } from '@/lib/audio/sfx';
 import { setSoundOverride } from '@/lib/audio/engine';
+import { preparePetSound, stopPetSound } from '@/lib/audio/pets';
 import { useAnnounce } from '@/components/providers/Announcer';
 import { m as motionEl, useReducedMotion } from '@/lib/motion';
 import { T } from '@/lib/motion-tokens';
@@ -84,6 +85,10 @@ export function SoundToggle() {
   const hydrated = useHydrated();
   const [session, update] = useDemoSession();
   const on = hydrated && session.soundEnabled;
+  useEffect(() => {
+    setSoundOverride(on);
+    if (!on) stopPetSound();
+  }, [on]);
   return (
     <button
       type="button"
@@ -91,9 +96,10 @@ export function SoundToggle() {
       aria-pressed={on}
       aria-label={m.header.soundLabel}
       onClick={() => {
-        const r = update({ soundEnabled: !on });
-        if (r !== 'ok') setSoundOverride(!on);
-        if (!on) playSfx('pop', { force: true });
+        update({ soundEnabled: !on });
+        setSoundOverride(!on);
+        if (!on) { playSfx('pop', { force: true }); preparePetSound(session.mascot); }
+        else stopPetSound();
       }}
     >
       <Icon name={on ? 'volume' : 'volumeOff'} />

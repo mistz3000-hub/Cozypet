@@ -34,9 +34,12 @@
 .creditStat dd { margin: var(--cp-space-3) 0 0; font-size: 1.7rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--cp-ink); }
 .creditStat:first-child dd { font-size: clamp(2rem, 3vw, 2.6rem); }
 .statPaw { position: absolute; width: 33px; height: 33px; bottom: 12px; right: 13px; color: var(--credit-decor); opacity: .12; transform: rotate(-15deg); }
+.compactStats { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-block: var(--cp-space-5); }
+.compactStats > .creditStat { grid-column: auto; }
 .kindnessHeader { display: flex; align-items: center; justify-content: space-between; gap: var(--cp-space-4); flex-wrap: wrap; margin-bottom: var(--cp-space-5); }
 .kindnessScore { display: flex; align-items: center; gap: var(--cp-space-3); }
 .kindnessScore strong { color: var(--cp-ink); font-size: clamp(2rem, 4vw, 3rem); font-variant-numeric: tabular-nums; }
 .empty { padding: var(--cp-space-5); background: var(--credit-soft); border-radius: var(--cp-radius-card); color: var(--cp-ink-muted); }
 @media (max-width: 700px) { .creditGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--cp-space-3); } .creditStat, .creditStat:first-child, .creditStat:nth-child(2) { grid-column: auto; } .creditStat:first-child, .creditStat:last-child { grid-column: span 2; } .creditStat { padding: var(--cp-space-4); } .creditStat dd { font-size: 1.55rem; } .seal { width: 48px; height: 48px; flex-basis: 48px; border-radius: 18px; } .seal svg { width: 32px; height: 32px; } .creditHeader, .creditHeading { gap: var(--cp-space-3); } .frame { padding: var(--cp-space-5); } .sideLeft, .sideRight { display: none; } }
 @media (prefers-reduced-motion: reduce) { .frame *, .petChip { transition: none; } }
+@media (max-width: 700px) { .compactStats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .compactStats > .creditStat:first-child { grid-column: span 2; } .compactStats > .creditStat:not(:first-child) { grid-column: auto; } }
