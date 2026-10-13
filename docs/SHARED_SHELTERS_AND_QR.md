@@ -46,7 +46,7 @@
 
 1. Supabase Free โปรเจกต์ Cozypet ที่ Singapore ใช้ publishable key ฝั่ง server
 2. ตั้ง `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SITE_URL` ใน Vercel ไม่ใส่ค่าใน Git
-3. Apply migrations init → shared_shelters → shelter_photo_publication (applied แล้วในโปรเจกต์ผู้ใช้)
+3. Migration history จริงตรงกับชื่อไฟล์ใน repo: `20261012193713_cozypet_initial_accounts.sql` → `20261013085213_cozypet_shared_shelters.sql` → `20261013214254_cozypet_photo_publication.sql` (applied แล้ว ไม่รัน SQL ซ้ำในโปรเจกต์นี้; โปรเจกต์ใหม่รันตามลำดับ)
 4. Google Cloud Web application: origin `https://cozypet-iota.vercel.app`, redirect URI ตาม Supabase `/auth/v1/callback`
 5. Supabase Sign In / Providers → Google → Client ID/Secret และ Enable; Skip nonce checks และ Allow users without an email ปิด
 6. URL Configuration: Site URL `https://cozypet-iota.vercel.app`, Redirect URLs `https://cozypet-iota.vercel.app/auth/callback**`
