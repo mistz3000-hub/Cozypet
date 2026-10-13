@@ -17,7 +17,7 @@ import s from './auth.module.css';
 
 export function SignupPage() {
   const { m, f } = useI18n();
-  const { enabled } = useAuth();
+  const { enabled, googleEnabled } = useAuth();
   const params = useSearchParams();
   const router = useRouter();
   const id = useId();
@@ -97,7 +97,7 @@ export function SignupPage() {
           </div>
         ) : (
           <>
-            <GoogleButton label={m.auth.googleSignup} next={next} disabled={!enabled} />
+            <GoogleButton label={m.auth.googleSignup} next={next} disabled={!googleEnabled} />
             <p className={s.or}><span>{m.auth.or}</span></p>
             <form noValidate className={s.form} onSubmit={(e) => { e.preventDefault(); void submit(); }}>
               <ErrorSummary title={m.common.errorSummary} errors={list} />

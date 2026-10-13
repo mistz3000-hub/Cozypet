@@ -17,7 +17,7 @@ export async function getCurrentUser(): Promise<ClientUser | null> {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) return null;
     const u = data.user;
-    const { data: profile } = await supabase.from('profiles').select('display_name, avatar_url, run_number').eq('id', u.id).maybeSingle();
+    const { data: profile } = await supabase.from('profiles').select('display_name, avatar_url, run_number, account_role').eq('id', u.id).maybeSingle();
     const meta = (u.user_metadata ?? {}) as Record<string, unknown>;
     const displayName = (profile?.display_name as string | undefined)
       ?? (meta.full_name as string | undefined) ?? (meta.name as string | undefined) ?? (u.email?.split('@')[0] ?? 'Cozypet');
@@ -28,6 +28,7 @@ export async function getCurrentUser(): Promise<ClientUser | null> {
       emailMasked: maskEmail(u.email),
       providers: ((u.app_metadata?.providers as string[] | undefined) ?? [u.app_metadata?.provider as string]).filter(Boolean),
       runNumber: (profile?.run_number as number | null | undefined) ?? null,
+      accountRole:profile?.account_role==='shelter'?'shelter':'supporter',
     };
   } catch {
     return null;

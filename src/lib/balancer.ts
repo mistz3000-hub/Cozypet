@@ -150,7 +150,7 @@ export interface RankDonationInput {
 export interface DonationTargetDetail { foodDays: number; litterDays?: number; recentTotal: number }
 
 export function canReceivePackages(h: HelperProfile): boolean {
-  return !!h.acceptsSupplyPackages && !h.isRealOrganization && (h.kind === 'individual' || h.isFictionalFoundation === true);
+  return !!h.acceptsSupplyPackages && !h.isRealOrganization && (h.kind === 'individual' || h.isFictionalFoundation === true || !!h.publicPlaceId);
 }
 
 export function donationTargetDetail(helperId: string, base: HelperSupplies, input: Pick<RankDonationInput, 'orders' | 'packages' | 'now'>): DonationTargetDetail {

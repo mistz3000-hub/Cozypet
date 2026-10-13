@@ -16,6 +16,7 @@ import { useAuth } from './AuthContext';
 import { updateProfileRemote } from './sync-client';
 import { PasswordInput, passwordStrength } from './PasswordInput';
 import s from './auth.module.css';
+import { RoleChooser } from '@/features/shelters/RoleChooser';
 
 export function AccountPage() {
   const { m, f, time, locale, setLocale } = useI18n();
@@ -98,6 +99,7 @@ export function AccountPage() {
   return (
     <div className={`cp-container cp-page ${s.wide}`}>
       <h1>{m.auth.accountTitle}</h1>
+      <RoleChooser/>
       {err ? <Notice tone="error" icon="alert" role="alert">{err}</Notice> : null}
 
       <Card className={s.section}>

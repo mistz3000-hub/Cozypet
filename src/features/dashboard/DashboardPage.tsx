@@ -36,6 +36,8 @@ import s from './dashboard.module.css';
 import { RevenuePanel, MicroDonationTracker, CrisisCards, SponsorBanner } from '@/features/business/BusinessWidgets';
 import { useDonationOrders } from '@/features/business/hooks';
 import { orderArrived } from '@/lib/orders';
+import { useShelters } from '@/features/shelters/useShelters';
+import { RoleChooser } from '@/features/shelters/RoleChooser';
 
 const SUPPLY_MAP = new Map(SUPPLIES.map((x) => [x.helperId, x]));
 const HELPER_MAP = new Map(HELPERS.map((h) => [h.id, h]));
@@ -52,6 +54,7 @@ export function DashboardPage() {
   const { m, f, money, num, district, locale } = useI18n();
   const router = useRouter();
   const { user } = useAuth();
+  const shared=useShelters();
   const run = useRun()!;
   const listings = useAllListings();
   const orders = useDonationOrders();
@@ -71,10 +74,10 @@ export function DashboardPage() {
   const totalPackages = DONATION_BASELINE.totalPackages + minePackages;
 
   const counts: Record<StatusLevel, number> = { open: 0, tight: 0, full: 0 };
-  const pins: MapPin[] = HELPERS.map((h) => {
+  const pins: MapPin[] = [...HELPERS,...shared.helpers].map((h) => {
     const st = statusInfo(h);
     counts[st.level] += 1;
-    return { id: h.id, location: h.location, level: st.level, kind: h.kind, label: helperName(h, locale) };
+    return { id: h.id, location: h.location, level: st.level, kind: h.kind, label: helperName(h, locale),photo:h.images.place?.[0]??h.images.profile };
   });
 
   return (
@@ -89,6 +92,7 @@ export function DashboardPage() {
       </header>
 
       <MicroDonationTracker />
+      <RoleChooser/>
       <SponsorBanner placement="dashboard" />
       <CrisisCards />
       <RevenuePanel />

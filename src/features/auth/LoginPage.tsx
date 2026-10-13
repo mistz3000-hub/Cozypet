@@ -18,7 +18,7 @@ type Err = 'invalid' | 'rate' | 'unavailable' | 'oauth' | null;
 
 export function LoginPage() {
   const { m } = useI18n();
-  const { enabled, resetEnabled, user } = useAuth();
+  const { enabled, resetEnabled, user, googleEnabled } = useAuth();
   const params = useSearchParams();
   const router = useRouter();
   const id = useId();
@@ -87,7 +87,7 @@ export function LoginPage() {
         {errText ? <Notice tone="error" icon="alert" role="alert">{errText}</Notice> : null}
         {!resetMode ? (
           <>
-            <GoogleButton label={m.auth.google} next={next} disabled={!enabled} />
+            <GoogleButton label={m.auth.google} next={next} disabled={!googleEnabled} />
             <p className={s.or}><span>{m.auth.or}</span></p>
           </>
         ) : null}

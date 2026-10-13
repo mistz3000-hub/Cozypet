@@ -1,5 +1,16 @@
 # CREDITS.md — ที่มาและไลเซนส์ของภาพ ฟอนต์ ไอคอน และ animation
 
+## D30 — ภาพป้าย Critical
+
+`public/media/critical/cozypet-critical-notice.png` และ `.webp`: เจนด้วย built-in image_gen ตามคำสั่งผู้ใช้ 14 ต.ค. 2026 สัตว์และฉากเป็นภาพสมมติ ไม่ใช่ภาพเคส/องค์กรจริง ภาพต้นฉบับเก็บ PNG ส่วนเว็บใช้ WebP ย่อขนาด ข้อความ เคส และปุ่มเป็น DOM อ่าน prompt ใน docs/CRITICAL_NOTICE_D30.md
+
+
+## D29 — QR ทดลองและภาพที่ผู้ใช้ส่งให้
+
+- `public/media/qr-pets/pet-001.webp`–`pet-057.webp`: ภาพทั้ง 57 ไฟล์จาก `C:\Users\Administrator\Pictures\Cat` ตามคำสั่งผู้ใช้ ทำ preview สำหรับเว็บ ไม่แก้ต้นฉบับ GIF ใช้เฟรมแรก hash/ชนิดไฟล์/ขนาดอยู่ใน `src/data/qr-pets.json` ที่มา user-provided ไม่อ้างเป็น CC0/AI ไม่ใส่ต้นฉบับ 60 MB ใน repo
+- dependency เดิม `qrcode`: QR เข้า `/demo/qr` ไม่ใช่ QR ธนาคาร
+- รูปบ้านพัก/สัตว์ที่เพิ่มภายหลัง upload โดยเจ้าของบัญชี ต้องยืนยันเผยแพร่เอง ไม่ถือเป็นภาพองค์กรที่ Cozypet รับรอง
+
 ## D28: เสียงสัตว์เมื่อกดลูบ
 
 | ID / ไฟล์ | ผู้สร้าง / ต้นฉบับ | สิทธิ์ | การใช้ |

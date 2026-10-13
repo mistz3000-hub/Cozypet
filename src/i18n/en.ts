@@ -1,8 +1,10 @@
 import type { Messages } from './types';
 import { businessEn } from './business-en';
+import { communityEn } from './community-en';
 
 /** English UI strings — must contain every key of th.ts (typechecked) */
 export const en: Messages = {
+  community: communityEn,
   business: businessEn,
   meta: {
     title: 'Cozypet — Every encounter could bring a pet home',
@@ -953,9 +955,10 @@ export const en: Messages = {
     intro: 'Cozypet is a prototype website for a Final Project. Animals, people, places, and outcomes on the site are simulated. This page explains what we store about testers.',
     sections: [
       { h: 'Demo mode (no sign-up)', p: 'What you create (notices, chats, requests, simulated orders) is stored only in this browser’s localStorage and never sent to a server. Clear it at “Profile → Reset demo data”.' },
-      { h: 'When you sign up or log in', p: 'We store your email, display name, Google profile photo (if you use Google), chosen language, Run number, and the demo data you create, so you can continue on any device. There are no fields for phone numbers, addresses, or ID numbers.' },
-      { h: 'Where and how long', p: 'Data is stored in Supabase (Postgres) protected by Row Level Security; each account can only see its own data. It’s kept until you delete your account or the project is shut down after the course ends.' },
-      { h: 'Photos', p: 'Photos you take or upload stay in your browser. They are never sent to the server or to AI providers, and they are re-saved to strip EXIF data.' },
+      { h: 'When you sign up or log in', p: 'We store your email, display name, Google profile photo (if you use Google), chosen language, Run number, and the demo data you create, so you can continue on any device. Shelter managers can publish a place address and contact instructions; no identity or payment details are collected.' },
+      { h: 'Where and how long', p: 'Data is stored in Supabase (Postgres) protected by Row Level Security; account records and drafts are private, while published shelter records are shared. It’s kept until you delete your account or the project is shut down after the course ends.' },
+      { h: 'Photos', p: 'Scan and demo notice photos stay on your device. Shelter and pet photos added through the manager are resized, stripped of EXIF and uploaded to private Storage after real login. Saved, published photos are visible to everyone. Signed links last up to 15 minutes and links already issued may remain usable until expiry after a status change. Images are not sent to AI.' },
+      { h: 'Shelter details and messages', p: 'Details you confirm for publication, including addresses, coordinates, photos, animal status and contact instructions, become public. Do not include information you want to keep private. Inquiries are readable only by their sender and the shelter owner. The directory does not expose account email addresses.' },
       { h: 'AI assistant', p: 'When the AI assistant is on, chat messages and text in “Let AI summarise” are sent to a free external AI provider (Gemini, Groq, or OpenRouter), which may store or use data under its own policy. Please don’t type personal details. We don’t log message content.' },
       { h: 'Your rights', p: 'Download your data as JSON or delete your account and all data yourself on the “My account” page. Logging in is not identity verification.' },
       { h: 'No payments or tracking', p: 'This site has no payment system, no analytics or trackers, and no real GPS.' },

@@ -3,6 +3,9 @@ import { BANGKOK_BOUNDS } from '@/data/districts';
 
 export const MAP_W = 640;
 export const MAP_H = 500;
+export function unproject(x:number,y:number):GeoPoint {
+  return {lat:BANGKOK_BOUNDS.maxLat-Math.min(1,Math.max(0,y/MAP_H))*(BANGKOK_BOUNDS.maxLat-BANGKOK_BOUNDS.minLat),lng:BANGKOK_BOUNDS.minLng+Math.min(1,Math.max(0,x/MAP_W))*(BANGKOK_BOUNDS.maxLng-BANGKOK_BOUNDS.minLng)};
+}
 
 export function project(p: GeoPoint): { x: number; y: number } {
   const x = ((p.lng - BANGKOK_BOUNDS.minLng) / (BANGKOK_BOUNDS.maxLng - BANGKOK_BOUNDS.minLng)) * MAP_W;

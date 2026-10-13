@@ -23,7 +23,7 @@ export async function fetchRemoteState(): Promise<Record<string, unknown> | null
   }
 }
 
-export async function updateProfileRemote(patch: { locale?: Locale; runNumber?: number | null; mascot?: MascotKind; displayName?: string }): Promise<boolean> {
+export async function updateProfileRemote(patch: { locale?: Locale; runNumber?: number | null; mascot?: MascotKind; displayName?: string;accountRole?:'supporter'|'shelter' }): Promise<boolean> {
   try {
     const res = await fetch('/api/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
     return res.ok;

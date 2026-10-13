@@ -1,4 +1,4 @@
-/** จัดการรูปในเบราว์เซอร์เท่านั้น — ไม่อัปโหลด (PROMPT.md 7.2, 7.3, 13) */
+/** Browser resize/EXIF removal. D29 shelter photos may upload to private Storage after real login. */
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 export const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 

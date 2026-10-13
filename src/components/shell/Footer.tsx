@@ -5,10 +5,15 @@ import { useI18n } from '@/i18n/provider';
 import { PROJECT_INFO } from '@/data/project-info';
 import { Wordmark } from './Wordmark';
 import s from './footer.module.css';
+import { Button } from '@/components/ui/Button';
+import { CRITICAL_NOTICE_EVENT } from '@/features/business/CriticalNotice';
 
 export function Footer() {
   const { m, f } = useI18n();
   const links = [
+    ['/shelters',m.community.title],
+    ['/shelter/manage',m.community.manage],
+    ['/donation-tax',m.community.tax.title],
     ['/scan', m.footer.scan],
     ['/nearby', m.footer.nearby],
     ['/listings', m.footer.listings],
@@ -34,6 +39,7 @@ export function Footer() {
           ))}
         </nav>
         <p className={s.disclaimer}>{m.footer.disclaimer}</p>
+        <Button small variant="ghost" icon="alert" onClick={()=>window.dispatchEvent(new Event(CRITICAL_NOTICE_EVENT))}>{m.community.alert.reopen}</Button>
       </div>
     </footer>
   );

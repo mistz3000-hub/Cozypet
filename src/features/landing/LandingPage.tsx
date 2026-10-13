@@ -25,10 +25,13 @@ import { PetMouthJourney } from './PetMouthJourney';
 import { PetVarietySection } from './PetVarietySection';
 import s from './landing.module.css';
 import { MicroDonationTracker, CrisisCards, SponsorBanner } from '@/features/business/BusinessWidgets';
+import { RoleChooser } from '@/features/shelters/RoleChooser';
+import { useShelters } from '@/features/shelters/useShelters';
 
 export function LandingPage() {
   const { m, f, district } = useI18n();
   const params = useSearchParams();
+  const shared=useShelters();
   const hydrated = useHydrated();
   const [session] = useDemoSession();
   const mascot = hydrated ? session.mascot : 'cat';
@@ -44,7 +47,7 @@ export function LandingPage() {
     return [adopted[0], reunited[0], adopted[1] ?? reunited[1]].filter(Boolean);
   }, []);
 
-  const pins: MapPin[] = useMemo(() => HELPERS.filter((_, i) => i % 3 === 0).map((h) => ({ id: h.id, location: h.location, level: statusLevel(h), kind: h.kind, label: h.displayName })), []);
+  const pins: MapPin[] = useMemo(() => [...HELPERS.filter((_, i) => i % 3 === 0),...shared.helpers].map((h) => ({ id: h.id, location: h.location, level: statusLevel(h), kind: h.kind, label: h.displayName,photo:h.images.place?.[0]??h.images.profile })), [shared.helpers]);
 
   const steps: { title: string; text: string; cta: string; href: string; icon: IconName }[] = [
     { title: m.landing.step1Title, text: m.landing.step1Text, cta: m.landing.step1Cta, href: '/scan', icon: 'camera' },
@@ -82,6 +85,7 @@ export function LandingPage() {
       </section>
 
       <PetMouthJourney />
+      <div className="cp-container" style={{paddingBlock:'var(--cp-space-6)'}}><RoleChooser/><div className={s.heroCtas}><ButtonLink href="/shelters" icon="map">{m.community.title}</ButtonLink><ButtonLink href="/donation-tax" icon="heart">{m.community.tax.taxLink}</ButtonLink></div></div>
 
       {/* 2 How it works */}
       <section id="how-it-works" className={s.section} aria-labelledby="how-title">

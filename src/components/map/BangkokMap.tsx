@@ -10,7 +10,7 @@ import { StatusShape } from '@/components/ui/StatusBadge';
 import { RadarWaves } from '@/components/RadarWaves';
 import { getHelper } from '@/data';
 import { AtlasPhoto } from '@/components/AtlasPhoto';
-import { MAP_H, MAP_W, PX_PER_KM, project, riverPath, viewFor } from './projection';
+import { MAP_H, MAP_W, PX_PER_KM, project, riverPath, viewFor, unproject } from './projection';
 import s from './map.module.css';
 
 export interface MapPin {
@@ -20,15 +20,17 @@ export interface MapPin {
   kind: 'shelter' | 'individual' | 'place';
   label: string;
   dim?: boolean;
+  photo?: import('@/lib/types').MediaRef;
 }
 
 /** แผนที่ mockup กรุงเทพฯ (SVG) — “แผนที่ตัวอย่าง ไม่ใช่แผนที่จริง” · หมุดเป็นปุ่มที่มีชื่อ */
-export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSelect, mini = false, overlay, routes = [], showLegend = true, children, zoomKm, searching = false }: {
+export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSelect, onPick, mini = false, overlay, routes = [], showLegend = true, children, zoomKm, searching = false }: {
   pins?: MapPin[];
   searchPoint?: GeoPoint | null;
   radiusKm?: number | null;
   selectedId?: string | null;
   onSelect?: (id: string) => void;
+  onPick?: (point:GeoPoint)=>void;
   mini?: boolean;
   overlay?: ReactNode;
   /** เส้นโค้งจากจุดค้นหาไปยังที่แนะนำ (≤ 3) */
@@ -51,7 +53,7 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
 
   return (
     <div className={[s.wrap, mini && s.mini].filter(Boolean).join(' ')}>
-      <div className={s.canvas} style={{ aspectRatio: `${MAP_W} / ${MAP_H}` }}>
+      <div className={s.canvas} style={{ aspectRatio: `${MAP_W} / ${MAP_H}`,cursor:onPick?'crosshair':undefined }} onClick={onPick?(e)=>{const r=e.currentTarget.getBoundingClientRect();onPick(unproject(view.x+(e.clientX-r.left)/r.width*view.w,view.y+(e.clientY-r.top)/r.height*view.h));}:undefined}>
         <svg viewBox={`${view.x} ${view.y} ${view.w} ${view.h}`} className={s.svg} aria-hidden="true" focusable="false">
           <rect x={-MAP_W} y={-MAP_H} width={MAP_W * 3} height={MAP_H * 3} fill="var(--cp-bg-alt)" />
           <g fill="var(--cp-map-land)">
@@ -92,7 +94,7 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
           if (!inView(pt.x, pt.y)) return null;
           const selected = p.id === selectedId;
           const helper = p.kind === 'place' ? undefined : getHelper(p.id);
-          const photo = helper?.kind === 'shelter' ? helper.images.place?.[0] : helper?.images.profile;
+          const photo = p.photo ?? (helper?.kind === 'shelter' ? helper.images.place?.[0] : helper?.images.profile);
           const common = {
             className: s.pin,
             'data-kind': p.kind,
@@ -117,7 +119,7 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
             </>
           );
           return onSelect && !mini ? (
-            <button key={p.id} type="button" {...common} aria-label={p.label} aria-pressed={selected} onClick={() => onSelect(p.id)} data-tour={p.level === 'full' && p.kind !== 'place' ? 'nearby-full-pin' : undefined} data-tour-safe={p.level === 'full' && p.kind !== 'place' ? 'true' : undefined}>
+            <button key={p.id} type="button" {...common} aria-label={p.label} aria-pressed={selected} onClick={(e) => {e.stopPropagation();onSelect(p.id);}} data-tour={p.level === 'full' && p.kind !== 'place' ? 'nearby-full-pin' : undefined} data-tour-safe={p.level === 'full' && p.kind !== 'place' ? 'true' : undefined}>
               {body}
             </button>
           ) : (

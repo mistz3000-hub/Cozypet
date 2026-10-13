@@ -3,7 +3,7 @@
 import { useI18n } from '@/i18n/provider';
 import s from './auth.module.css';
 
-const UPDATED = '2026-10-06';
+const UPDATED = '2026-10-14';
 
 export function PrivacyPage() {
   const { m, f, date } = useI18n();

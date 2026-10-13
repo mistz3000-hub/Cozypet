@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ExclusionKey, GeoPoint, Species, Urgency } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
 import { HELPERS, getHelper } from '@/data';
+import { useShelters } from '@/features/shelters/useShelters';
 import { rankHelpers, placeToCandidate } from '@/lib/balancer';
 import { m as motionEl } from '@/lib/motion';
 import { SPRING, staggerDelay } from '@/lib/motion-tokens';
@@ -30,7 +31,7 @@ export function RecommendPopup({ request, onClose, species, urgency, searchPoint
   species: Species;
   urgency: Urgency;
   searchPoint: GeoPoint;
-  run: number;
+  run: number|null;
   finding: number;
   searchDistrictId?: string;
   onSeeOnMap?: (id: string) => void;
@@ -39,15 +40,16 @@ export function RecommendPopup({ request, onClose, species, urgency, searchPoint
   const { m, f, locale } = useI18n();
   const announce = useAnnounce();
   const places = useStore('caretakerPlace');
+  const shared=useShelters(false,!!request);
   const myPlace = places.find((p) => p.runNumber === run);
   const [whyFor, setWhyFor] = useState<string | null>(null);
   const [explain, setExplain] = useState<{ id: string; text: string } | null>(null);
 
   const ranking = useMemo(() => {
     if (!request) return null;
-    const candidates = myPlace ? [...HELPERS, placeToCandidate(myPlace)] : HELPERS;
+    const candidates = [...HELPERS,...shared.helpers,...(myPlace?[placeToCandidate(myPlace)]:[])];
     return rankHelpers({ candidates, species, urgency, searchPoint, radiusKm: null, excludeId: request.sourceId });
-  }, [request, myPlace, species, urgency, searchPoint]);
+  }, [request, myPlace, shared.helpers, species, urgency, searchPoint]);
   const top = ranking?.items.slice(0, 3) ?? [];
 
   const title = !request ? '' : request.blocker === 'full' ? m.popup.titleFull
@@ -58,7 +60,7 @@ export function RecommendPopup({ request, onClose, species, urgency, searchPoint
     if (!request) return;
     announce(f(m.popup.opened, { title }));
     const first = top[0];
-    if (!first || first.id.startsWith('place-')) return;
+    if (!first || run===null || first.id.startsWith('place-')||first.id.startsWith('community-')) return;
     let alive = true;
     void requestExplain({ helperId: first.id, runNumber: run, findingIndex: finding, searchDistrictId, species, urgency, locale }).then((r) => {
       if (alive && r) setExplain({ id: first.id, text: r.text });
@@ -69,7 +71,7 @@ export function RecommendPopup({ request, onClose, species, urgency, searchPoint
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [request?.sourceId]);
 
-  const toDisplay = (id: string): DisplayHelper | undefined => (myPlace && id === myPlace.id ? placeToHelper(myPlace) : getHelper(id));
+  const toDisplay = (id: string): DisplayHelper | undefined => (myPlace && id === myPlace.id ? placeToHelper(myPlace) : shared.helpers.find(h=>h.id===id)??getHelper(id));
   const close = () => {
     setWhyFor(null);
     setExplain(null);
@@ -94,6 +96,7 @@ export function RecommendPopup({ request, onClose, species, urgency, searchPoint
                 <motionEl.li key={rec.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING.soft, delay: staggerDelay(i) }}>
                   <HelperCard
                     helper={h}
+                    supplies={shared.places.find(p=>p.id===h.publicPlaceId)?.payload}
                     distanceKm={rec.distanceKm}
                     rank={i + 1}
                     reasons={rec.reasons}

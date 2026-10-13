@@ -8,9 +8,34 @@ export type AnimalKind = 'cat' | 'dog' | 'rabbit' | 'bird' | 'guinea-pig' | 'ham
 export type MascotKind = 'cat' | 'dog';
 export type DistrictId = string; // ต้องมีอยู่ใน src/data/districts.ts
 export interface GeoPoint { lat: number; lng: number }
+
+export type AccountRole = 'supporter' | 'shelter';
+export type ShelterPublication = 'draft' | 'published' | 'paused' | 'archived';
+export interface ShelterPet {
+  id: string; name: string; species: Species; breed: string; age: string;
+  status: 'available' | 'foster' | 'adopted'; description: string; photo?: MediaRef;
+}
+export interface ShelterPayload {
+  name: string; organisationType: 'foundation' | 'shelter' | 'independent';
+  districtId: DistrictId; location: GeoPoint; address: string; description: string;
+  speciesAccepted: Species[]; careModes: CareMode[]; capacityTotal: number; currentCount: number;
+  foodDays: number; litterDays?: number; acceptsEmergency: boolean; hours: string;
+  conditions: string; donationsEnabled: boolean; donationNeeds: string;
+  contactInstructions: string; photos: MediaRef[]; pets: ShelterPet[];
+}
+export interface PublicShelter {
+  id: string; registrationDemoId: string; status: ShelterPublication;
+  payload: ShelterPayload; version: number; createdAt: string; updatedAt: string; isDemo: true;
+}
+export interface ShelterInquiry {
+  id: string; placeId: string; senderName: string; type: 'intake' | 'adopt' | 'contact';
+  body: string; reply: string; status: 'pending' | 'replied' | 'closed'; createdAt: string;
+}
 export interface MediaRef {
   src: string;
   alt: string;
+  /** Private Supabase object path; public API issues short-lived URLs after RLS checks. */
+  storagePath?: string;
   creditId?: string;
   aiGenerated?: boolean;
   /** ภาพถ่ายหลายช่องในไฟล์เดียว: index นับซ้ายไปขวา บนลงล่าง เริ่ม 0 */
@@ -139,6 +164,8 @@ export interface HelperProfile {
   currentPets?: CurrentPet[];
   preferences?: CarePreferences;
   isRealOrganization?: boolean;
+  /** Public, user-managed mock shelter stored in the shared directory. */
+  publicPlaceId?: string;
   /** Business demo only; never an assertion about a registered organisation. */
   isFictionalFoundation?: true;
   /** shelter: ช่องที่ยังรอทีมเติมข้อมูลองค์กรจริง (ห้ามแต่งองค์กร) */
@@ -313,6 +340,9 @@ export interface DonationOrder {
   fulfillmentStartedAt?: string;
   source?: 'donor' | 'csr' | 'micro';
   sponsorshipBookingId?: string;
+  paymentSessionId?: string;
+  demoConfirmedAt?: string;
+  recipientSnapshot?: { name:string;placeId:string;districtId:string;location:GeoPoint;foodDays:number;litterDays?:number;species:Species[] };
   isDemo: true;
 }
 

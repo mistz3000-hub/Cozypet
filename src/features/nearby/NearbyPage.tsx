@@ -5,6 +5,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { ExclusionKey, FindingSession, Recommendation, Species, Urgency } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
 import { HELPERS, getHelper } from '@/data';
+import { useShelters } from '@/features/shelters/useShelters';
 import { isDistrictId, DISTRICTS } from '@/data/districts';
 import { availableSlots } from '@/lib/capacity';
 import { distanceKm } from '@/lib/geo';
@@ -131,12 +132,13 @@ export function NearbyPage() {
   // กลับมาที่รอบที่เคยค้นแล้ว → แสดงผลทันที
   const shownPhase = phase === 'idle' && searchedRounds.has(roundKey) ? 'results' : phase;
 
+  const shared = useShelters();
   const myPlace = places.find((p) => p.runNumber === run.run);
   const personaId = personaIdForRun(run.run);
 
   const { rows, excluded } = useMemo(() => {
     const point = session.searchPoint;
-    const base: DisplayHelper[] = [...HELPERS, ...(myPlace ? [placeToHelper(myPlace)] : [])];
+    const base: DisplayHelper[] = [...HELPERS, ...shared.helpers, ...(myPlace ? [placeToHelper(myPlace)] : [])];
     let list = base.map<Row>((h) => ({ helper: h, distance: distanceKm(point, h.location) }));
     if (radius !== null && !limit5) list = list.filter((r) => r.distance <= radius);
     list = list.filter((r) => r.helper.speciesAccepted.includes(species));
@@ -158,7 +160,7 @@ export function NearbyPage() {
     }
     if (limit5) list = list.slice(0, 5);
     return { rows: list, excluded: ranking.excluded };
-  }, [session.searchPoint, myPlace, radius, species, type, onlyOpen, emergencyOnly, urgency, sort, limit5]);
+  }, [session.searchPoint, myPlace, shared.helpers, radius, species, type, onlyOpen, emergencyOnly, urgency, sort, limit5]);
 
   const pins: MapPin[] = rows.map((r) => {
     const st = statusInfo(r.helper);
@@ -167,6 +169,7 @@ export function NearbyPage() {
     return {
       id: r.helper.id,
       location: r.helper.location,
+      photo:r.helper.images.place?.[0]??r.helper.images.profile,
       level: st.level,
       kind: r.helper.isUserPlace ? 'place' : r.helper.kind,
       label: f(m.map.pinLabel, { name, kind: r.helper.isUserPlace ? m.nearby.yourPlace : m.kind[r.helper.kind], status: statusText, km: r.distance }),
@@ -365,7 +368,7 @@ export function NearbyPage() {
                             onBlocked={(b) => openBlocked(r.helper.id, b)}
                             onWhy={r.rec && sort === 'recommended' && r.rank && r.rank <= 3 ? () => setWhyRec({ rec: r.rec!, name: helperName(r.helper, locale) }) : undefined}
                             personaBadge={r.helper.id === personaId ? f(m.nearby.personaHere, { run: formatRun(run.run) }) : null}
-                            supplies={r.helper.isUserPlace && myPlace ? { foodDays: myPlace.foodDays, litterDays: myPlace.litterDays } : null}
+                            supplies={r.helper.isUserPlace && myPlace ? { foodDays: myPlace.foodDays, litterDays: myPlace.litterDays } : shared.places.find(p=>p.id===r.helper.publicPlaceId)?.payload}
                           />
                         </motionEl.li>
                       ))}

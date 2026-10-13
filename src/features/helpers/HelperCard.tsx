@@ -45,6 +45,7 @@ export function HelperCard({ helper: h, distanceKm, rank, reasons, species, urge
   const st = statusInfo(h);
   const slots = availableSlots(h);
   const name = helperName(h, locale);
+  const detailUrl=h.publicPlaceId?`/shelters/${h.publicPlaceId}`:`/helpers/${h.id}`;
   const isShelter = h.kind === 'shelter';
   const blocker = helperBlocker(h, species, urgency);
   const live = useHelperSupplies(h.id, !!h.acceptsSupplyPackages && !suppliesOverride);
@@ -73,7 +74,7 @@ export function HelperCard({ helper: h, distanceKm, rank, reasons, species, urge
             {h.demoVerified ? <Badge tone="reunited" icon="shield" title={m.helper.verifiedInfo}>{m.helper.verified}</Badge> : null}
           </div>
           <h3 className={s.cardTitle}>
-            {h.isUserPlace ? name : <Link href={`/helpers/${h.id}`}>{name}</Link>}
+            {h.isUserPlace ? name : <Link href={detailUrl}>{name}</Link>}
           </h3>
           <p className={s.meta}>
             <Icon name="pin" size="1em" /> {district(h.districtId)}
@@ -119,18 +120,18 @@ export function HelperCard({ helper: h, distanceKm, rank, reasons, species, urge
         </ul>
       ) : null}
       <div className={s.actions}>
-        {!h.isUserPlace ? <ButtonLink href={`/helpers/${h.id}`} small icon="doc">{m.helper.viewDetails}</ButtonLink> : null}
+        {!h.isUserPlace ? <ButtonLink href={detailUrl} small icon="doc">{m.helper.viewDetails}</ButtonLink> : null}
         {canIntake && !h.isUserPlace ? (
           blocker ? (
             <Button small icon="home" aria-disabled="true" className={s.disabledBtn} onClick={() => onBlocked?.(blocker)} title={blockText ?? undefined}>
               {m.helper.requestIntake}
             </Button>
           ) : (
-            <ButtonLink href={`/requests/new?type=intake&helper=${h.id}`} small variant="primary" icon="home">{compact ? m.helper.requestIntakeHere : m.helper.requestIntake}</ButtonLink>
+            <ButtonLink href={h.publicPlaceId?detailUrl:`/requests/new?type=intake&helper=${h.id}`} small variant="primary" icon="home">{compact ? m.helper.requestIntakeHere : m.helper.requestIntake}</ButtonLink>
           )
         ) : null}
         {!canIntake ? <p className={s.adoptOnly}>{m.helper.adoptOnlyNote}</p> : null}
-        {!h.isUserPlace ? <ButtonLink href={`/chat/new?persona=${h.id}`} small icon="chat">{f(m.helper.chatWith, { name: compact ? (name.length > 18 ? `${name.slice(0, 18)}…` : name) : name })}</ButtonLink> : null}
+        {!h.isUserPlace ? <ButtonLink href={h.publicPlaceId?detailUrl:`/chat/new?persona=${h.id}`} small icon="chat">{h.publicPlaceId?m.community.message:f(m.helper.chatWith, { name: compact ? (name.length > 18 ? `${name.slice(0, 18)}…` : name) : name })}</ButtonLink> : null}
         {h.acceptsSupplyPackages && !compact ? <ButtonLink href={`/donate?helper=${h.id}`} small variant="soft" icon="box">{m.helper.sendPackage}</ButtonLink> : null}
         {onSeeOnMap ? <Button small variant="ghost" icon="map" onClick={onSeeOnMap}>{m.helper.seeOnMap}</Button> : null}
         {onWhy ? <Button small variant="ghost" icon="info" onClick={onWhy} data-tour-safe="true" data-why-button="true">{m.why.open}</Button> : null}

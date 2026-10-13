@@ -6,7 +6,7 @@ import { intEnv } from './config';
  * rate limit ฝั่ง server (PROMPT.md 12.5) — หน่วยความจำของ instance (best effort บน serverless)
  * key = hash ของ IP + salt ที่สุ่มต่อ process (ไม่เก็บ IP ดิบ) · วันนับตามเวลาไทย
  */
-export type Bucket = 'chat' | 'assist' | 'auth';
+export type Bucket = 'chat' | 'assist' | 'auth' | 'community';
 export type RateResult = { ok: true } | { ok: false; reason: 'rate_limited' | 'quota_exceeded'; retryAfterSec: number };
 
 const SALT = randomBytes(16).toString('hex');
@@ -32,6 +32,7 @@ function secondsToBangkokMidnight(now: number): number {
 function limits(bucket: Bucket) {
   if (bucket === 'chat') return { perMin: intEnv('CHAT_RATE_LIMIT_PER_MIN', 6), perDay: intEnv('CHAT_RATE_LIMIT_PER_DAY', 40), global: intEnv('CHAT_GLOBAL_DAILY_LIMIT', 300) };
   if (bucket === 'assist') return { perMin: intEnv('ASSIST_RATE_LIMIT_PER_MIN', 10), perDay: Number.POSITIVE_INFINITY, global: intEnv('ASSIST_GLOBAL_DAILY_LIMIT', 200) };
+  if (bucket === 'community') return { perMin:30,perDay:500,global:3000 };
   // เข้าสู่ระบบ/สมัคร: 5 ครั้ง/นาทีต่อ IP (นอกเหนือจากที่ Supabase จำกัดเอง)
   return { perMin: 5, perDay: Number.POSITIVE_INFINITY, global: Number.POSITIVE_INFINITY };
 }

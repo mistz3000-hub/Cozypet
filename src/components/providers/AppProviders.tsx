@@ -12,6 +12,7 @@ import { ToastProvider } from './Toast';
 import { TourLauncher } from '@/features/motion/tour/TourLauncher';
 import { StorageNotice } from './StorageNotice';
 import { AccountSync } from '@/features/auth/AccountSync';
+import { CriticalNotice } from '@/features/business/CriticalNotice';
 
 const TYPING_TYPES = new Set(['text', 'search', 'email', 'password', 'number', 'tel', 'url', 'textarea', 'datetime-local', 'date']);
 
@@ -58,6 +59,7 @@ export function AppProviders({ locale, auth, children }: { locale: Locale; auth:
               <StorageNotice />
               {auth.user ? <AccountSync /> : null}
               {children}
+              <CriticalNotice/>
               <TourLauncher />
             </ToastProvider>
           </AnnouncerProvider>

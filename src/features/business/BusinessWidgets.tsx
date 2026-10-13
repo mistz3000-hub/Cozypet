@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useId, useState } from 'react';
 import type { DonationOrder, PartnerBooking } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
-import { useDemoSession, useStore, updateValue, newId } from '@/lib/store';
+import { useDemoSession, useStore, updateValue } from '@/lib/store';
 import { useNow } from '@/lib/useNow';
 import { bookingActive, moneySplit, poolPackage, poolOrders, revenueSummary } from '@/lib/business';
 import { getHelper } from '@/data';
@@ -26,6 +26,7 @@ import { Meter } from '@/components/ui/Meter';
 import { CountUp } from '@/components/ui/CountUp';
 import { useDonationOrders } from './hooks';
 import { PetFrame, PetStat } from './PetFrame';
+import { DemoPaymentDialog } from '@/features/donate/DemoPaymentDialog';
 import s from './business.module.css';
 import p from './profile-credit.module.css';
 
@@ -75,6 +76,7 @@ export function MicroDonationTracker({ helperId: preset }: { helperId?: string }
   const toast = useToast();
   const [helperId, setHelperId] = useState(preset ?? DEMO_FOUNDATIONS[0].id);
   const [ack, setAck] = useState(false);
+  const [payment,setPayment]=useState<{amount:number;helperId:string}|null>(null);
   const h = getHelper(helperId)!;
   const pkg = poolPackage(helperId);
   const revenue = revenueSummary([], state);
@@ -82,10 +84,11 @@ export function MicroDonationTracker({ helperId: preset }: { helperId?: string }
   const donations = state.microDonations.filter((d) => d.helperId === helperId);
   const total = state.microDonations.reduce((n, d) => n + d.amountTHB, 0);
   const orders = poolOrders(state).filter((o) => o.helperId === helperId);
-  const give = (amountTHB: number) => {
-    if (!run || !ack) return;
-    const result = updateValue('businessState', (s) => ({ ...s, microDonations: [...s.microDonations, { id: newId('micro'), runNumber: run.run, helperId, amountTHB, createdAt: new Date().toISOString(), isDemo: true }] }));
+  const give = (paymentSessionId:string) => {
+    if (!run || !ack||!payment) return;
+    const result = updateValue('businessState', (s) => s.microDonations.some(d=>d.id===`micro-${paymentSessionId}`)?s:({ ...s, microDonations: [...s.microDonations, { id:`micro-${paymentSessionId}`, runNumber: run.run, helperId:payment.helperId, amountTHB:payment.amount, createdAt: new Date().toISOString(), isDemo: true }] }));
     toast(result === 'quota' ? m.business.failed : m.business.saved);
+    if(result==='quota')throw Error('quota');
   };
   return <PetFrame mascot={mascot} id="micro-donations" className={s.micro} data-tour="micro-donation">
     <div className={s.head}><h2>{m.business.microTitle}</h2><Badge tone="butter" icon="heart">{m.business.demo}</Badge></div>
@@ -99,7 +102,8 @@ export function MicroDonationTracker({ helperId: preset }: { helperId?: string }
     </dl>
     <p>{f(m.business.microNext, { package: loc(pkg.name), price: money(pkg.priceTHB) })}</p>
     <Meter value={pool.balance} max={pkg.priceTHB} label={m.business.microPool} level="gold" valueText={`${money(pool.balance)} / ${money(pkg.priceTHB)}`} />
-    {run ? <><Checkbox checked={ack} onChange={setAck}>{m.business.microAck}</Checkbox><div className={s.actions}>{[50, 100].map((n) => <Button key={n} disabled={!ack} variant="primary" icon="heart" onClick={() => give(n)}>{f(m.business.microGive, { amount: money(n) })}</Button>)}</div></> : <ButtonLink href="/start?next=/dashboard" variant="primary" icon="heart">{m.start.submit}</ButtonLink>}
+    {run ? <><Checkbox checked={ack} onChange={setAck}>{m.business.microAck}</Checkbox><div className={s.actions}>{[50, 100].map((n) => <Button key={n} disabled={!ack} variant="primary" icon="heart" onClick={() => setPayment({amount:n,helperId})}>{f(m.business.microGive, { amount: money(n) })}</Button>)}</div></> : <ButtonLink href="/start?next=/dashboard" variant="primary" icon="heart">{m.start.submit}</ButtonLink>}
+    {payment?<DemoPaymentDialog amount={payment.amount} onClose={()=>setPayment(null)} onConfirm={give}/>:null}
     <p className={s.note}>{m.business.liveNote}</p>
     {orders.length ? <><h3>{m.business.microOrders}</h3><ul className={s.list}>{orders.slice(-3).reverse().map((o) => <li key={o.id} className={s.row}><Link href={`/donate/orders/${o.id}`}>{loc(pkg.name)}</Link><span>{money(o.unitPriceTHB)}</span></li>)}</ul></> : null}
   </PetFrame>;

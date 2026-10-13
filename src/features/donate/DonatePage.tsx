@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { DonationOrder, Species } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
 import { getHelper } from '@/data';
 import { DONATION_TARGETS, DONATION_SUPPLY_MAP } from '@/data/business';
+import { useShelters } from '@/features/shelters/useShelters';
+import { shelterToHelper } from '@/lib/shelters';
+import { DemoPaymentDialog } from './DemoPaymentDialog';
 import { BRANDS } from '@/data/brands';
 import { PACKAGES, getPackage } from '@/data/packages';
 import { canReceivePackages, donationTargetDetail, rankDonationTargets } from '@/lib/balancer';
@@ -33,10 +36,9 @@ import { helperName } from '@/features/helpers/helper-text';
 import { DemoModeBar } from '@/features/shared/DemoModeBar';
 import s from './donate.module.css';
 
-const SUPPLY_MAP = DONATION_SUPPLY_MAP;
 type SpeciesFilter = 'all' | Species;
 
-/** ส่งแพ็กเกจของใช้ (จำลอง) — PROMPT.md 7.12 · ไม่มีช่องชำระเงิน ไม่มี QR ไม่มีเลขบัญชี */
+/** Demo packages: animal QR and explicit demo confirmation, with no payment gateway. */
 export function DonatePage() {
   const { m, f, money, loc, district, locale } = useI18n();
   const params = useSearchParams();
@@ -46,8 +48,13 @@ export function DonatePage() {
   const orders = useDonationOrders();
   const now = useNow(orders.some((o) => o.status === 'active'));
   const id = useId();
+  const shared=useShelters();
+  const targets=useMemo(()=>[...DONATION_TARGETS,...shared.helpers],[shared.helpers]);
+  const SUPPLY_MAP=useMemo(()=>new Map([...DONATION_SUPPLY_MAP,...shared.places.map(p=>[`community-${p.id}`,{helperId:`community-${p.id}`,foodDays:p.payload.foodDays,litterDays:p.payload.litterDays,recentPackages30d:0,updatedAt:p.updatedAt}] as const)]),[shared.places]);
+  const lookup=(id:string|null)=>targets.find(h=>h.id===id)??getHelper(id);
+  const [payment,setPayment]=useState(false);
 
-  const paramHelper = getHelper(params.get('helper'));
+  const paramHelper = lookup(params.get('helper'));
   const paramSpecies = params.get('species');
   const [species, setSpecies] = useState<SpeciesFilter>(paramSpecies === 'cat' || paramSpecies === 'dog' || paramSpecies === 'other' ? paramSpecies : 'all');
   const eligibleParam = paramHelper && canReceivePackages(paramHelper) ? paramHelper.id : null;
@@ -61,12 +68,13 @@ export function DonatePage() {
   const [ack, setAck] = useState(false);
   const [tried, setTried] = useState(false);
   const [whyId, setWhyId] = useState<string | null>(null);
+  useEffect(()=>{if(helperId||!eligibleParam)return;const timer=window.setTimeout(()=>{setHelperId(eligibleParam);setStep(2);},0);return()=>window.clearTimeout(timer);},[eligibleParam,helperId]);
 
   const ranking = useMemo(() => rankDonationTargets({
-    helpers: DONATION_TARGETS.filter((h) => recipientType === 'all' || (recipientType === 'foundation' ? h.isFictionalFoundation : h.kind === 'individual')), supplies: SUPPLY_MAP, orders, packages: PACKAGE_MAP, now: new Date(now || 0), species: species === 'all' ? null : species,
-  }), [orders, now, species, recipientType]);
+    helpers: targets.filter((h) => recipientType === 'all' || (recipientType === 'foundation' ? h.kind==='shelter' : h.kind === 'individual')), supplies: SUPPLY_MAP, orders, packages: PACKAGE_MAP, now: new Date(now || 0), species: species === 'all' ? null : species,
+  }), [orders, now, species, recipientType,targets,SUPPLY_MAP]);
 
-  const helper = helperId ? getHelper(helperId) : undefined;
+  const helper = helperId ? lookup(helperId) : undefined;
   const pkgs = helper ? PACKAGES.filter((p) => p.species.some((x) => helper.speciesAccepted.includes(x))) : [];
   const pkg = packageId ? getPackage(packageId) : undefined;
   const brand = pkg ? BRANDS.find((b) => b.id === pkg.brandId) : undefined;
@@ -74,19 +82,25 @@ export function DonatePage() {
   const whyRec = whyId ? ranking.items.find((r) => r.id === whyId) : undefined;
   const mine = [...orders].filter((o) => o.runNumber === run.run).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
-  const confirm = () => {
+  const confirm = async (paymentSessionId:string) => {
     setTried(true);
     if (!ack || !helper || !pkg || confirming.current || !pkg.species.some((sp) => helper.speciesAccepted.includes(sp)) || !Number.isInteger(qty) || qty < 1 || qty > 5) return;
     // ตรวจซ้ำ: สถานสงเคราะห์จริงไม่เป็นปลายทางเด็ดขาด
     if (!canReceivePackages(helper)) return;
     confirming.current = true;
+    let latest=helper;
+    if(helper.publicPlaceId){
+      try{const r=await fetch(`/api/shelters?id=${helper.publicPlaceId}`,{cache:'no-store'});const d=await r.json();if(!r.ok||!d.places?.[0]||!canReceivePackages(shelterToHelper(d.places[0])))throw Error();latest=shelterToHelper(d.places[0]);}catch{confirming.current=false;toast(m.community.errors.unavailable);throw Error('unavailable');}
+    }
     const order: DonationOrder = {
       id: newId('order'), runNumber: run.run, helperId: helper.id, packageId: pkg.id, quantity: qty, unitPriceTHB: pkg.priceTHB,
       recommendedRank: rank >= 0 ? rank + 1 : undefined, status: 'active', createdAt: new Date().toISOString(), isDemo: true,
       source: 'donor', platformSharePct: pkg.platformSharePct, settlementStage: 'received',
+      paymentSessionId,demoConfirmedAt:new Date().toISOString(),
+      ...(latest.publicPlaceId?{recipientSnapshot:{name:latest.displayName,placeId:latest.publicPlaceId,districtId:latest.districtId,location:latest.location,foodDays:SUPPLY_MAP.get(latest.id)?.foodDays??0,litterDays:SUPPLY_MAP.get(latest.id)?.litterDays,species:latest.speciesAccepted}}:{}),
     };
-    const result = updateValue('donationOrders', (prev) => [order, ...prev]);
-    if (result === 'quota') { confirming.current = false; toast(m.business.failed); return; }
+    const result = updateValue('donationOrders', (prev) => prev.some(o=>o.paymentSessionId===paymentSessionId)?prev:[order, ...prev]);
+    if (result === 'quota') { confirming.current = false; toast(m.business.failed); throw Error('quota'); }
     playSfx('box');
     toast(m.donate.created);
     router.push(`/donate/orders/${order.id}`);
@@ -97,7 +111,7 @@ export function DonatePage() {
       <DemoModeBar next="/donate" />
       <p className={s.bar} data-tour="donate-notice"><Icon name="info" size="1em" /> {m.donate.bar}</p>
       <h1>{m.donate.title}</h1>
-      {paramHelper && paramHelper.kind === 'shelter' && !paramHelper.isFictionalFoundation ? (
+      {paramHelper?.isRealOrganization ? (
         <Notice tone="butter" icon="info">
           {f(m.donate.realShelter, { name: helperName(paramHelper, locale) })}
           {paramHelper.officialUrl ? <> · <a href={paramHelper.officialUrl} target="_blank" rel="noopener noreferrer">{m.helper.officialLink}</a></> : null}
@@ -125,7 +139,7 @@ export function DonatePage() {
           {ranking.items.length ? (
             <ul className={s.targets}>
               {ranking.items.slice(0, 12).map((r, i) => {
-                const h = getHelper(r.id)!;
+                const h = lookup(r.id)!;
                 const det = donationTargetDetail(h.id, SUPPLY_MAP.get(h.id)!, { orders, packages: PACKAGE_MAP, now: new Date(now || 0) });
                 const st = statusInfo(h);
                 const name = helperName(h, locale);
@@ -139,7 +153,7 @@ export function DonatePage() {
                           <StatusBadge level={st.level} closed={st.closed} demo />
                           {h.isFictionalFoundation ? <Badge tone="butter">{m.business.foundation}</Badge> : null}
                         </div>
-                        <p className={s.targetName}><Link href={`/helpers/${h.id}`}>{name}</Link></p>
+                        <p className={s.targetName}><Link href={h.publicPlaceId?`/shelters/${h.publicPlaceId}`:`/helpers/${h.id}`}>{name}</Link></p>
                         <p className={s.muted}>{district(h.districtId)} · {h.speciesAccepted.map((x) => m.species[x]).join(', ')}</p>
                       </div>
                     </div>
@@ -226,7 +240,7 @@ export function DonatePage() {
           <Checkbox checked={ack} onChange={setAck} required error={tried && !ack ? m.requests.ackRequired : null}>{m.donate.ack}</Checkbox>
           <div className={s.nav}>
             <Button icon="arrowLeft" onClick={() => setStep(2)}>{m.donate.back}</Button>
-            <span data-tour="donate-confirm"><Button variant="primary" icon="box" onClick={confirm}>{m.donate.confirm}</Button></span>
+            <span data-tour="donate-confirm"><Button variant="primary" icon="box" onClick={()=>{setTried(true);if(ack)setPayment(true);}}>{m.donate.confirm}</Button></span>
           </div>
         </section>
       ) : null}
@@ -236,12 +250,12 @@ export function DonatePage() {
           <h2 id={`${id}-o`} className={s.h2}>{m.donate.myOrders}</h2>
           <ul className={s.orders}>
             {mine.map((o) => {
-              const h = getHelper(o.helperId);
+              const h = lookup(o.helperId);
               const p = getPackage(o.packageId);
               return (
                 <li key={o.id}>
                   <Link href={`/donate/orders/${o.id}`} className={s.orderLink}>
-                    <span>{f(m.orders.summary, { pkg: p ? loc(p.name) : o.packageId, qty: o.quantity, helper: h ? helperName(h, locale) : o.helperId })}</span>
+                    <span>{f(m.orders.summary, { pkg: p ? loc(p.name) : o.packageId, qty: o.quantity, helper: h ? helperName(h, locale) : o.recipientSnapshot?.name??o.helperId })}</span>
                     {o.status === 'cancelled' ? <Badge tone="neutral">{m.orders.cancelled}</Badge> : <span className={s.muted}>{money(orderTotalTHB(o))}</span>}
                   </Link>
                 </li>
@@ -252,8 +266,9 @@ export function DonatePage() {
       ) : null}
 
       <Dialog open={!!whyRec} onClose={() => setWhyId(null)} title={m.why.title} size="md">
-        {whyRec ? <WhyPanel rec={whyRec} kind="donation" name={helperName(getHelper(whyRec.id)!, locale)} /> : null}
+        {whyRec ? <WhyPanel rec={whyRec} kind="donation" name={helperName(lookup(whyRec.id)!, locale)} /> : null}
       </Dialog>
+      {payment&&helper&&pkg?<DemoPaymentDialog amount={qty*pkg.priceTHB} onClose={()=>setPayment(false)} onConfirm={confirm}/>:null}
     </div>
   );
 }

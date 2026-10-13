@@ -14,7 +14,7 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:n
  * dialog แบบ modal: focus trap, ปิดด้วย Esc, คืนโฟกัสไปที่ปุ่มที่เปิด (PROMPT.md 9)
  * variant 'sheet' = sheet จากด้านล่างบนมือถือ / dialog บน desktop
  */
-export function Dialog({ open, onClose, title, children, footer, variant = 'dialog', size = 'md', describedBy }: {
+export function Dialog({ open, onClose, title, children, footer, variant = 'dialog', size = 'md', describedBy,className }: {
   open: boolean;
   onClose: () => void;
   title: ReactNode;
@@ -23,6 +23,7 @@ export function Dialog({ open, onClose, title, children, footer, variant = 'dial
   variant?: 'dialog' | 'sheet';
   size?: 'sm' | 'md' | 'lg';
   describedBy?: string;
+  className?:string;
 }) {
   const { m: msg } = useI18n();
   const id = useId();
@@ -81,7 +82,7 @@ export function Dialog({ open, onClose, title, children, footer, variant = 'dial
             aria-labelledby={`${id}-title`}
             aria-describedby={describedBy}
             tabIndex={-1}
-            className={[s.panel, variant === 'sheet' ? s.sheet : '', s[size]].join(' ')}
+            className={[s.panel, variant === 'sheet' ? s.sheet : '', s[size],className].filter(Boolean).join(' ')}
             initial={variant === 'sheet' ? { opacity: 0, y: 24 } : { opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, transition: T.exit }}

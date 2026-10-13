@@ -1,0 +1,20 @@
+.panel { background:var(--cp-bg); border:1px solid var(--cp-table-edge); border-radius:28px; }
+.kicker { display:flex; align-items:center; gap:var(--cp-space-2); flex-wrap:wrap; color:var(--cp-status-full-ink); letter-spacing:.06em; font-size:var(--cp-text-sm); }
+.demo { color:var(--cp-ink-muted); letter-spacing:0; font-size:.75rem; font-weight:500; }
+.hero { position:relative; overflow:hidden; border-radius:var(--cp-radius-card); border:1px solid var(--cp-border); }
+.hero > div:first-child { aspect-ratio:2.2; border-radius:0; }
+.hero img { object-position:center 68%; }
+.heroHeading { position:absolute; top:var(--cp-space-4); left:var(--cp-space-4); right:var(--cp-space-4); display:flex; align-items:center; gap:var(--cp-space-2); pointer-events:none; }
+.heroHeading h2 { font-size:clamp(1.2rem,3vw,1.65rem); margin:0; color:var(--cp-ink); text-shadow:0 1px 10px var(--cp-bg); }
+.paw,.seal { display:grid; flex:0 0 auto; place-items:center; border-radius:var(--cp-radius-pill); background:var(--cp-butter); color:var(--cp-gold-700); width:34px; height:34px; }
+.intro { color:var(--cp-ink-muted); margin:var(--cp-space-4) 0; font-size:var(--cp-text-sm); }
+.cases { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--cp-space-3); }
+.case { display:flex; flex-direction:column; gap:var(--cp-space-2); padding:var(--cp-space-4); min-width:0; background:var(--cp-surface); border:1px solid var(--cp-border); border-radius:var(--cp-radius-card); }
+.case h3 { margin:0; font-size:.9rem; overflow-wrap:anywhere; }
+.case p { margin:0; font-size:.75rem; }
+.caseHead { display:flex; align-items:center; gap:var(--cp-space-2); }
+.caseHead p,.capacity { color:var(--cp-ink-muted); }
+.supply { color:var(--cp-status-full-ink); font-weight:700; }
+.case a { margin-top:auto; font-size:.75rem; }
+.seal { width:28px; height:28px; background:var(--cp-status-full-bg); color:var(--cp-status-full-ink); }
+@media(max-width:600px){ .hero > div:first-child { aspect-ratio:1.7; } .heroHeading { top:var(--cp-space-3); left:var(--cp-space-3); right:var(--cp-space-3); } .heroHeading h2 { font-size:1rem; } .cases { grid-template-columns:1fr; } .case { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:var(--cp-space-2) var(--cp-space-3); } .caseHead { grid-column:1; } .supply,.capacity { grid-column:1; } .case a { grid-column:2; grid-row:1/4; align-self:center; margin:0; } }

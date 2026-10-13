@@ -10,6 +10,7 @@ const Body = z.object({
   locale: z.enum(['th', 'en']).optional(),
   runNumber: z.number().int().min(1).max(100).nullable().optional(),
   mascot: z.enum(['cat', 'dog']).optional(),
+  accountRole:z.enum(['supporter','shelter']).optional(),
 });
 
 export async function PATCH(req: Request) {
@@ -25,6 +26,7 @@ export async function PATCH(req: Request) {
   if (p.locale !== undefined) patch.locale = p.locale;
   if (p.runNumber !== undefined) patch.run_number = p.runNumber;
   if (p.mascot !== undefined) patch.mascot = p.mascot;
+  if (p.accountRole !== undefined) patch.account_role = p.accountRole;
   if (!Object.keys(patch).length) return NextResponse.json({ ok: true });
   const { error } = await supabase.from('profiles').update(patch).eq('id', u.user.id);
   if (error) {

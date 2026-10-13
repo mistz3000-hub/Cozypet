@@ -10,6 +10,7 @@ import { Footer } from '@/components/shell/Footer';
 import { TabBar } from '@/components/shell/TabBar';
 import { authEnabled, passwordResetEnabled } from '@/server/supabase/config';
 import { getCurrentUser } from '@/server/supabase/auth';
+import { googleEnabled } from '@/server/supabase/capabilities';
 import { SkipLink } from '@/components/shell/SkipLink';
 
 const mitr = Mitr({ weight: ['500', '600'], subsets: ['thai', 'latin'], variable: '--font-mitr', display: 'swap' });
@@ -38,8 +39,8 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await currentLocale();
-  const user = await getCurrentUser();
-  const auth = { enabled: authEnabled(), user, resetEnabled: passwordResetEnabled() };
+  const [user,google] = await Promise.all([getCurrentUser(),googleEnabled()]);
+  const auth = { enabled: authEnabled(), user, resetEnabled: passwordResetEnabled(),googleEnabled:google };
   return (
     <html lang={locale} className={`${mitr.variable} ${noto.variable}`}>
       <body>

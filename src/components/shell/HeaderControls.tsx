@@ -151,6 +151,8 @@ export function AccountButton() {
           <p className={s.menuName}>{user.displayName}</p>
           <Link role="menuitem" href="/dashboard" onClick={() => setOpen(false)}><Icon name="chart" />{m.header.dashboard}</Link>
           <Link role="menuitem" href="/profile" onClick={() => setOpen(false)}><Icon name="user" />{m.header.profile}</Link>
+          <Link role="menuitem" href="/shelter/manage" onClick={() => setOpen(false)}><Icon name="home" />{m.community.manage}</Link>
+          <Link role="menuitem" href="/shelters" onClick={() => setOpen(false)}><Icon name="map" />{m.community.title}</Link>
           <Link role="menuitem" href="/account" onClick={() => setOpen(false)}><Icon name="shield" />{m.header.account}</Link>
           <Link role="menuitem" href="/account#logout" onClick={() => setOpen(false)}><Icon name="logout" />{m.header.logout}</Link>
         </div>

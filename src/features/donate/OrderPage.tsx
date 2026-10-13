@@ -55,7 +55,7 @@ function Order({ order }: { order: DonationOrder }) {
   const now = useNow(live);
   const step = orderStepIndex(order, new Date(now || Date.parse(order.createdAt)));
   const sup = useHelperSupplies(order.helperId, true);
-  const name = helper ? helperName(helper, locale) : order.helperId;
+  const name = helper ? helperName(helper, locale) : order.recipientSnapshot?.name??order.helperId;
   const pkgName = pkg ? loc(pkg.name) : order.packageId;
   const done = step >= ORDER_STEPS - 1;
 
@@ -144,7 +144,7 @@ function Order({ order }: { order: DonationOrder }) {
       )}
       <div className={s.nav}>
         <ButtonLink href="/donate" icon="box">{m.orders.newOrder}</ButtonLink>
-        {helper ? <ButtonLink href={`/helpers/${helper.id}`} variant="ghost" icon="user">{m.chat.viewHelper}</ButtonLink> : null}
+        {helper||order.recipientSnapshot ? <ButtonLink href={order.recipientSnapshot?`/shelters/${order.recipientSnapshot.placeId}`:`/helpers/${helper!.id}`} variant="ghost" icon="user">{m.chat.viewHelper}</ButtonLink> : null}
       </div>
 
       <Dialog
