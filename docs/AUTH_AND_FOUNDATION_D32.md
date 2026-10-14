@@ -2,6 +2,12 @@
 
 อัปเดต 14 ตุลาคม 2026 · งานต่อเนื่องจาก D29–D31
 
+## GitHub และ Production
+
+- Source commit `845c8e4265846ec0578010f24abf774c575c268b` push แล้วบน `claude/wizardly-cori-i4qnh9`; Claude Cloud อ่าน source/เอกสารจาก branch นี้ได้.
+- Vercel Production `dpl_DcsQVKLCtbcazR8KnLbKdKz285ay` build ใหม่จาก commit นี้และอยู่สถานะ Ready; alias `https://cozypet-iota.vercel.app` ชี้รุ่นนี้แล้ว. Build ผ่านทั้งในเครื่องและบน Vercel.
+- ตรวจเว็บที่ alias หลังเผยแพร่แล้ว: OAuth start ขอ callback สาธารณะ; Supabase cancellation กลับ callback สาธารณะ; missing/invalid code ไป public Login. ไม่อ้างว่าการตั้งค่าระบบเพียงอย่างเดียวเป็น proof ของบัญชี Google ที่ล็อกอินสำเร็จ.
+
 ## สาเหตุที่ยืนยันได้
 
 โค้ด Production ส่ง `redirect_to` ไป Vercel อยู่แล้ว แต่ OAuth flow ที่ Supabase สร้างยังมี `referrer=http://localhost:3000`. ดังนั้นการตรวจเฉพาะ 307 ของเว็บยังไม่พิสูจน์ปลายทางที่ Supabase เลือกจริง.
@@ -32,7 +38,7 @@ Migration `20261014045430_cozypet_required_foundation_registration.sql` ติ�
 - `npm run typecheck`: ผ่าน.
 - `npm test`: 9 files, 112 tests ผ่าน รวม localhost/127.0.0.1/IPv6/Preview, start disabled/rate/provider error, callback สำเร็จ/ไม่มี code/หมดอายุ/เครือข่ายล้ม และ external next ที่ซ่อน control characters.
 - Production build ใช้ `npm run build` ตามปกติ. แก้ pure-selector ของ CSS Modules: selector ของ Critical anchor และ print chrome ย้ายไป globals; local print classes คงอยู่ใน module.
-- Mobile spot-check 360/390px: Home, shelters, listings, profile, login ไม่มี document horizontal overflow; ป้าย Critical ปิดได้และ body เลื่อนภายในได้; skeleton เปลี่ยนเป็นเนื้อหา/empty state หลัง request เสร็จ.
+- Mobile ตรวจ Production ที่ 320/360/390px: Home, shelters, listings, profile, login และ shelter/manage แบบยังไม่ล็อกอิน ตอบ 200 ไม่มี document horizontal overflow และไม่มี JavaScript pageerror. รอ entrance animation จริงก่อนวัด/จับภาพ ไม่ใช้ networkidle เพราะหน้าเว็บมี background requests. ป้าย Critical ปิดได้และ body เลื่อนภายในได้; skeleton เปลี่ยนเป็นเนื้อหา/empty state หลัง request เสร็จ.
 - Supabase public tables 5 ตารางเปิด RLS ทั้งหมด. ตรวจ policy owner สำหรับการเขียน shelter และการอ่านร่าง/ข้อความส่วนตัว; ใช้ Google metadata เฉพาะแสดงชื่อ/รูป ไม่ใช้เป็นสิทธิ์เจ้าของ.
 - Security advisor ยังมี warning เดิม: `delete_my_account()` เป็น SECURITY DEFINER ที่ authenticated เรียกได้ตามที่ออกแบบ ตรวจ function ว่าจำกัด `auth.uid()` และ search_path ว่างแล้ว; leaked-password protection ปิดอยู่ ไม่เปิดบริการเสียเงิน. อ่าน [function advisory](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable) และ [password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
 

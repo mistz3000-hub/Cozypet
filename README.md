@@ -2,7 +2,7 @@
 
 > D30: ป้ายเคส Critical พร้อมภาพเจนสมจริงขึ้นครั้งแรกต่อ session ของแท็บ ปิดได้ด้วย × / Esc / พื้นหลัง เปิดซ้ำจาก Footer ชื่อและเลขจากเคสทดลองจริงใน data ดู [กฎและภาพ](docs/CRITICAL_NOTICE_D30.md)
 
-> D32 (14 ต.ค. 2026): Login/Signup และ Google OAuth จาก localhost/Preview ส่งไปเริ่มที่ `https://cozypet-iota.vercel.app`; callback ใช้ origin นี้. Supabase URL Configuration แก้แล้วและตรวจ flow ใหม่/กรณียกเลิกว่าเลือกเว็บสาธารณะจริง. มูลนิธิบังคับเลขจำลองทั้ง UI/API/ฐานข้อมูล (migration ที่ 4 ติดตั้งแล้ว). Tests 112 ข้อและ production build ผ่าน; ตรวจ mobile 360/390px ไม่มี horizontal overflow บน Home, บ้านพัก, ประกาศ, โปรไฟล์และ Login. อ่าน [หลักฐาน D32](docs/AUTH_AND_FOUNDATION_D32.md) และ [handoff ให้ Claude](docs/CLAUDE_MOTION_HANDOFF.md); Motion M8.6 ยังไม่ครบ.
+> D32 (14 ต.ค. 2026): เผยแพร่ source `845c8e4` แล้ว. Login/Signup และ Google OAuth จาก localhost/Preview ส่งไปเริ่มที่ `https://cozypet-iota.vercel.app`; callback ใช้ origin นี้. Supabase URL Configuration แก้แล้วและตรวจ flow ใหม่/กรณียกเลิกว่าเลือกเว็บสาธารณะจริง. มูลนิธิบังคับเลขจำลองทั้ง UI/API/ฐานข้อมูล (migration ที่ 4 ติดตั้งแล้ว). Tests 112 ข้อและ production build ผ่าน; ตรวจ mobile 320/360/390px ไม่มี horizontal overflow บน 6 หน้าหลัก. อ่าน [หลักฐาน D32](docs/AUTH_AND_FOUNDATION_D32.md) และ [handoff ให้ Claude](docs/CLAUDE_MOTION_HANDOFF.md); Motion M8.6 ยังไม่ครบ.
 
 
 > D29 (14 ต.ค. 2026): ผู้ดูแล Login จริงก่อนจัดการบ้านพักที่ `/shelter/manage` → บันทึกร่าง → รูป/ปักหมุด → เผยแพร่; ทุกคนอ่านที่ `/shelters` และ `/nearby` ผ่าน Supabase Free กลาง Google provider เปิดแล้ว QR แพ็กเกจ/สมทบย่อยเปิดรูปสุ่ม 57 ไฟล์ก่อน “ฉันชำระเงินแล้ว (ทดลอง)” ไม่มีเงินจริง หน้า `/donation-tax` มีเงื่อนไขภาษีและสรุปทดลอง อ่าน [วิธีเข้า กฎ และ setup](docs/SHARED_SHELTERS_AND_QR.md)

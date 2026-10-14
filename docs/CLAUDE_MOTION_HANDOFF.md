@@ -8,6 +8,7 @@
 
 - Source of truth: repository [`mistz3000-hub/Cozypet`](https://github.com/mistz3000-hub/Cozypet), branch งาน `claude/wizardly-cori-i4qnh9`.
 - เว็บสาธารณะ: [https://cozypet-iota.vercel.app](https://cozypet-iota.vercel.app).
+- Source ล่าสุดที่เผยแพร่: `845c8e4265846ec0578010f24abf774c575c268b`, Production `dpl_DcsQVKLCtbcazR8KnLbKdKz285ay` Ready. Source และเอกสาร D32 push ขึ้น branch งานแล้ว; อ่าน [ผลตรวจและรุ่นเผยแพร่](AUTH_AND_FOUNDATION_D32.md).
 - Vercel project: [`cozy-pet/cozypet`](https://vercel.com/cozy-pet/cozypet), plan Hobby; GitHub repository เชื่อมแล้ว, production branch คือ `main`. งานบน branch อื่นสร้าง Preview; การ promote Production ทำเมื่อเจ้าของสั่ง/อนุมัติตามรอบงาน.
 - Supabase project: `Cozypet`, ref `kxecehtzrizrpmrjfcng` ([Dashboard](https://supabase.com/dashboard/project/kxecehtzrizrpmrjfcng)); ใช้ Free plan. Auth/Google provider ถูกตั้งค่าแล้ว, migrations 4 ชุด, RLS และ private Storage bucket `community-shelters` ติดตั้งแล้ว. ชุดล่าสุด `20261014045430_cozypet_required_foundation_registration` บังคับเลขมูลนิธิในฐานข้อมูล; อ่าน [D32](AUTH_AND_FOUNDATION_D32.md) และไม่ apply ซ้ำ.
 - Vercel Production มี environment variable `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`; ห้ามพิมพ์/คัดลอก secret หรือเพิ่ม key ใน repo. Auth origin ใน source ปัจจุบัน pin ที่ `https://cozypet-iota.vercel.app`.
@@ -15,9 +16,9 @@
 
 ### หมายเหตุเรื่อง localhost และ Google Login
 
-Source ปัจจุบันกำหนด auth origin เป็น `https://cozypet-iota.vercel.app`: หน้า Login/Signup และ OAuth ที่เริ่มจาก localhost/Preview ไปเว็บจริงก่อนสร้าง PKCE cookie; callback คนละ origin และ `/?code=...` recovery ก็ไป callback สาธารณะ. ตรวจ Supabase พบเดิมเลือก referrer localhost แม้เว็บขอ callback บน Vercel; เจ้าของแก้ URL Configuration และ Save แล้ว. หลังแก้ตรวจ flow ใหม่ทั้งมีและไม่มี `next` พบ Supabase เลือก callback สาธารณะ และตรวจกรณียกเลิก Google พบ 302 → callback → 307 → public Login. การเลือกบัญชี Google จริงและ session ยังต้องตรวจโดยผู้ใช้; อย่าอ้างว่ากรณียกเลิกเป็น proof ของ session สำเร็จ. Source edits ต้อง commit/push และ deploy ก่อนมีผลบนเว็บ; อ่านบันทึก deployment ใน D32.
+Source ปัจจุบันกำหนด auth origin เป็น `https://cozypet-iota.vercel.app`: หน้า Login/Signup และ OAuth ที่เริ่มจาก localhost/Preview ไปเว็บจริงก่อนสร้าง PKCE cookie; callback คนละ origin และ `/?code=...` recovery ก็ไป callback สาธารณะ. ตรวจ Supabase พบเดิมเลือก referrer localhost แม้เว็บขอ callback บน Vercel; เจ้าของแก้ URL Configuration และ Save แล้ว. หลังแก้ตรวจ flow ใหม่ทั้งมีและไม่มี `next` พบ Supabase เลือก callback สาธารณะ และตรวจกรณียกเลิก Google พบ 302 → callback → 307 → public Login. เผยแพร่ source แล้วและตรวจ alias Production ซ้ำแล้ว. การเลือกบัญชี Google จริงและ session ยังต้องตรวจโดยผู้ใช้; อย่าอ้างว่ากรณียกเลิกเป็น proof ของ session สำเร็จ.
 
-Mobile spot-check ที่ 360px และ 390px ของ Production: Home, shelters, listings, profile และ login ไม่มี horizontal overflow; ปุ่มแถบนำทางด้านล่างสูง 60px, ปิด popup Critical ได้ และรายการใน popup เลื่อนภายในได้. หน้า shelters แสดง skeleton ระหว่างโหลดจริง จากนั้นเปลี่ยนเป็น empty state เมื่อไม่มีรายการเผยแพร่. ภาพ Home ที่ 390px แสดงลำดับแมวเกาะโต๊ะ → แมวหาว → หน้าตัวอย่างเว็บเข้าพื้นที่ปาก; ให้ Claude ตรวจความลื่นของช่วงเปลี่ยนและ reduced-motion ตาม `MOTION.md` ต่อ.
+Mobile ตรวจ Production ล่าสุดที่ 320px, 360px และ 390px: Home, shelters, listings, profile, login และหน้าเข้าศูนย์จัดการแบบยังไม่ล็อกอินไม่มี horizontal overflow/JavaScript pageerror; ปุ่มแถบล่างสูง 60px, ปิด popup Critical ได้ และรายการใน popup เลื่อนภายในได้. หน้า shelters แสดง skeleton ระหว่างโหลดจริง จากนั้นเปลี่ยนเป็น empty state เมื่อไม่มีรายการเผยแพร่. ภาพ Home ที่ 390px แสดงลำดับแมวเกาะโต๊ะ → แมวหาว → หน้าตัวอย่างเว็บเข้าพื้นที่ปาก; ให้ Claude ตรวจความลื่นของช่วงเปลี่ยนและ reduced-motion ตาม `MOTION.md` ต่อ.
 
 ## สิ่งที่ทำแล้ว
 
