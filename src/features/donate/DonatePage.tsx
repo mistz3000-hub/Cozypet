@@ -184,7 +184,7 @@ export function DonatePage() {
               const b = BRANDS.find((x) => x.id === p.brandId);
               return (
                 <li key={p.id}>
-                  <label className={s.pkg} data-selected={packageId === p.id ? 'true' : undefined}>
+                  <label className={s.pkg} data-selected={packageId === p.id ? 'true' : undefined} data-film="package">
                     <input type="radio" name={`${id}-pkg`} checked={packageId === p.id} onChange={() => setPackageId(p.id)} />
                     <span className={s.pkgBody}>
                       <span className={s.pkgName}>{loc(p.name)}</span>
@@ -211,7 +211,7 @@ export function DonatePage() {
           </div>
           <div className={s.nav}>
             <Button icon="arrowLeft" onClick={() => setStep(1)}>{m.donate.back}</Button>
-            <Button variant="primary" iconRight="arrowRight" disabled={!pkg} onClick={() => setStep(3)}>{m.donate.next}</Button>
+            <Button variant="primary" iconRight="arrowRight" disabled={!pkg} onClick={() => setStep(3)} data-film="donate-next">{m.donate.next}</Button>
           </div>
         </section>
       ) : null}
@@ -237,7 +237,7 @@ export function DonatePage() {
           </Card>
           <p className={s.paymentOff}><Icon name="shield" size="1em" /> {m.donate.paymentOff}</p>
           <MoneyFlow preview order={{ id: 'quote', runNumber: run.run, helperId: helper.id, packageId: pkg.id, quantity: qty, unitPriceTHB: pkg.priceTHB, platformSharePct: pkg.platformSharePct, status: 'active', createdAt: '', isDemo: true }} />
-          <Checkbox checked={ack} onChange={setAck} required error={tried && !ack ? m.requests.ackRequired : null}>{m.donate.ack}</Checkbox>
+          <span data-film="donate-ack"><Checkbox checked={ack} onChange={setAck} required error={tried && !ack ? m.requests.ackRequired : null}>{m.donate.ack}</Checkbox></span>
           <div className={s.nav}>
             <Button icon="arrowLeft" onClick={() => setStep(2)}>{m.donate.back}</Button>
             <span data-tour="donate-confirm"><Button variant="primary" icon="box" onClick={()=>{setTried(true);if(ack)setPayment(true);}}>{m.donate.confirm}</Button></span>

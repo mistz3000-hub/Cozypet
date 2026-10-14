@@ -59,7 +59,7 @@ export function MoneyFlow({ order, preview = false, onAdvance }: { order: Donati
   const stage = order.settlementStage ?? 'partner_paid';
   const index = stage === 'received' ? 0 : stage === 'commissioned' ? 1 : 2;
   const rows = [{ title: m.business.received, amount: split.gross }, { title: m.business.commission, amount: split.commission }, { title: m.business.partnerPaid, amount: split.partner }];
-  return <section id="money-flow" className={s.panel} data-tour="business-money-flow">
+  return <section id="money-flow" className={s.panel} data-tour="business-money-flow" data-pct={split.pct}>
     <div className={s.head}><h3>{m.business.flowTitle}</h3><Badge tone="butter">{m.business.demo}</Badge></div>
     <ol className={s.flow} aria-live="polite">{rows.map((r, i) => <li key={r.title} data-done={!preview && i <= index ? 'true' : undefined}><span className={s.stepIcon}>{i + 1}<Icon name={i <= index && !preview ? 'check' : 'arrowRight'} size={18} /></span><p>{r.title}</p><strong>{money(r.amount)}</strong>{i === 1 ? <span className={s.muted}>{split.pct}%</span> : null}</li>)}</ol>
     <p className={s.lead}>{m.business.flowNote}</p><p className={s.note}>{m.business.zeroFee}</p>

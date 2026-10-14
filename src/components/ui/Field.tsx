@@ -109,7 +109,7 @@ export function ChipGroup({ legend, values, onChange, options, required, error, 
         {options.map((o) => {
           const on = values.includes(o.value);
           return (
-            <label key={o.value} className={s.chip} data-checked={on ? 'true' : undefined}>
+            <label key={o.value} className={s.chip} data-checked={on ? 'true' : undefined} data-value={o.value}>
               <input type="checkbox" checked={on} onChange={() => onChange(on ? values.filter((v) => v !== o.value) : [...values, o.value])} />
               {o.swatch ? <span className={s.swatch} style={{ background: o.swatch }} aria-hidden="true" /> : null}
               {o.label}

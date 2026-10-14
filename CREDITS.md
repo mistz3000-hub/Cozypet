@@ -1,5 +1,16 @@
 # CREDITS.md — ที่มาและไลเซนส์ของภาพ ฟอนต์ ไอคอน และ animation
 
+## D34 — Demo Video ฉบับ 3 มิติ
+
+- **โลโก้ใหม่ “แมว-C”** (`src/lib/brand.ts`, `src/components/shell/Wordmark.tsx`, `src/app/icon.svg`, โมเดล `src/features/film/props/logo3d.ts`): ออกแบบใหม่สำหรับ Cozypet ด้วยโค้ด ไม่ได้ trace จากภาพอ้างอิงหรือโลโก้ของผู้อื่น
+- **prop และฉาก 3 มิติ** (`src/features/film/props/`, `scenes/`): สร้างด้วยโค้ด three.js (MIT) ใช้ภาพ AI จากทะเบียนเดิม (`cats-01`, `cats-02`, `pets-01`, `people-01`, `homes-01`) เป็นพื้นผิวการ์ด ภาพคนยังเป็นบุคคลสมมติและในฉากมีป้าย “ภาพคนสร้างด้วย AI · บุคคลสมมติ”
+- **ป้าย SDG 3 · 9 · 11** ในฉากผลกระทบ: วาดเองเป็นสี่เหลี่ยมสี+ตัวเลข ไม่ใช่ไอคอนทางการของ UN
+- **GSAP 3.15** (ease, SplitText/ScrambleText/DrawSVG/MorphSVG/CustomEase): ใช้ฟรีรวมปลั๊กอินตามเงื่อนไขของ GSAP ณ วันที่ติดตั้ง (ตรวจหน้า https://gsap.com/licensing อีกครั้งก่อนเผยแพร่)
+- **ดนตรีและ SFX:** สังเคราะห์ด้วย Web Audio (OfflineAudioContext) ใน `src/features/film/audio/render.ts` ทั้งหมด ไม่มีเพลง/เสียงจากคลิปอ้างอิงหรือคลังเสียงภายนอก ยกเว้นเสียงแมวครางที่บันทึกไว้แล้วใน D28 (`public/audio/cat-purr.wav`)
+- **เสียงพากย์ภาษาอังกฤษ (ฉบับร่าง):** เสียงสังเคราะห์ Kokoro-82M (Apache-2.0) เสียง `af_heart` ผ่าน kokoro-onnx (MIT) และ espeak-ng (GPL-3.0, ใช้เป็นเครื่องมือแปลงเสียงอ่าน ไม่รวมใน repo) ไฟล์โมเดลและเสียงไม่อยู่ใน repo — เป็นเสียงสังเคราะห์ ไม่ได้เลียนแบบคนจริง และต้องเขียนกำกับในเครดิตท้ายวิดีโอ/รายงานว่า “เสียงบรรยายสังเคราะห์ด้วย AI”
+- **เสียงพากย์ภาษาไทย:** ยังไม่มี — ใช้ Gemini TTS ด้วย key ของทีม (free tier) หรือให้ทีมอัดเองจากสคริปต์ `--script-only`
+- **QR ในการ์ดทีม:** สร้างด้วย `qrcode` (MIT) ชี้เว็บเดโม https://cozypet-iota.vercel.app
+
 ## D30 — ภาพป้าย Critical
 
 `public/media/critical/cozypet-critical-notice.png` และ `.webp`: เจนด้วย built-in image_gen ตามคำสั่งผู้ใช้ 14 ต.ค. 2026 สัตว์และฉากเป็นภาพสมมติ ไม่ใช่ภาพเคส/องค์กรจริง ภาพต้นฉบับเก็บ PNG ส่วนเว็บใช้ WebP ย่อขนาด ข้อความ เคส และปุ่มเป็น DOM อ่าน prompt ใน docs/CRITICAL_NOTICE_D30.md
@@ -85,7 +96,7 @@
 | `ai-personas-001-010` … `ai-personas-091-100` | `public/images/personas/adopter-###/…` | โปรไฟล์ บ้าน น้องที่ดูแลอยู่ ของผู้รับดูแลรายบุคคล | สร้างด้วย AI (Codex) ตาม CODEX_IMAGE_PROMPTS.md | — | ตามเงื่อนไขของเครื่องมือ ณ วันที่สร้าง | — | วางแผน | หนึ่งแถวต่อ batch 10 records บุคคลสมมติ `aiGenerated: true` |
 | `shelter-photo-###` | `public/images/shelters/shelter-###/…` | การ์ดและโปรไฟล์สถานสงเคราะห์จริง | ภาพจากช่องทางทางการขององค์กร (เครดิต: ชื่อองค์กร) | ลิงก์ต้นทาง | ใช้เพื่องานการศึกษา ไม่ใช่เชิงพาณิชย์ (สิทธิ์เป็นของเจ้าของภาพ) | — | วางแผน | หนึ่งแถวต่อภาพ เลี่ยงภาพที่เห็นหน้าบุคคลชัด ห้ามภาพ QR/เลขบัญชี |
 | `sound-synth` | `src/lib/audio/` | เพลงและเสียงประกอบทั้งหมด | สังเคราะห์ด้วย Web Audio API ในโค้ดของโปรเจกต์ | — | ของโปรเจกต์ | — | วางแผน | ไม่มีไฟล์เสียงจากภายนอก ถ้าเพิ่มไฟล์ต้องเป็น CC0 และเพิ่มแถวใหม่ |
-| `lib-threejs-gsap` | `package.json` | animation เล่าเรื่องและเอฟเฟกต์ | three.js / GSAP | https://threejs.org · https://gsap.com | MIT (three.js) · ตรวจเงื่อนไข GSAP ณ วันที่ติดตั้ง | — | วางแผน | โหลดแบบ dynamic import |
+| `lib-threejs-gsap` | `package.json` | animation เล่าเรื่องและเอฟเฟกต์ | three.js / GSAP | https://threejs.org · https://gsap.com | MIT (three.js) · ตรวจเงื่อนไข GSAP ณ วันที่ติดตั้ง | — | ใช้งาน (`/film`) | โหลดแบบ dynamic import |
 | `fallback-paw` | `public/images/fallback-paw.svg` | ภาพ fallback | สร้างขึ้นสำหรับ Cozypet | — | ของโปรเจกต์ | — | วางแผน | |
 | `story-characters` | `src/features/story/characters/` | animation บท 0–14 (ขนมชั้น ขนมปัง มอคค่า น้องหมา มือคน) | สร้างขึ้นสำหรับ Cozypet (SVG ในโค้ด) | — | ของโปรเจกต์ | — | วางแผน | ออกแบบจากคำบรรยายใน STORYBOARD.md ไม่ trace ภาพ |
 | `story-scenes` | `src/features/story/scenes/` | ฉากซอย ห้องคอนโด เมืองยามค่ำ UI ช่องมองภาพ | สร้างขึ้นสำหรับ Cozypet (SVG + shader ในโค้ด) | — | ของโปรเจกต์ | — | วางแผน | ไม่มีตัวอักษร ป้าย ป้ายทะเบียน หรือแบรนด์ในฉาก |

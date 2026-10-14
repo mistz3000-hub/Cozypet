@@ -91,7 +91,7 @@ export function AssistBox({ onApply, compact = false, tourTarget }: { onApply: (
         {loading ? <div className={s.loadingResult} aria-busy="true" role="status" aria-label={m.assist.loading}><span className="visually-hidden">{m.assist.loading}</span><Skeleton /><Skeleton style={{ width: '85%' }} /><Skeleton style={{ width: '60%' }} /></div> : null}
         <AnimatePresence>
           {result ? (
-            <motionEl.div key="result" className={s.result} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: T.exit }} transition={SPRING.soft}>
+            <motionEl.div key="result" className={s.result} data-film="assist-result" data-source={result.source} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: T.exit }} transition={SPRING.soft}>
               <p className={s.source}>
                 <Badge tone={result.source === 'ai' ? 'gold' : 'info'} icon={result.source === 'ai' ? 'sparkle' : 'list'}>
                   {result.source === 'ai' ? f(m.assist.sourceAi, { provider: PROVIDER_LABEL[result.provider ?? ''] ?? 'AI' }) : m.assist.sourceRules}
@@ -124,7 +124,7 @@ export function AssistBox({ onApply, compact = false, tourTarget }: { onApply: (
                     </div>
                   </div>
                   {showVet ? <Notice tone="error" icon="emergency" role="note">{m.assist.vet}</Notice> : null}
-                  <Button variant="primary" icon="search" onClick={apply} className={s.apply}>{m.assist.apply}</Button>
+                  <Button variant="primary" icon="search" onClick={apply} className={s.apply} data-film="assist-apply">{m.assist.apply}</Button>
                 </>
               )}
             </motionEl.div>

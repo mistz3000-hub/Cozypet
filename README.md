@@ -15,6 +15,7 @@
 > วิธีเล่นด้านล่างครอบคลุมสเปกเป้าหมายทั้งหมด บางส่วน เช่น Insights และทัวร์สอนใช้งาน ยังพัฒนาไม่เสร็จ
 > D26 (12 ต.ค. 2026): เพิ่มกองอาหาร 50/100 บาทจำลอง, Commission/Dropship, แบนเนอร์/CSR, มูลนิธิสมมติ 3 แห่ง, ภาพรับของ, รีวิว, Profile และสัญญาพิมพ์ได้ ดู flow/กติกาและแนวทางทำ Motion/Video ใน [docs/BUSINESS_DEMO.md](docs/BUSINESS_DEMO.md)
 > D27: Profile Credit เป็นกรอบอุ้งเท้าแมว/หมาตามสวิตช์แถบล่าง ตัดคำ “สมมติ” ออกจากชื่อ/ป้ายย่อย จัดปุ่มการ์ดเร่งด่วนให้ตรงกัน และเปลี่ยนภาพกล่องหลังรับแพ็กเกจเป็นซองจดหมายลายอุ้งเท้า ดูกติกาใน PROMPT.md/MOTION.md D27
+> D34 (14 ต.ค. 2026): Demo Video ฉบับ 3 มิติที่ `/film` (โลโก้ใหม่ “แมว-C”, prop อธิบายขั้นตอน, ตัวเลขวิ่งจากการจำลอง, ดนตรี/SFX สังเคราะห์) render เป็น MP4 ได้ด้วย `film:*` — เสียงพากย์ภาษาไทยและข้อมูลทีมยังต้องให้ทีมเติม ดู [DEMO_VIDEO.md](DEMO_VIDEO.md) D34
 > Preview ในเครื่อง: `npm run dev -- --hostname 127.0.0.1 --port 3010` → http://127.0.0.1:3010 · ค่าเริ่มต้นเป็นแชตตัวอย่างและไม่ต้องตั้ง API key
 > เว็บสาธารณะ: **[เปิด CozyPet](https://cozypet-iota.vercel.app/)** เผยแพร่บน Vercel Hobby เมื่อ 12 ต.ค. 2026 เข้าได้โดยไม่ต้องล็อกอิน Vercel และใช้แชตตัวอย่างเป็นค่าเริ่มต้น ดู [สถานะการเผยแพร่](docs/PUBLIC_PREVIEW.md)
 > หน้าแรกแสดงแมวหรือหมาสมจริงทีละตัวตามสวิตช์ด้านล่าง เกาะโต๊ะ มองตามเมาส์/นิ้ว และมีภาพท่าปกติ ฟิน และหาว ดู [รายละเอียดภาพและ prompt](docs/MASCOT_ASSETS.md)
@@ -87,7 +88,7 @@
 | [CODEX_IMAGE_PROMPTS.md](CODEX_IMAGE_PROMPTS.md) | รายละเอียดผู้รับดูแล 100 ราย พร้อมคำสั่งให้ Codex สร้างภาพเสมือนจริง และตารางช่องสถานสงเคราะห์จริง 20 แห่งที่ต้องเติม |
 | [STORYBOARD.md](STORYBOARD.md) | animation v2 15 บท (~1:47): เปิดด้วยลูกแมวเลียขนผ่านช่องมองภาพ จบที่บ้านที่อบอุ่น ใช้ทั้งหน้าแรกและวิดีโอ |
 | [MOTION.md](MOTION.md) | ระบบ Motion ของ UI (ไลบรารี Motion + tokens), WebGL Motion Kit 6 ชิ้น, **Phone Tour** (โทรศัพท์ 3 มิติหมุนตามการเลื่อน โชว์ 5 หน้าจอ), ทัวร์ในแอปพร้อมโหมด “ให้ Cozypet สาธิต” |
-| [DEMO_VIDEO.md](DEMO_VIDEO.md) | วิดีโอเดโม 2:45 และ 2:00 (TH/EN) ที่ประกอบ animation กับภาพใช้งานจริง และวิธี render ด้วยโค้ด |
+| [DEMO_VIDEO.md](DEMO_VIDEO.md) | วิดีโอเดโม 2:51 (`demo`) และ 2:00 (`short`) TH/EN: ฉาก 3 มิติ (three.js + GSAP) prop อธิบายขั้นตอน ตัวเลขวิ่งจากการจำลอง ประกอบกับภาพใช้งานจริง และวิธี render ด้วยโค้ด (D34) |
 | [SUBMISSION.md](SUBMISSION.md) | งานส่งอาจารย์ 5 ชิ้น สถานะ สิ่งที่ทีมต้องทำเอง คำตอบฟอร์มฉบับพิมพ์ โครงรายงาน สไลด์ และโปสเตอร์ |
 | [CREDITS.md](CREDITS.md) | ทะเบียนที่มาและไลเซนส์ของภาพ ฟอนต์ ไอคอน และ animation |
 | [CLAUDE.md](CLAUDE.md) | ไฟล์ที่ Claude Code อ่านอัตโนมัติ (นำเข้า AGENTS.md) |
@@ -277,3 +278,7 @@ Cozypet เป็น **Final Project prototype** ของ **ทีมก้า�
 ## งานส่งอาจารย์
 
 ต้องส่ง 5 ชิ้น: แอป/Prototype, รายงาน 10–15 หน้า, Pitch deck 10–12 สไลด์, Demo video 2–3 นาที และ Innovation poster 1 หน้า สถานะ สิ่งที่ทีมต้องทำเอง และสเปกของแต่ละชิ้นอยู่ใน [SUBMISSION.md](SUBMISSION.md) ส่วนวิดีโออยู่ใน [DEMO_VIDEO.md](DEMO_VIDEO.md) หลัง implement สร้างไฟล์ได้ด้วย `npm run shots`, `npm run film:all` และ `npm run print:all` (ผลลัพธ์อยู่ใน `out/` ที่ไม่ commit)
+
+**วิดีโอเดโม (D34) ทีละขั้น:** `npm run build && npx next start -p 3100` แล้ว
+`npm run film:capture -- --locale th` (อัดหน้าจอแอปจริง C0–C9) → `npm run film:voice -- --cut demo --lang en` (เสียงพากย์ร่างภาษาอังกฤษ ต้องตั้ง `FILM_TTS_PYTHON`/`KOKORO_DIR`; ภาษาไทยใช้ `--provider gemini` หรือ `--script-only`) → `npm run film:audio -- --cut demo --locale th` → `npm run film:render -- --cut demo --locale th --jobs 3` → `npm run film:mux -- --cut demo --locale th` ผลอยู่ที่ `out/film/cozypet-<cut>-<locale>.mp4` พร้อม .srt ภาพปก และ contact sheet ดูทีละเฟรมได้ที่ `/film?cut=demo&t=<วินาที>` หรือ `npm run film:frames -- --cut demo --t 12,40`
+ก่อน render ฉบับส่งจริงให้สร้าง `team.local.json` (ไม่ commit) ใส่ชื่อทีม สมาชิก รหัสนักศึกษา และ `siteUrl` ไม่อย่างนั้นการ์ดทีมจะขึ้น `[[ต้องเติม: …]]` (render ร่างได้ด้วย `--allow-placeholders`)

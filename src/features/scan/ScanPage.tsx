@@ -130,6 +130,8 @@ export function ScanPage() {
     }
     setScanDraft(draft());
     setPhase('scanning');
+    // การ์ดสแกนอยู่บนสุด แต่ปุ่มเริ่มสแกนอยู่ท้ายฟอร์ม — เลื่อนขึ้นให้เห็นขั้นตอน
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     setScanStep(0);
     setShowAlternatives(false);
     announce(m.scan.scanStep1);
@@ -383,7 +385,7 @@ export function ScanPage() {
             <>
               <motionEl.div className={s.notFound} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={T.base}>
                 <span className={s.nfIcon} aria-hidden="true"><Icon name="search" size={30} /></span>
-                <h2 ref={resultHeading} tabIndex={-1}>{m.scan.notFoundTitle}</h2>
+                <h2 ref={resultHeading} tabIndex={-1} data-film="scan-notfound">{m.scan.notFoundTitle}</h2>
                 <p>{m.scan.notFoundText}</p>
               </motionEl.div>
             </>
@@ -392,7 +394,7 @@ export function ScanPage() {
             <section className={s.alternatives} aria-label={m.scan.nextSteps}>
               <h3>{m.scan.nextSteps}</h3>
               <div className={s.altButtons}>
-                <Button variant="primary" icon="plus" onClick={goPostFound}>{m.scan.postFound}</Button>
+                <Button variant="primary" icon="plus" onClick={goPostFound} data-film="post-found">{m.scan.postFound}</Button>
                 <ButtonLink href={`/nearby?district=${districtId}&species=${species ?? 'cat'}`} icon="search">{m.scan.findHelp}</ButtonLink>
                 <Button variant="ghost" icon="edit" onClick={() => setPhase('form')}>{m.scan.editRescan}</Button>
               </div>

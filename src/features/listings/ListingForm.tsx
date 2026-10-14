@@ -165,6 +165,8 @@ export function ListingForm({ editId }: { editId?: string }) {
     setScanDraft(null);
     setSavedId(listing.id);
     setPhase('done');
+    // หน้าสำเร็จสั้นกว่าฟอร์ม — กลับขึ้นบนสุดให้เห็นหัวข้อ
+    window.scrollTo({ top: 0 });
     playSfx('pop');
     toast(editId ? m.listings.savedEdit : user ? m.listings.successAccount : m.listings.successTitle);
   };
@@ -176,7 +178,7 @@ export function ListingForm({ editId }: { editId?: string }) {
       <div className="cp-container cp-page">
         <Card className={s.success}>
           <span className={s.check} aria-hidden="true"><Icon name="check" size={34} /></span>
-          <h1>{editId ? m.listings.savedEdit : user ? m.listings.successAccount : m.listings.successTitle}</h1>
+          <h1 data-film="listing-done">{editId ? m.listings.savedEdit : user ? m.listings.successAccount : m.listings.successTitle}</h1>
           <div className={s.actions}>
             <ButtonLink href={`/listings/${savedId}`} variant="primary" icon="doc">{m.listings.openListing}</ButtonLink>
             <ButtonLink href={`/listings?tab=${mode}`} icon="list">{m.listings.goListings}</ButtonLink>
@@ -226,7 +228,7 @@ export function ListingForm({ editId }: { editId?: string }) {
           ) : null}
           <div className={s.actions}>
             <Button icon="edit" onClick={() => setPhase('edit')} disabled={phase === 'saving'}>{m.listings.editAgain}</Button>
-            <Button variant="primary" icon="send" onClick={() => void save(true)} disabled={phase === 'saving'} aria-busy={phase === 'saving'}>
+            <Button variant="primary" icon="send" onClick={() => void save(true)} disabled={phase === 'saving'} aria-busy={phase === 'saving'} data-film="listing-submit">
               {phase === 'saving' ? m.common.sending : editId ? m.listings.saveChanges : m.listings.submit}
             </Button>
           </div>
@@ -269,7 +271,7 @@ export function ListingForm({ editId }: { editId?: string }) {
               </Field>
             ) : null}
             <Field id={`${id}-name`} label={m.listings.name} required={mode === 'lost'} hint={mode === 'found' ? m.listings.nameHintFound : undefined} error={shown.name}>
-              <TextInput id={`${id}-name`} value={name} maxLength={40} onChange={(e) => setName(e.target.value)} aria-invalid={!!shown.name} aria-describedby={[mode === 'found' ? `${id}-name-hint` : null, shown.name ? `${id}-name-error` : null].filter(Boolean).join(' ') || undefined} />
+              <TextInput id={`${id}-name`} data-film="listing-name" value={name} maxLength={40} onChange={(e) => setName(e.target.value)} aria-invalid={!!shown.name} aria-describedby={[mode === 'found' ? `${id}-name-hint` : null, shown.name ? `${id}-name-error` : null].filter(Boolean).join(' ') || undefined} />
             </Field>
             <Field id={`${id}-breed`} label={m.common.breed} hint={m.common.breedHint}>
               <TextInput id={`${id}-breed`} value={breed} maxLength={60} onChange={(e) => setBreed(e.target.value)} aria-describedby={`${id}-breed-hint`} />

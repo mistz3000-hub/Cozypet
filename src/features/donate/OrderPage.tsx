@@ -113,7 +113,7 @@ function Order({ order }: { order: DonationOrder }) {
             ))}
           </ol>
           <div className={s.nav}>
-            {!done && order.source !== 'micro' ? <Button icon="bolt" disabled={!!order.settlementStage && order.settlementStage !== 'partner_paid'} onClick={fastForward}>{m.orders.fastForward}</Button> : null}
+            {!done && order.source !== 'micro' ? <Button icon="bolt" disabled={!!order.settlementStage && order.settlementStage !== 'partner_paid'} onClick={fastForward} data-film="order-fast">{m.orders.fastForward}</Button> : null}
             {canCancelOrder(order, new Date(now || Date.parse(order.createdAt))) ? <Button variant="ghost" icon="x" onClick={() => setConfirmCancel(true)}>{m.orders.cancel}</Button> : null}
           </div>
 
@@ -134,7 +134,7 @@ function Order({ order }: { order: DonationOrder }) {
           ) : null}
 
           {done ? (
-            <Card flat className={s.thanks}>
+            <Card flat className={s.thanks} data-film="order-thanks">
               <p className={s.h3}>{m.orders.thanksTitle} <Badge tone="butter">{m.orders.thanksTag}</Badge></p>
               <p>{f(m.orders.thanks, { pkg: pkgName, p: helper?.persona.politeParticle ?? 'ค่ะ' })}</p>
               <p className={s.muted}>— {name}</p>

@@ -96,6 +96,7 @@ export function BangkokMap({ pins = [], searchPoint, radiusKm, selectedId, onSel
           const helper = p.kind === 'place' ? undefined : getHelper(p.id);
           const photo = p.photo ?? (helper?.kind === 'shelter' ? helper.images.place?.[0] : helper?.images.profile);
           const common = {
+            'data-pin-id': p.id,
             className: s.pin,
             'data-kind': p.kind,
             'data-level': p.level,

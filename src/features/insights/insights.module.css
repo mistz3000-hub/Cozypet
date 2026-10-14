@@ -1,0 +1,256 @@
+.page {
+  display: grid;
+  gap: var(--cp-space-5);
+}
+.head {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  max-width: 760px;
+}
+.head h1 {
+  margin: 0;
+}
+.head p {
+  margin: 0;
+  color: var(--cp-ink);
+}
+.h2 {
+  margin: 0 0 10px;
+  font-size: var(--cp-text-xl);
+}
+.h3 {
+  margin: 0;
+  font-size: var(--cp-text-lg);
+}
+.muted {
+  margin: 0;
+  color: var(--cp-ink-muted);
+  font-size: var(--cp-text-sm);
+}
+.formula,
+.controls {
+  display: grid;
+  gap: 12px;
+}
+.ctrlRow {
+  display: grid;
+  gap: 6px;
+}
+.ctrlLabel {
+  font-weight: 600;
+  font-size: var(--cp-text-sm);
+}
+.tableWrap {
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--cp-text-sm);
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--cp-border);
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--cp-surface);
+}
+.results {
+  display: grid;
+  gap: var(--cp-space-4);
+}
+.resultsInner {
+  display: grid;
+  gap: var(--cp-space-4);
+}
+.resultFor {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-weight: 600;
+}
+.empty {
+  margin: 0;
+  padding: 16px;
+  border-radius: var(--cp-radius-card);
+  border: 2px dashed var(--cp-border-strong);
+  color: var(--cp-ink-muted);
+}
+.kpis {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 1024px) {
+  .kpis {
+    grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  }
+}
+.kpis li {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  padding: 14px;
+  border-radius: var(--cp-radius-card);
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  min-width: 0;
+}
+.kpis li.kpiHero {
+  background: var(--cp-butter);
+  border-color: var(--cp-gold-500);
+  grid-column: 1 / -1;
+}
+@media (min-width: 1024px) {
+  .kpis li.kpiHero {
+    grid-column: auto;
+  }
+}
+.kpiLabel {
+  font-size: var(--cp-text-sm);
+  color: var(--cp-ink-muted);
+  font-weight: 600;
+}
+.kpiBig {
+  font-family: var(--cp-font-heading);
+  font-size: var(--cp-text-hero);
+  line-height: 1.1;
+  color: var(--cp-gold-700);
+}
+.kpiVal {
+  font-family: var(--cp-font-heading);
+  font-size: var(--cp-text-lg);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.kpiSub {
+  font-size: var(--cp-text-sm);
+}
+.legend {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  font-size: var(--cp-text-sm);
+  font-weight: 600;
+}
+.keyA,
+.keyB {
+  display: inline-block;
+  width: 22px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--cp-ink-muted);
+}
+.keyB {
+  background: var(--cp-gold-500);
+}
+.chart {
+  display: grid;
+  gap: 10px;
+}
+.chart > button {
+  justify-self: start;
+}
+.figure {
+  margin: 0;
+}
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.axes line {
+  stroke: var(--cp-border);
+  stroke-width: 1;
+}
+.axes text {
+  fill: var(--cp-ink-muted);
+  font-size: 12px;
+  font-family: var(--cp-font-body);
+}
+.lineA,
+.lineB {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lineA {
+  stroke: var(--cp-ink-muted);
+  stroke-dasharray: none;
+}
+.lineB {
+  stroke: var(--cp-gold-500);
+  stroke-width: 4;
+}
+.barA {
+  fill: var(--cp-ink-muted);
+}
+.barB {
+  fill: var(--cp-gold-500);
+}
+.finalGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.finalCol {
+  min-width: 0;
+}
+.finalTitle {
+  margin: 0 0 6px;
+  font-weight: 700;
+  font-size: var(--cp-text-sm);
+}
+.finalList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 3px;
+}
+.finalList li {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+.finalLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cp-ink-muted);
+}
+.finalTrack {
+  display: block;
+  height: 9px;
+  border-radius: 5px;
+  background: var(--cp-bg-alt);
+  overflow: hidden;
+}
+.finalFill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  transform-origin: left center;
+}
+.fillA {
+  background: var(--cp-ink-muted);
+}
+.fillB {
+  background: var(--cp-gold-500);
+}

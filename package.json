@@ -17,6 +17,8 @@
     "film:plan": "node --experimental-strip-types scripts/film/plan.ts",
     "film:capture": "node --experimental-strip-types scripts/film/capture.ts",
     "film:render": "node --experimental-strip-types scripts/film/render.ts",
+    "film:frames": "node --experimental-strip-types scripts/film/frames.ts",
+    "film:voice": "node --experimental-strip-types scripts/film/voice.ts",
     "film:audio": "node --experimental-strip-types scripts/film/audio.ts",
     "film:mux": "node --experimental-strip-types scripts/film/mux.ts",
     "film:all": "node --experimental-strip-types scripts/film/all.ts",

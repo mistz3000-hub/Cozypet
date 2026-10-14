@@ -227,9 +227,11 @@ export function NearbyPage() {
               if (r.urgency !== 'unknown') setUrgency(r.urgency);
               setSort('recommended');
               if (r.urgency === 'emergency') setEmergencyOnly(true);
-              if (r.districtId && r.districtId !== session.districtId) {
-                setChosenDistrict(r.districtId);
-                doSearch(startNewRound('district_choice', r.districtId));
+              // เขตจากข้อความมาก่อน ถ้าข้อความไม่ระบุเขต ใช้เขตที่เลือกไว้ (เช่น ?district= จากหน้าสแกน)
+              const target = r.districtId ?? (chosenDistrict || null);
+              if (target && target !== session.districtId) {
+                setChosenDistrict(target);
+                doSearch(startNewRound('district_choice', target));
               } else doSearch();
             }}
           />
@@ -338,7 +340,7 @@ export function NearbyPage() {
           ) : null}
 
           {shownPhase === 'results' ? (
-            <div ref={listRef}>
+            <div ref={listRef} data-film="nearby-results">
               <p className={s.count} aria-live="polite">{f(radius === null || limit5 ? m.nearby.resultsAll : m.nearby.results, { n: num(rows.length) })}</p>
               {!personaRow ? (
                 <Card className={s.personaBox} flat>

@@ -33,6 +33,7 @@ export function HandoffCard({ handoff: h }: { handoff: Handoff }) {
   return (
     <motionEl.div
       className={s.handoffCard}
+      data-film="handoff-card"
       role="group"
       aria-label={m.chat.handoffDone}
       initial={animate ? (reduced ? { opacity: 0 } : { opacity: 0, y: 40 }) : false}

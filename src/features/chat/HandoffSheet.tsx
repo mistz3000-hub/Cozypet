@@ -99,7 +99,7 @@ export function HandoffSheet({ open, onClose, conv, helper, topicListing }: {
       footer={(
         <>
           <Button onClick={onClose}>{m.common.cancel}</Button>
-          <Button variant="primary" icon="heart" onClick={confirm} disabled={!!block || already}>{m.chat.handoffConfirm}</Button>
+          <Button variant="primary" icon="heart" onClick={confirm} disabled={!!block || already} data-film="handoff-confirm">{m.chat.handoffConfirm}</Button>
         </>
       )}
     >

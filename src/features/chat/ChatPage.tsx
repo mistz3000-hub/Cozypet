@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { ChatMessage, Conversation, FallbackReason, ProviderId } from '@/lib/types';
 import { useI18n } from '@/i18n/provider';
 import { getHelper, getOwner } from '@/data';
@@ -95,12 +95,32 @@ function Chat({ conv }: { conv: Conversation }) {
     setHasNew(false);
   }, [reduced]);
 
+  // หน้าแชตสูงเต็มจอ (รายการเลื่อนในกล่อง) — เปิดมาแล้วเริ่มที่บนสุดเสมอ แม้มาจากหน้าที่เลื่อนลงไปแล้ว
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [conv.id]);
+
   // ข้อความใหม่: ถ้าอยู่ท้ายรายการ → เลื่อนลง ถ้ากำลังอ่านข้างบน → ปุ่ม “ข้อความใหม่ ↓”
   const count = conv.messages.length + (typing ? 1 : 0);
+  // การ์ดส่งต่อน้องเกิดจากการกดยืนยันของผู้ใช้เอง → เลื่อนให้เห็นเสมอ
+  const handoffCount = useRef(convHandoffs.length);
   useLayoutEffect(() => {
+    if (convHandoffs.length > handoffCount.current) atBottom.current = true;
+    handoffCount.current = convHandoffs.length;
     if (atBottom.current) scrollToEnd(false);
     else setHasNew(true);
-  }, [count, scrollToEnd]);
+  }, [count, convHandoffs.length, scrollToEnd]);
+
+  // แถบสถานะ/คีย์บอร์ดทำให้กล่องข้อความเตี้ยลง → ถ้าอยู่ท้ายรายการอยู่แล้ว ให้ยังอยู่ท้ายรายการ
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => {
+      if (atBottom.current) el.scrollTo({ top: el.scrollHeight });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // นับถอยหลัง retryAfterSec ของ rate_limited (นาฬิกา subscribe เฉพาะตอนนับ)
   const now = useNow(!!status?.retryAt);
@@ -226,7 +246,7 @@ function Chat({ conv }: { conv: Conversation }) {
         <div className={s.headText}>
           <h1 className={s.name}>{name}</h1>
           <p className={s.role}>{m.chat.role[conv.persona.kind]} · {f(m.chat.topic, { topic })}</p>
-          <p className={s.badgeRow}>
+          <p className={s.badgeRow} data-film="chat-source" data-source={usingAi ? 'ai' : 'demo'}>
             <Badge tone={usingAi ? 'gold' : 'butter'} icon={usingAi ? 'sparkle' : 'chat'}>{sourceBadge}</Badge>
             {usingAi && lastAssistant?.provider ? <span className={s.via}>{f(m.chat.via, { provider: PROVIDER_LABEL[lastAssistant.provider] })}</span> : null}
             {isRealOrg && helper?.officialUrl ? <a className={s.via} href={helper.officialUrl} target="_blank" rel="noopener noreferrer">{m.chat.officialContact}</a> : null}
@@ -254,6 +274,7 @@ function Chat({ conv }: { conv: Conversation }) {
                   key={msg.id}
                   className={s.row}
                   data-mine={mine ? 'true' : undefined}
+                  data-film={mine ? 'msg-user' : 'msg-assistant'}
                   initial={reduced ? false : { opacity: 0, y: DISTANCE.card / 2 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={T.quick}
@@ -267,7 +288,7 @@ function Chat({ conv }: { conv: Conversation }) {
             })}
             {g.role !== 'system' ? <p className={s.time} data-mine={g.role === 'user' ? 'true' : undefined}>{time(g.items[g.items.length - 1].createdAt)}</p> : null}
             {g.role === 'user' && lastUser && g.items.some((x) => x.id === lastUser.id) ? (
-              <p className={s.msgStatus} aria-live="polite">
+              <p className={s.msgStatus} aria-live="polite" data-film={lastUser.readAt ? 'msg-read' : 'msg-status'}>
                 {lastUser.status === 'sending' ? m.chat.sending
                   : lastUser.status === 'failed' ? <>{m.chat.failed} · <button type="button" className={s.linkBtn} onClick={() => void retryFailed(lastUser)}>{m.chat.retrySend}</button></>
                     : lastUser.readAt ? f(m.chat.read, { time: time(lastUser.readAt) }) : null}

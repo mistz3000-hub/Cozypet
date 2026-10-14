@@ -1,0 +1,55 @@
+/* ชิ้นส่วน DOM ของวิดีโอ */
+.counter {
+  display: inline-flex;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.digit {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+}
+.strip {
+  display: flex;
+  flex-direction: column;
+}
+.strip > span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+.comma {
+  display: inline-block;
+}
+.kinetic {
+  display: inline;
+}
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0.12em 0.02em 0.18em;
+  margin: -0.12em -0.02em -0.18em;
+}
+.hiWrap {
+  position: relative;
+  display: inline-block;
+  padding: 0.02em 0.28em 0.06em;
+  color: var(--cp-ink);
+  text-shadow: none;
+}
+.hiBox {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.2em;
+  background: var(--cp-gold-500);
+  box-shadow: 0 0 50px rgba(244, 180, 0, 0.55);
+  transform-origin: left center;
+  z-index: -1;
+}
+.hiWrap {
+  isolation: isolate;
+  white-space: nowrap;
+}
