@@ -5,17 +5,32 @@
  */
 import * as THREE from 'three';
 import type { CSSProperties } from 'react';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { GLKit, GLScene } from '../gl';
 import type { FilmContext, SceneProps } from '../context';
 import type { Shot } from '../cuts';
 import { clamp, ease, fbm, lerp, prog } from '../timeline';
 import { rngFromKey } from '@/lib/seeded-random';
+import { SupplyBox, iconDisc } from '../props/objects';
 import type { SceneModule, SceneSfx } from './types';
 import { C, Floaters, applyCam, card3d, glowSprite, glowTexture, iconCardTexture, makeCamera, project, setShock, shockRing, softMaterial, studio, type CamRig } from './stage';
 import s from './scenes.module.css';
 
 const X = [-4.6, 0, 4.6];
+/** หลอดแก้ว ① (พิกัดในแท่น) */
+const TUBE = { x: [-0.95, -0.12, 0.66, 1.38], z: [0.25, -0.35, 0.3, -0.25], r: 0.39, h: 1.75, base: 0.1 };
+const CAT_R = 0.155;
+/** จำนวนน้องแมว: เรียงในหลอดแรก 12 · ล้นออก 4 · หลอด 3 และ 4 มีหลอดละ 1 */
+const STACK = 12;
+const SPILL = 4;
+const CATS = STACK + SPILL + 2;
+
+/** ตำแหน่งปลายทางของน้องตัวที่ i ในหลอดแรก (2 ตัวต่อชั้น สลับมุม) */
+function stackPos(i: number): THREE.Vector3 {
+  const layer = Math.floor(i / 2);
+  const a = (i % 2) * Math.PI + layer * 1.15 + 0.4;
+  const off = TUBE.r - 0.035 - CAT_R - 0.012;
+  return new THREE.Vector3(TUBE.x[0] + Math.cos(a) * off, TUBE.base + CAT_R + 0.01 + layer * 0.272, TUBE.z[0] + Math.sin(a) * off * 0.9);
+}
 const BASE_Y = -1.0;
 /** เวลาที่กล้องถึงแท่นแต่ละแท่น / เหวี่ยง / ถอยกว้าง (เวอร์ชันเต็ม) */
 const ARRIVE = [0, 1.5, 3.0];
@@ -67,8 +82,9 @@ class ProblemsScene implements GLScene {
   private pools: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>[] = [];
   private cones: THREE.Mesh<THREE.CylinderGeometry, THREE.MeshBasicMaterial>[] = [];
   private spots: THREE.SpotLight[] = [];
-  private fills: THREE.Mesh[] = [];
-  private tokens: THREE.Mesh[] = [];
+  private cats: THREE.Group[] = [];
+  private glass0!: THREE.MeshPhysicalMaterial;
+  private rim0!: THREE.MeshPhysicalMaterial;
   private alarm!: THREE.Sprite;
   private bits: THREE.Group[] = [];
   private rings: THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>[] = [];
@@ -138,28 +154,67 @@ class ProblemsScene implements GLScene {
       this.spots.push(sp);
     }
 
-    // ① ถังรับน้อง 4 ใบ: ใบแรกล้น ใบอื่นว่าง
-    const glass = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.06, transparent: true, opacity: 0.22, clearcoat: 1, depthWrite: false });
-    const tankX = [-1.0, -0.15, 0.62, 1.32];
-    const tankZ = [0.3, -0.4, 0.35, -0.3];
+    // ① หลอดแก้วรับน้อง 4 หลอด: น้องแมวลูกกลมหล่นลงหลอดแรกหลอดเดียวจนล้น หลอดอื่นแทบว่าง
+    // แก้วใส: ผนังชั้นเดียว 2 หน้า ความทึบต่ำ ให้เห็นน้องข้างใน — ขอบสว่างมาจากเงาสะท้อน clearcoat
+    const glassMat = () => new THREE.MeshPhysicalMaterial({ color: '#eaf4ff', roughness: 0.05, metalness: 0, transparent: true, opacity: 0.07, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 0.9, specularIntensity: 1, depthWrite: false, side: THREE.DoubleSide });
+    const rimMat = () => new THREE.MeshPhysicalMaterial({ color: C.gold, metalness: 0.9, roughness: 0.22, clearcoat: 1 });
     for (let i = 0; i < 4; i++) {
-      const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 1.8, 40, 1, true), glass);
-      tank.position.set(tankX[i], 0.9, tankZ[i]);
-      tank.renderOrder = 2;
-      this.peds[0].add(tank);
-      const fill = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 1, 40), new THREE.MeshPhysicalMaterial({ color: i === 0 ? '#e0473a' : '#7fc9a4', roughness: 0.35, clearcoat: 0.8, emissive: i === 0 ? '#ff2a10' : '#000000', emissiveIntensity: i === 0 ? 0.35 : 0 }));
-      fill.position.set(tankX[i], 0, tankZ[i]);
-      this.peds[0].add(fill);
-      this.fills.push(fill);
+      const g = glassMat();
+      const r = rimMat();
+      if (i === 0) {
+        this.glass0 = g;
+        this.rim0 = r;
+      }
+      const tube = new THREE.Group();
+      tube.position.set(TUBE.x[i], 0, TUBE.z[i]);
+      const wall = new THREE.Mesh(new THREE.CylinderGeometry(TUBE.r, TUBE.r, TUBE.h, 48, 1, true), g);
+      wall.position.y = TUBE.base + TUBE.h / 2;
+      wall.renderOrder = 3;
+      // แถบสะท้อนแสงแนวตั้ง 2 เส้น (หันเข้ากล้อง) ให้รู้ว่าเป็นแก้ว
+      const shine = new THREE.Mesh(new THREE.PlaneGeometry(0.05, TUBE.h * 0.86), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.32, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+      shine.position.set(-TUBE.r * 0.55, TUBE.base + TUBE.h * 0.5, TUBE.r * 0.82);
+      const shine2 = shine.clone();
+      shine2.scale.x = 0.45;
+      shine2.position.x = -TUBE.r * 0.32;
+      const foot = new THREE.Mesh(new THREE.CylinderGeometry(TUBE.r + 0.04, TUBE.r + 0.07, TUBE.base, 48), new THREE.MeshPhysicalMaterial({ color: '#f3e8d8', roughness: 0.15, transmission: 0, clearcoat: 1, transparent: true, opacity: 0.65 }));
+      foot.position.y = TUBE.base / 2;
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(TUBE.r - 0.012, 0.032, 12, 64), r);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = TUBE.base + TUBE.h;
+      tube.add(wall, shine, shine2, foot, lip);
+      this.peds[0].add(tube);
     }
-    for (let i = 0; i < 6; i++) {
-      const tok = new THREE.Mesh(new THREE.SphereGeometry(0.19, 24, 16), softMaterial(i % 2 ? '#f4a95a' : '#efd9b6', 0.4));
-      tok.visible = false;
-      this.peds[0].add(tok);
-      this.tokens.push(tok);
+    // น้องแมวลูกกลม (ของเล่นไวนิล: หู ตา จมูก) — ใช้ซ้ำทั้ง 18 ตัว
+    const FUR = ['#f0a24f', '#f6e7cc', '#a3a3ab', '#3b3431', '#fbf6ee', '#e6b98a'];
+    const earGeo = new THREE.ConeGeometry(0.058, 0.09, 20);
+    const eyeGeo = new THREE.SphereGeometry(0.017, 12, 8);
+    const bodyGeo = new THREE.SphereGeometry(CAT_R, 32, 24);
+    const eyeMat = new THREE.MeshPhysicalMaterial({ color: '#1d1714', roughness: 0.2, clearcoat: 1 });
+    const noseMat = softMaterial('#f29aa0', 0.4);
+    for (let i = 0; i < CATS; i++) {
+      const fur = softMaterial(FUR[(i * 5) % FUR.length], 0.38);
+      const cat = new THREE.Group();
+      const body = new THREE.Mesh(bodyGeo, fur);
+      body.scale.set(1.06, 0.96, 1);
+      cat.add(body);
+      for (const sx of [-1, 1]) {
+        const ear = new THREE.Mesh(earGeo, fur);
+        ear.position.set(sx * 0.085, 0.125, -0.01);
+        ear.rotation.z = -sx * 0.38;
+        cat.add(ear);
+        const eye = new THREE.Mesh(eyeGeo, eyeMat);
+        eye.position.set(sx * 0.052, 0.03, CAT_R * 0.93);
+        cat.add(eye);
+      }
+      const nose = new THREE.Mesh(new THREE.SphereGeometry(0.012, 10, 8), noseMat);
+      nose.position.set(0, -0.006, CAT_R * 0.99);
+      cat.add(nose);
+      cat.visible = false;
+      this.peds[0].add(cat);
+      this.cats.push(cat);
     }
-    this.alarm = glowSprite(glow, '#ff3b2a', 3.2, 0);
-    this.alarm.position.set(-1.0, 1.9, 0.4);
+    this.alarm = glowSprite(glow, '#ff3b2a', 3.0, 0);
+    this.alarm.position.set(TUBE.x[0], TUBE.base + TUBE.h + 0.1, TUBE.z[0] + 0.3);
     this.peds[0].add(this.alarm);
 
     // ② โทรศัพท์ ประกาศ และเครื่องหมายคำถามกระจัดกระจาย
@@ -178,13 +233,10 @@ class ProblemsScene implements GLScene {
 
     // ③ กล่องบริจาคเดินเข้าหมอก แล้วมีเครื่องหมายคำถามโผล่
     this.box = new THREE.Group();
-    const kraft = softMaterial('#c89a63', 0.75);
-    this.box.add(new THREE.Mesh(new RoundedBoxGeometry(0.95, 0.75, 0.8, 3, 0.06), kraft));
-    this.box.add(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.76, 0.81), softMaterial('#e8d3a6', 0.5)));
-    const heartTex = await iconCardTexture(kit, 'heart', { size: 128, bg: '#c89a63', ring: 'rgba(0,0,0,0)', accent: C.heart });
-    const label = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.4), new THREE.MeshBasicMaterial({ map: heartTex, toneMapped: false }));
-    label.position.set(0.28, 0, 0.402);
-    this.box.add(label);
+    const carton = new SupplyBox(kit, 0.95, await iconDisc(kit, 'heart', '#fff3d1'));
+    carton.setOpen(0);
+    carton.group.position.y = -0.36;
+    this.box.add(carton.group);
     this.peds[2].add(this.box);
     const puff = await kit.canvasTex(256, 256, (c) => {
       const rnd = rngFromKey('cozypet:v1:film:fog');
@@ -226,24 +278,57 @@ class ProblemsScene implements GLScene {
       this.cones[i].material.opacity = 0.075 * on * (0.9 + 0.1 * Math.sin(t * 7 + i));
     });
 
-    // ① ถังใบแรกเติมจนล้น ใบอื่นเกือบว่าง
+    // ① น้องหล่นลงหลอดแรกทีละตัว ตรงกลางปากหลอด ซ้อนเป็นชั้น จนเต็มแล้วล้นกลิ้งออกมาที่แท่น
     const t1 = (t - ts[0]) * sp;
-    const levels = [lerp(0.45, 1.12, ease.out(prog(t1, 0.3, 1.5))), 0.12, 0.08, 0.16];
-    this.fills.forEach((f, i) => {
-      const h = 1.75 * levels[i];
-      f.scale.set(1, h, 1);
-      f.position.y = h / 2 + 0.02;
+    const DROP = 0.075;
+    const FALL = 0.34;
+    const up = new THREE.Vector3();
+    this.cats.forEach((cat, i) => {
+      if (i >= STACK + SPILL) {
+        // น้องที่อยู่หลอดอื่นอยู่แล้ว (หลอดละ 1 ตัว)
+        const k = i - STACK - SPILL;
+        cat.visible = true;
+        cat.position.set(TUBE.x[2 + k], TUBE.base + CAT_R + 0.01, TUBE.z[2 + k]);
+        cat.rotation.set(0, -0.3 + 0.2 * k + 0.05 * Math.sin(t * 2 + k), 0);
+        return;
+      }
+      const a = 0.12 + i * DROP;
+      const f = prog(t1, a, a + FALL);
+      cat.visible = t1 > a;
+      if (!cat.visible) return;
+      const spin = (1 - f) * 2.2;
+      if (i < STACK) {
+        const target = stackPos(i);
+        // ตกแนวดิ่งจากเหนือปากหลอด: x/z ตรงจุดหมายตั้งแต่ต้น จึงลงหลอดพอดี
+        const y0 = TUBE.base + TUBE.h + 1.6;
+        const y = lerp(y0, target.y, ease.in(f));
+        const land = t1 - (a + FALL);
+        const bounce = land > 0 ? 0.05 * Math.exp(-land * 18) * Math.abs(Math.sin(land * 26)) : 0;
+        cat.position.set(target.x, y + bounce, target.z);
+        cat.rotation.set(0.25 * spin, -0.35 + 0.6 * Math.sin(i * 1.7) * 0.4 + spin, 0.2 * spin);
+      } else {
+        // ล้น: ตกลงบนยอดกองแล้วกลิ้งออกด้านหน้าลงแท่น
+        const j = i - STACK;
+        const topY = TUBE.base + TUBE.h + CAT_R + 0.02;
+        const fallEnd = a + FALL;
+        const roll = prog(t1, fallEnd, fallEnd + 0.45);
+        const dir = -0.9 + j * 0.55;
+        up.set(Math.sin(dir), 0, Math.cos(dir));
+        const dist = (TUBE.r + 0.25 + 0.22 * j) * ease.out(roll);
+        const ground = CAT_R + 0.005;
+        const arcY = roll < 1 ? lerp(topY, ground, ease.in(roll)) + 0.35 * Math.sin(roll * Math.PI) * (1 - roll * 0.6) : ground + 0.03 * Math.abs(Math.sin((t1 - fallEnd - 0.45) * 10)) * Math.exp(-(t1 - fallEnd - 0.45) * 6);
+        const y = f < 1 ? lerp(TUBE.base + TUBE.h + 1.6, topY, ease.in(f)) : arcY;
+        cat.position.set(TUBE.x[0] + up.x * dist, y, TUBE.z[0] + up.z * dist);
+        cat.rotation.set(roll * 3.2 * Math.cos(dir), dir * 0.4, -roll * 3.2 * Math.sin(dir));
+      }
     });
-    this.tokens.forEach((tok, i) => {
-      const a = 0.25 + i * 0.18;
-      const k = prog(t1, a, a + 0.35);
-      const spill = i >= 3;
-      const yTop = spill ? 1.98 + 0.2 * (i - 3) : 1.98;
-      tok.position.set(-1.0 + (spill ? (i - 4) * 0.27 : 0), lerp(3.4, yTop, ease.in(k)) - (k >= 1 && !spill ? 0.5 : 0), 0.3 + (spill ? 0.15 : 0));
-      if (spill && k >= 1) tok.position.y = yTop - 0.05 * Math.abs(Math.sin(t * 6 + i));
-      tok.visible = t1 > a && (spill || k < 1);
-    });
-    this.alarm.material.opacity = prog(t1, 0.9, 1.3) * (0.45 + 0.35 * Math.max(0, Math.sin(t * 9)));
+    const full = ease.out(prog(t1, 0.12 + (STACK - 1) * DROP + FALL, 0.12 + (STACK - 1) * DROP + FALL + 0.3));
+    this.glass0.color.set('#ffffff').lerp(new THREE.Color('#ff7a68'), 0.7 * full);
+    this.glass0.opacity = 0.07 + 0.1 * full;
+    this.rim0.color.set(C.gold).lerp(new THREE.Color('#e0473a'), full);
+    this.rim0.emissive.set('#ff2a10');
+    this.rim0.emissiveIntensity = 0.5 * full * (0.6 + 0.4 * Math.max(0, Math.sin(t * 9)));
+    this.alarm.material.opacity = full * (0.45 + 0.35 * Math.max(0, Math.sin(t * 9)));
 
     // ② กระจัดกระจาย หมุน และสั่นเหมือนโทรหาไม่ติด
     const t2 = (t - ts[1]) * sp;
@@ -347,8 +432,9 @@ function problemsSfx(shot: Shot): SceneSfx[] {
     ev.push({ at: a - 0.02, kind: 'thud', note: i, gain: 0.8, pan: single ? (i - 1) * 0.5 : 0 });
     ev.push({ at: a, kind: 'glass', note: 2 + i, gain: 0.35 });
   });
-  for (let i = 0; i < 3; i++) ev.push({ at: ts[0] + (0.25 + i * 0.18 + 0.35) / sp, kind: 'drop', note: 5 - i, gain: 0.45 });
-  ev.push({ at: ts[0] + 0.9 / sp, kind: 'zap', gain: 0.4 });
+  // น้องแมวหล่นลงหลอดทีละตัว: เสียงติ๊งไล่โน้ตขึ้นตามความสูงของกอง แล้วสัญญาณเตือนตอนเต็ม
+  for (let i = 0; i < STACK + SPILL; i++) ev.push({ at: ts[0] + (0.12 + i * 0.075 + 0.34) / sp, kind: i < STACK ? 'drop' : 'pop', note: i < STACK ? 2 + Math.floor(i / 2) : 1, gain: i < STACK ? 0.24 : 0.3 });
+  ev.push({ at: ts[0] + (0.12 + (STACK - 1) * 0.075 + 0.36) / sp, kind: 'zap', gain: 0.4 });
   for (let k = 0; k < (single ? 1 : 2); k++) ev.push({ at: ts[1] + (0.4 + k * 0.6) / sp, kind: 'tick', note: 7, gain: 0.3 });
   ev.push({ at: ts[2] + 0.3 / sp, kind: 'whoosh', dur: 0.9 / sp, gain: 0.3 });
   ev.push({ at: ts[2] + 1.3 / sp, kind: 'pop', note: 1, gain: 0.55 });

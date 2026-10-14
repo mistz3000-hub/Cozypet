@@ -757,7 +757,7 @@
   display: grid;
   justify-items: center;
   gap: 6px;
-  width: 460px;
+  width: 540px;
   text-align: center;
 }
 .imPillar b {
@@ -766,24 +766,30 @@
   color: var(--cp-ink);
 }
 .imPillar span {
-  font-size: 22px;
+  font-size: 20px;
   color: var(--cp-ink-muted);
+  white-space: nowrap;
 }
 .imKpi {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 120px;
+  bottom: 140px;
   display: grid;
   justify-items: center;
-  gap: 4px;
+  gap: 6px;
+}
+.imKpiRow {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 22px;
 }
 .imKpiNum {
   display: inline-flex;
   align-items: baseline;
   font-family: var(--cp-font-heading);
   font-weight: 700;
-  font-size: 96px;
+  font-size: 84px;
   line-height: 1;
   color: var(--cp-gold-700);
 }

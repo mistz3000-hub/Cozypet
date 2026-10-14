@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { GLKit } from '../gl';
 import { clamp, ease } from '../timeline';
+import { rngFromKey } from '@/lib/seeded-random';
 import { C, drawIcon, goldMaterial, pawGeometry, roundedShape, shapeGeo, softMaterial, type IconName } from '../scenes/stage';
 
 const prog = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
@@ -137,61 +138,162 @@ export class CapacityTank {
 }
 
 /** กล่องพัสดุคราฟต์: ฝา 4 แผ่นเปิดได้ เทปกาว สติกเกอร์หัวใจ */
+let kraftCache: THREE.CanvasTexture | null = null;
+/** พื้นผิวกระดาษลังคราฟต์ (สร้างด้วยโค้ด ค่าสุ่มคงที่) — ใช้ร่วมกันทุกกล่อง */
+export function kraftTexture(): THREE.CanvasTexture {
+  if (kraftCache) return kraftCache;
+  const N = 512;
+  const cv = document.createElement('canvas');
+  cv.width = N;
+  cv.height = N;
+  const c = cv.getContext('2d')!;
+  c.fillStyle = '#c69a62';
+  c.fillRect(0, 0, N, N);
+  const rnd = rngFromKey('cozypet:v1:film:kraft');
+  // ลอนลูกฟูกจาง ๆ
+  for (let x = 0; x < N; x += 6) {
+    c.fillStyle = `rgba(90,60,30,${0.025 + 0.02 * Math.sin(x * 0.9)})`;
+    c.fillRect(x, 0, 3, N);
+  }
+  // จุดและเส้นใย
+  for (let i = 0; i < 2600; i++) {
+    const x = rnd() * N;
+    const y = rnd() * N;
+    const dark = rnd() < 0.55;
+    c.fillStyle = dark ? `rgba(80,50,22,${0.08 + rnd() * 0.18})` : `rgba(255,236,200,${0.06 + rnd() * 0.14})`;
+    c.fillRect(x, y, 1 + rnd() * 1.5, 1 + rnd() * 1.5);
+  }
+  c.lineCap = 'round';
+  for (let i = 0; i < 500; i++) {
+    const x = rnd() * N;
+    const y = rnd() * N;
+    const a = rnd() * Math.PI;
+    const l = 4 + rnd() * 14;
+    c.strokeStyle = rnd() < 0.5 ? `rgba(95,62,28,${0.07 + rnd() * 0.1})` : `rgba(250,225,185,${0.06 + rnd() * 0.1})`;
+    c.lineWidth = 0.6 + rnd() * 0.8;
+    c.beginPath();
+    c.moveTo(x, y);
+    c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l);
+    c.stroke();
+  }
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.anisotropy = 8;
+  kraftCache = tex;
+  return tex;
+}
+
+/**
+ * กล่องลังของบริจาคแบบ RSC จริง: ผนัง 4 ด้าน + ก้น, ฝานอก 2 แผ่น (ด้านยาว) ปิดชนกันกลางกล่องแล้วคาดเทป,
+ * ฝาใน 2 แผ่น (ด้านสั้น) อยู่ใต้ฝานอก · เปิด: ฝานอกพับออกก่อน แล้วฝาใน ของข้างในยกตัวโผล่ขอบ
+ */
 export class SupplyBox {
   group = new THREE.Group();
-  private flaps: THREE.Group[] = [];
+  private outer: THREE.Group[] = [];
+  private inner: THREE.Group[] = [];
+  private goods = new THREE.Group();
   readonly size: number;
+  private h: number;
 
   constructor(kit: GLKit, size = 1.0, sticker?: THREE.Texture) {
     this.size = size;
     const w = size;
-    const h = size * 0.75;
-    const d = size * 0.8;
-    const kraft = clay('#c99a5f', 0.8);
-    const inside = clay('#a77a45', 0.9);
-    const body = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, size * 0.03), kraft);
-    body.position.y = h / 2;
-    this.group.add(body);
-    const hole = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.94, d * 0.94), inside);
-    hole.rotation.x = -Math.PI / 2;
-    hole.position.y = h - 0.002;
-    this.group.add(hole);
-    const tape = new THREE.Mesh(new THREE.BoxGeometry(w * 0.22, h * 1.002, d * 1.004), clay('#e9d4a8', 0.45));
-    tape.position.y = h / 2;
-    this.group.add(tape);
+    const h = size * 0.72;
+    const d = size * 0.78;
+    const th = size * 0.022;
+    this.h = h;
+    const tex = kraftTexture();
+    const kraft = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.86, bumpMap: tex, bumpScale: 0.6 });
+    const inside = new THREE.MeshStandardMaterial({ map: tex, color: '#b48552', roughness: 0.92 });
+    const edge = new THREE.MeshStandardMaterial({ color: '#d9b27c', roughness: 0.9 });
+    const tapeMat = new THREE.MeshPhysicalMaterial({ color: '#b98a4e', roughness: 0.22, clearcoat: 0.8, transparent: true, opacity: 0.86 });
+    const wall = (gw: number, gh: number, gd: number, x: number, y: number, z: number) => {
+      // ด้านนอก/ใน/ขอบใช้วัสดุต่างกัน (ลำดับหน้าของ BoxGeometry: +x −x +y −y +z −z)
+      const m = new THREE.Mesh(new THREE.BoxGeometry(gw, gh, gd), [kraft, kraft, edge, edge, kraft, kraft]);
+      m.position.set(x, y, z);
+      this.group.add(m);
+      return m;
+    };
+    wall(w, th, d, 0, th / 2, 0);
+    wall(w, h, th, 0, h / 2, d / 2 - th / 2);
+    wall(w, h, th, 0, h / 2, -d / 2 + th / 2);
+    wall(th, h, d - 2 * th, w / 2 - th / 2, h / 2, 0);
+    wall(th, h, d - 2 * th, -w / 2 + th / 2, h / 2, 0);
+    // ผนังด้านในสีเข้มกว่า + เงาก้นกล่อง
+    const lining = new THREE.Mesh(new THREE.BoxGeometry(w - 2 * th - 0.002, h - th, d - 2 * th - 0.002), inside);
+    (lining.material as THREE.Material).side = THREE.BackSide;
+    lining.position.y = th + (h - th) / 2;
+    this.group.add(lining);
+    // เทปแนวตั้งที่ผนังซ้าย/ขวา (ปลายเทปที่ถูกตัดตอนเปิด)
+    for (const sx of [-1, 1]) {
+      const t = new THREE.Mesh(new THREE.BoxGeometry(0.004, h * 0.32, d * 0.16), tapeMat);
+      t.position.set(sx * (w / 2 + 0.002), h - h * 0.16, 0);
+      this.group.add(t);
+    }
     if (sticker) {
-      const st = new THREE.Mesh(new THREE.CircleGeometry(size * 0.16, 32), new THREE.MeshBasicMaterial({ map: sticker, toneMapped: false }));
-      st.position.set(w * 0.3, h * 0.5, d / 2 + 0.003);
+      const st = new THREE.Mesh(new THREE.CircleGeometry(size * 0.15, 40), new THREE.MeshBasicMaterial({ map: sticker, toneMapped: false }));
+      st.position.set(w * 0.27, h * 0.5, d / 2 + 0.003);
       this.group.add(st);
     }
-    // ฝา 4 แผ่น (หมุนรอบขอบบน)
-    const mk = (fw: number, fd: number, px: number, pz: number, axis: 'x' | 'z', sign: number) => {
+    // ของข้างใน: ถุงอาหาร + กระป๋อง (ยกขึ้นตอนเปิด)
+    const bag = new THREE.Mesh(new RoundedBoxGeometry(w * 0.42, h * 0.95, d * 0.34, 3, size * 0.04), softMaterial('#f4b400', 0.4));
+    bag.position.set(-w * 0.16, h * 0.475, -d * 0.12);
+    bag.rotation.z = 0.06;
+    const label = new THREE.Mesh(new THREE.CircleGeometry(size * 0.08, 32), new THREE.MeshBasicMaterial({ color: '#fff8ec', toneMapped: false }));
+    label.position.set(0, h * 0.12, d * 0.171);
+    bag.add(label);
+    const paw = new THREE.Mesh(pawGeometry(size * 0.12, size * 0.004), new THREE.MeshBasicMaterial({ color: '#2b2118', toneMapped: false }));
+    paw.position.set(0, h * 0.12, d * 0.172);
+    bag.add(paw);
+    const can = new THREE.Mesh(new THREE.CylinderGeometry(size * 0.11, size * 0.11, h * 0.62, 32), new THREE.MeshPhysicalMaterial({ color: '#e9e2d6', metalness: 0.7, roughness: 0.25 }));
+    can.position.set(w * 0.2, h * 0.31, d * 0.08);
+    const canLabel = new THREE.Mesh(new THREE.CylinderGeometry(size * 0.112, size * 0.112, h * 0.34, 32, 1, true), softMaterial('#d0402f', 0.45));
+    can.add(canLabel);
+    this.goods.add(bag, can);
+    this.group.add(this.goods);
+    // ฝา: ฝานอกด้านยาว (หน้า/หลัง) ลึกครึ่งกล่อง ชนกันกลาง · ฝาในด้านสั้น (ซ้าย/ขวา) อยู่ต่ำกว่าหนึ่งความหนา
+    const flap = (fw: number, fd: number, px: number, py: number, pz: number, dirX: number, dirZ: number, list: THREE.Group[], taped: boolean) => {
       const pivot = new THREE.Group();
-      pivot.position.set(px, h, pz);
-      const m = new THREE.Mesh(new THREE.BoxGeometry(fw, size * 0.02, fd), kraft);
-      if (axis === 'x') m.position.z = (sign * fd) / 2;
-      else m.position.x = (sign * fw) / 2;
+      pivot.position.set(px, py, pz);
+      const m = new THREE.Mesh(new THREE.BoxGeometry(fw, th, fd), [edge, edge, kraft, inside, edge, edge]);
+      m.position.set((dirX * fw) / 2, th / 2, (dirZ * fd) / 2);
       pivot.add(m);
-      pivot.userData = { axis, sign };
+      if (taped) {
+        // เทปครึ่งหนึ่งอยู่บนฝาแต่ละแผ่น ชิดขอบที่ชนกัน
+        const tw = d * 0.08;
+        const tp = new THREE.Mesh(new THREE.BoxGeometry(fw * 1.0, 0.004, tw), tapeMat);
+        tp.position.set(0, th + 0.002, dirZ * (fd - tw / 2));
+        pivot.add(tp);
+      }
+      pivot.userData = { dirX, dirZ };
       this.group.add(pivot);
-      this.flaps.push(pivot);
+      list.push(pivot);
     };
-    mk(w, d / 2, 0, d / 2, 'x', -1);
-    mk(w, d / 2, 0, -d / 2, 'x', 1);
-    mk(w / 2, d * 0.98, w / 2, 0, 'z', -1);
-    mk(w / 2, d * 0.98, -w / 2, 0, 'z', 1);
+    flap(w, d / 2, 0, h, d / 2, 0, -1, this.outer, true);
+    flap(w, d / 2, 0, h, -d / 2, 0, 1, this.outer, true);
+    flap(d / 2, d - 2 * th, -w / 2 + th, h - th, 0, 1, 0, this.inner, false);
+    flap(d / 2, d - 2 * th, w / 2 - th, h - th, 0, -1, 0, this.inner, false);
     void kit;
   }
 
-  /** open 0..1 */
+  /** open 0..1 — 0 = ปิดสนิทคาดเทป · 1 = ฝาทั้ง 4 พับออก ของข้างในโผล่ */
   setOpen(open: number) {
-    this.flaps.forEach((p, i) => {
-      const k = ease.backOut(clamp(open * 1.3 - i * 0.08));
-      const a = k * (Math.PI * 0.72);
-      const { axis, sign } = p.userData as { axis: 'x' | 'z'; sign: number };
-      if (axis === 'x') p.rotation.x = sign * a;
-      else p.rotation.z = -sign * a;
+    const ko = ease.backOut(clamp(open * 1.7));
+    const ki = ease.backOut(clamp(open * 1.7 - 0.55));
+    const a = (k: number) => k * Math.PI * 0.68;
+    this.outer.forEach((p) => {
+      const { dirZ } = p.userData as { dirZ: number };
+      // ฝาหน้าชี้เข้า −z: หมุนรอบแกน x บวก = พับขึ้นแล้วออกด้านหน้า
+      p.rotation.x = dirZ < 0 ? a(ko) : -a(ko);
     });
+    this.inner.forEach((p) => {
+      const { dirX } = p.userData as { dirX: number };
+      p.rotation.z = dirX > 0 ? a(ki) : -a(ki);
+    });
+    const lift = ease.out(clamp(open * 1.4 - 0.5));
+    this.goods.position.y = this.h * 0.22 * lift;
+    this.goods.visible = open > 0.02;
   }
 }
 

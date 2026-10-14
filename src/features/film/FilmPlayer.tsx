@@ -383,10 +383,15 @@ function ShotLayer({ layer, ctx, clean }: { layer: Layer; ctx: FilmContext; clea
 function Chrome({ shot, lt, ctx, voice, t, steps }: { shot: Shot; lt: number; ctx: FilmContext; voice: VoTrack | null; t: number; steps: string[] }) {
   const fm = ctx.fm;
   const stepIdx = shot.capture ? steps.indexOf(shot.chapter) : -1;
-  const stepIn = ease.out(prog(lt, 0, 0.5));
-  const cap = shot.captions?.find((c) => lt >= c.at && lt <= c.to);
+  // ช่วงเปลี่ยนฉากเข้า (อุ้งเท้า/จาง/ซูม): ยังไม่โชว์ HUD/คำบรรยายของช็อตใหม่ทับฉากเก่า — รอให้ฉากใหม่เกือบเต็มจอก่อน
+  const tr = shot.transitionIn ?? 'cut';
+  const intro = shot.index > 0 && TRANS[tr] > 0 ? TRANS[tr] * 0.85 : 0;
+  const from = (a: number) => Math.max(a, intro);
+  const gate = intro > 0 ? ease.out(prog(lt, intro - 0.1, intro + 0.35)) : 1;
+  const stepIn = ease.out(prog(lt, intro, intro + 0.5));
+  const cap = shot.captions?.find((c) => lt >= from(c.at) && lt <= c.to);
   const text = cap ? captionText(fm, cap.key, ctx) : null;
-  const fade = cap ? Math.min(clamp((lt - cap.at) / 0.25), clamp((cap.to - lt) / 0.2)) : 0;
+  const fade = cap ? Math.min(clamp((lt - from(cap.at)) / 0.25), clamp((cap.to - lt) / 0.2)) : 0;
   const ipo = shot.ipo ? [...shot.ipo].reverse().find(([at]) => lt >= at)?.[1] : undefined;
   const meta = shot.capture ? ctx.captures[shot.capture] : undefined;
   const desktop = meta?.device === 'desktop';
@@ -406,12 +411,12 @@ function Chrome({ shot, lt, ctx, voice, t, steps }: { shot: Shot; lt: number; ct
     <>
       {mod?.hud ? <Hud shot={shot} lt={lt} ctx={ctx} dark={mod.hud === 'dark'} /> : null}
       {shot.ipo ? (
-        <div className={s.ipo} aria-hidden="true">
+        <div className={s.ipo} aria-hidden="true" style={{ opacity: gate }}>
           {(['input', 'process', 'output'] as const).map((k) => <span key={k} data-on={ipo === k ? 'true' : undefined}>{fm.ipo[k]}</span>)}
         </div>
       ) : null}
       {stepIdx >= 0 ? (
-        <div className={s.flow} aria-hidden="true" style={{ opacity: 0.9 }}>
+        <div className={s.flow} aria-hidden="true" style={{ opacity: 0.9 * gate }}>
           {steps.map((c, i) => <span key={c} data-done={i <= stepIdx ? 'true' : undefined} data-cur={i === stepIdx ? 'true' : undefined} style={i === stepIdx ? { transform: `scaleX(${0.3 + 0.7 * stepIn})`, transformOrigin: 'left' } : undefined} />)}
         </div>
       ) : null}
@@ -421,8 +426,8 @@ function Chrome({ shot, lt, ctx, voice, t, steps }: { shot: Shot; lt: number; ct
       {shot.capture ? <ExplainDom shot={shot} lt={lt} ctx={ctx} desktop={desktop} /> : null}
       {shot.capture && !desktop ? (
         <div className={s.side}>
-          <span className={s.chapter}><span className={s.stepTag}>{fill(fm.hud.step, { n: stepIdx + 1 })}</span>{fm.chapters[shot.chapter]}</span>
-          {text && cap ? <p className={s.capMain} style={{ opacity: Math.min(1, clamp((cap.to - lt) / 0.2)) }}><RichKinetic key={cap.key + cap.at} text={text.main} t={lt} at={cap.at} /></p> : null}
+          <span className={s.chapter} style={{ opacity: gate, transform: `translateY(${((1 - gate) * 14).toFixed(1)}px)` }}><span className={s.stepTag}>{fill(fm.hud.step, { n: stepIdx + 1 })}</span>{fm.chapters[shot.chapter]}</span>
+          {text && cap ? <p className={s.capMain} style={{ opacity: Math.min(1, clamp((cap.to - lt) / 0.2)) }}><RichKinetic key={cap.key + cap.at} text={text.main} t={lt} at={from(cap.at)} /></p> : null}
           {text?.sub ? <p className={s.capSub} style={{ opacity: fade }}>{text.sub}</p> : null}
           {cardText ? (
             <div className={s.card} style={{ opacity: cardFade, transform: `translateX(${(1 - cardFade) * -16}px)` }}>

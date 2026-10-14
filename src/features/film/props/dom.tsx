@@ -58,7 +58,9 @@ export function Kinetic({ text, t, at, out, stagger = 0.06, className, style, hi
   };
   if (highlight) {
     // วลีไฮไลต์: กล่องทองขยายจากซ้าย แล้วคำโผล่ทีละคำในกล่อง
-    const box = ease.expoOut(prog(t, at, at + 0.5));
+    // กล่องขยายตามจังหวะคำที่โผล่ (ไม่วิ่งนำจนเห็นกล่องว่าง)
+    const nWords = ws.filter((w) => !/^\s+$/.test(w)).length;
+    const box = ease.out(prog(t, at, at + Math.max(0.3, nWords * stagger + 0.3)));
     let j = 0;
     return (
       <span className={[s.hiWrap, className].filter(Boolean).join(' ')} style={style}>

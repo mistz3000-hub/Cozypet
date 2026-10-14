@@ -263,6 +263,7 @@ export class DeviceScene {
     scene.add(this.card);
     this.beam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(), new THREE.Vector3(1, 0, 0)), 8, 0.012, 6), new THREE.MeshBasicMaterial({ color: '#f4b400', transparent: true, toneMapped: false }));
     this.beam.visible = false;
+    this.beam.renderOrder = -1;
     scene.add(this.beam);
 
     // เคอร์เซอร์อุ้งเท้า (ตัวเดียวกับทัวร์ในแอป: ทอง ขอบเข้ม)
@@ -562,10 +563,12 @@ export class DeviceScene {
     (glow.material as THREE.MeshBasicMaterial).opacity = 0.55 * p;
     this.cardFace.material.opacity = clamp(p * 1.4);
     this.card.visible = p > 0.01;
-    // ลำแสงจากจุดบนจอไปยังการ์ด
+    // ลำแสงจากจุดบนจอไปยังขอบซ้ายของการ์ด (อยู่หลังหน้าการ์ด ไม่ลากทับเนื้อหา)
     this.beam.geometry.dispose();
-    const mid = origin.clone().lerp(pos, 0.5).add(new THREE.Vector3(0, 0.3, 0.4));
-    this.beam.geometry = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(origin, mid, pos), 24, 0.014, 6);
+    this.card.updateMatrixWorld();
+    const end = new THREE.Vector3(-0.5 * widthU * s, 0, -0.03).applyMatrix4(this.card.matrixWorld);
+    const mid = origin.clone().lerp(end, 0.5).add(new THREE.Vector3(0, 0.25, -0.1));
+    this.beam.geometry = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(origin, mid, end), 24, 0.014, 6);
     this.beam.material.opacity = 0.85 * p;
     this.beam.visible = p > 0.05;
   }

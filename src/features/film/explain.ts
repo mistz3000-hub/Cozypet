@@ -199,7 +199,7 @@ export class ExplainLayer {
 
     // handoff: หัวใจใหญ่ + ประกาย
     const ho = mk('handoff');
-    const big = heartCoin(1.6);
+    const big = heartCoin(1.45);
     big.name = 'heart';
     ho.add(big);
 
@@ -228,7 +228,7 @@ export class ExplainLayer {
 
     // globe: สองภาษา
     const gl = mk('globe');
-    this.globe = dotSphere(glowTex, 700, 1.1, '#ffd23f', 0.07);
+    this.globe = dotSphere(glowTex, 700, 0.9, '#ffd23f', 0.07);
     gl.add(this.globe);
     void atlasCanvasTex;
     void ctx;
@@ -346,10 +346,11 @@ export class ExplainLayer {
       }
       case 'handoff': {
         const h = g.getObjectByName('heart')!;
+        h.position.x = -0.35;
         h.rotation.y = T * 1.5;
         h.scale.setScalar(1 + 0.12 * Math.sin(prog(k, 0, 1.2) * Math.PI * 4) * (1 - prog(k, 0, 1.2)));
         this.sparks.mesh.visible = true;
-        this.sparks.burst(zone.clone().add(new THREE.Vector3(0, 0, 0.5)), k - 0.15, this.camera, 1.6);
+        this.sparks.burst(zone.clone().add(new THREE.Vector3(-0.35, 0, 0.5)), k - 0.15, this.camera, 1.6);
         break;
       }
       case 'donate': {
@@ -358,7 +359,9 @@ export class ExplainLayer {
         this.box.group.rotation.set(0.3, lerp(-1.5, -0.45, fly), 0);
         this.box.setOpen(prog(k, 0.9, 1.6));
         const pop = ease.backBig(prog(k, 1.4, 1.9));
-        this.splitCoin.position.set(0, lerp(-0.2, 1.05, ease.out(prog(k, 1.4, 1.9))), 0.2);
+        // เหรียญแบ่งส่วนเด้งออกจากกล่องไปทางซ้าย (ไม่ขึ้นไปทับคำบรรยาย)
+        const up = ease.out(prog(k, 1.4, 1.9));
+        this.splitCoin.position.set(lerp(0, -1.15, up), lerp(-0.2, 0.35, up) + 0.25 * Math.sin(up * Math.PI), 0.35);
         this.splitCoin.scale.setScalar(Math.max(0.001, pop));
         this.splitCoin.rotation.y = 0.5 * Math.sin(T * 2);
         break;

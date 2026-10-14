@@ -49,7 +49,7 @@ class ImpactScene implements GLScene {
         c.font = '700 240px "DejaVu Sans", sans-serif';
         c.fillText(String(b.n), 50, 150);
       });
-      const g = card3d(2.1, 2.1, { depth: 0.2, radius: 0.36, face: tex, faceInset: 0.05, color: b.color });
+      const g = card3d(1.8, 1.8, { depth: 0.2, radius: 0.32, face: tex, faceInset: 0.05, color: b.color });
       this.badges.push(g);
       this.scene.add(g);
     }
@@ -72,7 +72,7 @@ class ImpactScene implements GLScene {
     this.badges.forEach((b, i) => {
       const a = SWAP + 0.35 + i * 0.15;
       const k = ease.backBig(prog(t, a, a + 0.5));
-      b.position.set((i - 1) * 3.4, lerp(-3, 0.7, ease.out(prog(t, a, a + 0.5))), 0.5);
+      b.position.set((i - 1) * 3.4, lerp(-3, 1.0, ease.out(prog(t, a, a + 0.5))), 0.5);
       b.rotation.set(0, lerp(-1.2, 0, k) + 0.1 * Math.sin(t * 1.1 + i), 0);
       b.scale.setScalar(Math.max(0.001, k));
     });
@@ -97,7 +97,7 @@ function ImpactOverlay({ t, ctx }: SceneProps) {
       })}
       <div className={s.imTitle} style={{ opacity: ease.out(prog(t, SWAP + 0.2, SWAP + 0.5)) }}>{fm.impact.title}</div>
       {fm.impact.sdgs.map((g, i) => {
-        const p = project(r, [(i - 1) * 3.4, -0.75, 0.5]);
+        const p = project(r, [(i - 1) * 3.4, -0.2, 0.5]);
         const a = SWAP + 0.5 + i * 0.15;
         return (
           <div key={g.n} className={s.imPillar} style={{ left: p.x, top: p.y, opacity: ease.out(prog(t, a, a + 0.35)) }}>
@@ -107,8 +107,10 @@ function ImpactOverlay({ t, ctx }: SceneProps) {
         );
       })}
       <div className={s.imKpi} style={{ opacity: ease.out(prog(t, SWAP + 1.0, SWAP + 1.3)) }}>
-        <span className={s.imKpiNum}>−<Counter t={t} at={SWAP + 1.0} dur={1.4} value={ctx.facts.sim} locale={ctx.locale} />%</span>
-        <span className={s.imKpiLabel}>{fill(fm.impact.kpi, { sim: ctx.facts.sim }).replace(`${ctx.facts.sim}%`, '').trim()}</span>
+        <span className={s.imKpiRow}>
+          <span className={s.imKpiNum}>−<Counter t={t} at={SWAP + 1.0} dur={1.4} value={ctx.facts.sim} locale={ctx.locale} />%</span>
+          <span className={s.imKpiLabel}>{fill(fm.impact.kpi, { sim: ctx.facts.sim }).replace(`${ctx.facts.sim}%`, '').trim()}</span>
+        </span>
         <span className={s.imKpiNote}>{fm.impact.kpiNote} · {fm.impact.sdgNote}</span>
       </div>
     </div>

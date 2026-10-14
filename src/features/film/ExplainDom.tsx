@@ -1,4 +1,7 @@
-/** ป้ายข้อความของ prop อธิบายขั้นตอน (DOM วางตามตำแหน่ง 3 มิติของ prop) */
+/**
+ * ป้ายข้อความของ prop อธิบายขั้นตอน (DOM วางตามตำแหน่ง 3 มิติของ prop)
+ * แถบที่วางได้: dy −0.95 … +0.9 จากกลางพื้นที่ prop — เหนือกว่านั้นชนคำบรรยาย 2 บรรทัด ต่ำกว่านั้นชนซับล่าง
+ */
 import { fill, type FilmContext } from './context';
 import type { Shot } from './cuts';
 import { RUN, explainAt, explainPhase, runHeights, zonePx } from './explain';
@@ -31,7 +34,7 @@ export function ExplainDom({ shot, lt, ctx, desktop = false }: { shot: Shot; lt:
         const p = at(-1.35 + i * 0.25, 0.6 - i * 0.5);
         out.push(<Chip key={c} x={p.x} y={p.y} show={show(0.45 + i * 0.5)} tone="gold">{c}</Chip>);
       });
-      out.push(<Chip key="l" {...at(0, -1.12)} show={show(1.6)}>{x.micro.label}</Chip>);
+      out.push(<Chip key="l" {...at(0, -0.95)} show={show(1.6)}>{x.micro.label}</Chip>);
       break;
     case 'scan': {
       const pos: [number, number][] = [[-1.45, 0.75], [1.45, 0.55], [-1.5, -0.6], [1.4, -0.75]];
@@ -39,28 +42,28 @@ export function ExplainDom({ shot, lt, ctx, desktop = false }: { shot: Shot; lt:
         const p = at(...pos[i]);
         out.push(<Chip key={c} x={p.x} y={p.y} show={show(0.9 + i * 0.55)} tone="gold">{c}</Chip>);
       });
-      out.push(<Chip key="l" {...at(0, 1.25)} show={show(0.5)}>{x.scan.label}</Chip>);
+      out.push(<Chip key="l" {...at(0, 0.9)} show={show(0.5)}>{x.scan.label}</Chip>);
       break;
     }
     case 'compare':
-      out.push(<Chip key="l" {...at(0.2, 1.05)} show={show(0.4)}>{x.compare.label}</Chip>);
-      out.push(<Chip key="r" {...at(0.2, -1.0)} show={show(2.8)} tone="grey">{x.compare.result}</Chip>);
+      out.push(<Chip key="l" {...at(0.2, 0.85)} show={show(0.4)}>{x.compare.label}</Chip>);
+      out.push(<Chip key="r" {...at(0.2, -0.95)} show={show(2.8)} tone="grey">{x.compare.result}</Chip>);
       break;
     case 'post':
-      out.push(<Chip key="l" {...at(0, -1.12)} show={show(0.75)} tone="green">✓ {x.post.label}</Chip>);
+      out.push(<Chip key="l" {...at(0, -0.95)} show={show(0.75)} tone="green">✓ {x.post.label}</Chip>);
       break;
     case 'assist':
-      out.push(<Chip key="l" {...at(0.6, -1.1)} show={show(0.9)}>{x.assist.label}</Chip>);
+      out.push(<Chip key="l" {...at(0.6, -0.95)} show={show(0.9)}>{x.assist.label}</Chip>);
       break;
     case 'nearby':
-      out.push(<Chip key="f" {...at(-0.75, 1.05)} show={show(0.3)} tone="red">{x.nearby.full}</Chip>);
-      out.push(<Chip key="b" {...at(0.95, 0.85)} show={show(1.2)} tone="green">{x.nearby.best}</Chip>);
+      out.push(<Chip key="f" {...at(-0.75, 0.85)} show={show(0.3)} tone="red">{x.nearby.full}</Chip>);
+      out.push(<Chip key="b" {...at(0.95, 0.7)} show={show(1.2)} tone="green">{x.nearby.best}</Chip>);
       break;
     case 'chat':
       out.push(<Chip key="r" {...at(1.35, -0.2)} show={show(1.0)} tone="green">✓✓ {x.chat.label}</Chip>);
       break;
     case 'handoff':
-      out.push(<Chip key="h" {...at(0, 1.25)} show={show(0.3)} tone="gold">♥ {x.handoff.label}</Chip>);
+      out.push(<Chip key="h" {...at(1.3, 0.5)} show={show(0.3)} tone="gold">♥ {x.handoff.label}</Chip>);
       break;
     case 'donate':
       x.donate.chips.forEach((c, i) => {

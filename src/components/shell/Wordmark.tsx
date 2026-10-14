@@ -1,18 +1,17 @@
-import { LOGO, logoEarsPath, logoNosePath, logoRingPath } from '@/lib/brand';
+import { LOGO, logoNosePath, logoTailPath } from '@/lib/brand';
 
-/** หัวแมวรูปตัว C (D34) — ใช้เป็นตัว C ของคำว่า Cozypet และเป็นไอคอนแอป */
+/** ตัว C เป็นหางแมวขดรอบหน้าแมว (D34 รอบ v3) — ใช้เป็นตัว C ของคำว่า Cozypet และเป็นไอคอนแอป */
 function CatC({ ink, nose }: { ink: string; nose: string }) {
   return (
     <>
-      <path d={logoEarsPath()} fill={ink} stroke={ink} strokeWidth={LOGO.earRound} strokeLinejoin="round" />
-      <path d={logoRingPath()} fill="none" stroke={ink} strokeWidth={LOGO.ring.stroke} strokeLinecap="round" />
+      <path d={logoTailPath()} fill={ink} />
       {LOGO.eyes.map(([cx, cy]) => <circle key={cx} cx={cx} cy={cy} r={LOGO.eyeR} fill={ink} />)}
-      <path d={logoNosePath()} fill={nose} stroke={nose} strokeWidth={1.4} strokeLinejoin="round" />
+      <path d={logoNosePath()} fill={nose} stroke={nose} strokeWidth={1.3} strokeLinejoin="round" />
     </>
   );
 }
 
-/** Wordmark: ตัว C เป็นหัวแมว ตามด้วย ozy (สีเข้ม) และ pet (สีทอง) */
+/** Wordmark: ตัว C เป็นหางแมว ตามด้วย ozy (สีเข้ม) และ pet (สีทอง) */
 export function Wordmark({ height = 28, symbolOnly = false, title = 'Cozypet' }: { height?: number; symbolOnly?: boolean; title?: string }) {
   const t = LOGO.tile;
   if (symbolOnly) {
