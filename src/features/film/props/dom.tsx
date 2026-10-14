@@ -60,13 +60,13 @@ export function Kinetic({ text, t, at, out, stagger = 0.06, className, style, hi
     // วลีไฮไลต์: กล่องทองขยายจากซ้าย แล้วคำโผล่ทีละคำในกล่อง
     // กล่องขยายตามจังหวะคำที่โผล่ (ไม่วิ่งนำจนเห็นกล่องว่าง)
     const nWords = ws.filter((w) => !/^\s+$/.test(w)).length;
-    const box = ease.out(prog(t, at, at + Math.max(0.3, nWords * stagger + 0.3)));
+    const box = ease.out(prog(t, at + 0.12, at + 0.12 + Math.max(0.3, nWords * stagger + 0.3)));
     let j = 0;
     return (
       <span className={[s.hiWrap, className].filter(Boolean).join(' ')} style={style}>
         <span className={s.hiBox} style={{ transform: `scaleX(${box.toFixed(3)})`, opacity: (box > 0.001 ? 1 : 0) * (1 - outK) }} />
         {ws.map((w, idx) => (/^\s+$/.test(w) ? <span key={idx}>{w}</span> : (
-          <span key={idx} className={s.mask}><span style={{ display: 'inline-block', ...anim(at + 0.05 + stagger * j++) }}>{w}</span></span>
+          <span key={idx} className={s.mask}><span style={{ display: 'inline-block', ...anim(at + 0.02 + stagger * j++) }}>{w}</span></span>
         )))}
       </span>
     );

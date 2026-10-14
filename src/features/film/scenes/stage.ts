@@ -667,8 +667,26 @@ export function drawIcon(c: CanvasRenderingContext2D, name: IconName, cx: number
 }
 
 /** การ์ดไอคอน: พื้นขาวมน + วงทองอ่อน + ไอคอน */
+/** ไอคอน 3 มิติแบบดินปั้น (ภาพสร้างด้วย AI ตัดจากแผ่นตาราง — CREDITS.md D34 v3) — ไอคอนที่ไม่มีภาพยังวาดด้วยเส้นเหมือนเดิม */
+const ICON_3D: Partial<Record<IconName, string>> = {
+  scan: 'scan', notice: 'notice', ai: 'ai', balancer: 'balancer', chat: 'chat', handoff: 'handoff', box: 'box', chart: 'chart', globe: 'globe',
+  phone: 'phone', pin: 'pin', heart: 'heart', home: 'home', paw: 'paw', question: 'question', search: 'search', shield: 'shield',
+};
+
+/** โหลดภาพไอคอน 3 มิติ (null ถ้าไม่มีหรือโหลดไม่ได้) */
+export async function icon3d(kit: GLKit, name: IconName | 'clock'): Promise<HTMLImageElement | null> {
+  const file = name === 'clock' ? 'clock' : ICON_3D[name];
+  if (!file) return null;
+  try {
+    return await kit.image(`/images/film/sprites/${file}.png`);
+  } catch {
+    return null;
+  }
+}
+
 export async function iconCardTexture(kit: GLKit, name: IconName, opts: { size?: number; bg?: string; ring?: string; ink?: string; accent?: string } = {}): Promise<THREE.CanvasTexture> {
   const S = opts.size ?? 512;
+  const img = await icon3d(kit, name);
   return kit.canvasTex(S, S, (c) => {
     c.fillStyle = opts.bg ?? '#ffffff';
     c.fillRect(0, 0, S, S);
@@ -677,7 +695,8 @@ export async function iconCardTexture(kit: GLKit, name: IconName, opts: { size?:
     g.addColorStop(1, 'rgba(244,180,0,0)');
     c.fillStyle = g;
     c.fillRect(0, 0, S, S);
-    drawIcon(c, name, S / 2, S / 2, S * 0.5, opts.ink ?? C.ink, opts.accent ?? C.gold);
+    if (img) c.drawImage(img, S * 0.17, S * 0.17, S * 0.66, S * 0.66);
+    else drawIcon(c, name, S / 2, S / 2, S * 0.5, opts.ink ?? C.ink, opts.accent ?? C.gold);
   });
 }
 

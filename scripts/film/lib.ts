@@ -34,8 +34,10 @@ export function chromiumPath(): string | undefined {
 }
 
 export async function launch(extraArgs: string[] = []): Promise<Browser> {
+  // เครื่องอื่น (เช่น Windows ที่มีการ์ดจอ): FILM_CHROME_CHANNEL=chrome ใช้ Chrome ที่ติดตั้งในเครื่อง
+  const channel = process.env.FILM_CHROME_CHANNEL;
   return chromium.launch({
-    executablePath: chromiumPath(),
+    ...(channel ? { channel } : { executablePath: chromiumPath() }),
     args: ['--no-proxy-server', '--disable-background-networking', '--disable-component-update', '--autoplay-policy=no-user-gesture-required', '--font-render-hinting=none', ...extraArgs],
   });
 }

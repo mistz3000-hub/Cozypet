@@ -41,7 +41,7 @@ class TeamScene implements GLScene {
     this.logo.group.position.set(-3.75, 0.95, 0);
     this.scene.add(this.logo.group);
     const atlas = await cardAtlas(kit);
-    this.swarm = new CardSwarm(atlas, 220, 'team', { size: 0.5, rMin: 6, rMax: 11, height: 10, spin: 0.5 });
+    this.swarm = new CardSwarm(atlas, 150, 'team', { size: 0.5, rMin: 6, rMax: 11, height: 10, spin: 0.5 });
     this.swarm.setLook(0.95);
     this.swarm.setFog('#fff3d1', 10, 26);
     this.scene.add(this.swarm.mesh);
@@ -50,8 +50,8 @@ class TeamScene implements GLScene {
     await QRCode.toCanvas(qrCanvas, url, { margin: 1, width: 512, color: { dark: '#2b2118', light: '#fffdf8' } });
     const tex = new THREE.CanvasTexture(qrCanvas);
     tex.colorSpace = THREE.SRGBColorSpace;
-    this.qr = photoCard(tex, 1.9, 1.9);
-    this.qr.position.set(5.0, -0.6, 0);
+    this.qr = photoCard(tex, 1.75, 1.75);
+    this.qr.position.set(3.75, 0.55, 0);
     this.scene.add(this.qr);
   }
 
@@ -85,10 +85,11 @@ function TeamOverlay({ t, ctx }: SceneProps) {
       <div className={s.tmMembers}>
         <span className={s.tmMembersTitle} style={{ opacity: ease.out(prog(t, 0.6, 0.9)) }}>{fm.team.members}</span>
         {members.map((m, i) => {
-          const a = 0.7 + i * 0.08;
+          const a = 0.7 + i * 0.07;
           const full = (ctx.locale === 'en' ? m.fullNameEn : m.fullNameTh) ?? m.fullNameTh;
           return (
             <span key={i} className={s.tmMember} style={{ opacity: ease.out(prog(t, a, a + 0.3)), transform: `translateX(${((1 - ease.out(prog(t, a, a + 0.3))) * 20).toFixed(1)}px)` }}>
+              <i>{String(i + 1).padStart(2, '0')}</i>
               <b>{full ?? miss('ชื่อ–นามสกุล')}</b>
               <span>{m.studentId ?? miss('รหัสนักศึกษา')}</span>
             </span>

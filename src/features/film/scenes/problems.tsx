@@ -10,7 +10,7 @@ import type { FilmContext, SceneProps } from '../context';
 import type { Shot } from '../cuts';
 import { clamp, ease, fbm, lerp, prog } from '../timeline';
 import { rngFromKey } from '@/lib/seeded-random';
-import { SupplyBox, iconDisc } from '../props/objects';
+import { SupplyBox, iconDisc, preloadKraft } from '../props/objects';
 import type { SceneModule, SceneSfx } from './types';
 import { C, Floaters, applyCam, card3d, glowSprite, glowTexture, iconCardTexture, makeCamera, project, setShock, shockRing, softMaterial, studio, type CamRig } from './stage';
 import s from './scenes.module.css';
@@ -82,7 +82,7 @@ class ProblemsScene implements GLScene {
   private pools: THREE.Mesh<THREE.CircleGeometry, THREE.MeshBasicMaterial>[] = [];
   private cones: THREE.Mesh<THREE.CylinderGeometry, THREE.MeshBasicMaterial>[] = [];
   private spots: THREE.SpotLight[] = [];
-  private cats: THREE.Group[] = [];
+  private cats: THREE.Sprite[] = [];
   private glass0!: THREE.MeshPhysicalMaterial;
   private rim0!: THREE.MeshPhysicalMaterial;
   private alarm!: THREE.Sprite;
@@ -184,31 +184,14 @@ class ProblemsScene implements GLScene {
       tube.add(wall, shine, shine2, foot, lip);
       this.peds[0].add(tube);
     }
-    // น้องแมวลูกกลม (ของเล่นไวนิล: หู ตา จมูก) — ใช้ซ้ำทั้ง 18 ตัว
-    const FUR = ['#f0a24f', '#f6e7cc', '#a3a3ab', '#3b3431', '#fbf6ee', '#e6b98a'];
-    const earGeo = new THREE.ConeGeometry(0.058, 0.09, 20);
-    const eyeGeo = new THREE.SphereGeometry(0.017, 12, 8);
-    const bodyGeo = new THREE.SphereGeometry(CAT_R, 32, 24);
-    const eyeMat = new THREE.MeshPhysicalMaterial({ color: '#1d1714', roughness: 0.2, clearcoat: 1 });
-    const noseMat = softMaterial('#f29aa0', 0.4);
+    // น้องแมวลูกกลม: ภาพ 3 มิติ 6 แบบ (ภาพสร้างด้วย AI) เป็น sprite หันเข้ากล้องเสมอ — ใช้ซ้ำทั้ง 18 ตัว
+    const FUR = ['orange', 'cream', 'grey', 'tuxedo', 'white', 'calico'];
+    const catTex = await Promise.all(FUR.map((f) => kit.tex(`/images/film/sprites/cat-${f}.png`)));
     for (let i = 0; i < CATS; i++) {
-      const fur = softMaterial(FUR[(i * 5) % FUR.length], 0.38);
-      const cat = new THREE.Group();
-      const body = new THREE.Mesh(bodyGeo, fur);
-      body.scale.set(1.06, 0.96, 1);
-      cat.add(body);
-      for (const sx of [-1, 1]) {
-        const ear = new THREE.Mesh(earGeo, fur);
-        ear.position.set(sx * 0.085, 0.125, -0.01);
-        ear.rotation.z = -sx * 0.38;
-        cat.add(ear);
-        const eye = new THREE.Mesh(eyeGeo, eyeMat);
-        eye.position.set(sx * 0.052, 0.03, CAT_R * 0.93);
-        cat.add(eye);
-      }
-      const nose = new THREE.Mesh(new THREE.SphereGeometry(0.012, 10, 8), noseMat);
-      nose.position.set(0, -0.006, CAT_R * 0.99);
-      cat.add(nose);
+      const mat = new THREE.SpriteMaterial({ map: catTex[(i * 5) % FUR.length], transparent: true, depthWrite: false });
+      const cat = new THREE.Sprite(mat);
+      cat.scale.setScalar(CAT_R * 2.5);
+      cat.renderOrder = 1;
       cat.visible = false;
       this.peds[0].add(cat);
       this.cats.push(cat);
@@ -233,6 +216,7 @@ class ProblemsScene implements GLScene {
 
     // ③ กล่องบริจาคเดินเข้าหมอก แล้วมีเครื่องหมายคำถามโผล่
     this.box = new THREE.Group();
+    await preloadKraft(kit);
     const carton = new SupplyBox(kit, 0.95, await iconDisc(kit, 'heart', '#fff3d1'));
     carton.setOpen(0);
     carton.group.position.y = -0.36;
@@ -289,7 +273,7 @@ class ProblemsScene implements GLScene {
         const k = i - STACK - SPILL;
         cat.visible = true;
         cat.position.set(TUBE.x[2 + k], TUBE.base + CAT_R + 0.01, TUBE.z[2 + k]);
-        cat.rotation.set(0, -0.3 + 0.2 * k + 0.05 * Math.sin(t * 2 + k), 0);
+        cat.material.rotation = 0.06 * Math.sin(t * 2 + k);
         return;
       }
       const a = 0.12 + i * DROP;
@@ -305,7 +289,7 @@ class ProblemsScene implements GLScene {
         const land = t1 - (a + FALL);
         const bounce = land > 0 ? 0.05 * Math.exp(-land * 18) * Math.abs(Math.sin(land * 26)) : 0;
         cat.position.set(target.x, y + bounce, target.z);
-        cat.rotation.set(0.25 * spin, -0.35 + 0.6 * Math.sin(i * 1.7) * 0.4 + spin, 0.2 * spin);
+        cat.material.rotation = 0.35 * spin * Math.sin(i * 1.7 + 1);
       } else {
         // ล้น: ตกลงบนยอดกองแล้วกลิ้งออกด้านหน้าลงแท่น
         const j = i - STACK;
@@ -319,7 +303,7 @@ class ProblemsScene implements GLScene {
         const arcY = roll < 1 ? lerp(topY, ground, ease.in(roll)) + 0.35 * Math.sin(roll * Math.PI) * (1 - roll * 0.6) : ground + 0.03 * Math.abs(Math.sin((t1 - fallEnd - 0.45) * 10)) * Math.exp(-(t1 - fallEnd - 0.45) * 6);
         const y = f < 1 ? lerp(TUBE.base + TUBE.h + 1.6, topY, ease.in(f)) : arcY;
         cat.position.set(TUBE.x[0] + up.x * dist, y, TUBE.z[0] + up.z * dist);
-        cat.rotation.set(roll * 3.2 * Math.cos(dir), dir * 0.4, -roll * 3.2 * Math.sin(dir));
+        cat.material.rotation = -roll * 3.4 * Math.sign(Math.sin(dir) || 1);
       }
     });
     const full = ease.out(prog(t1, 0.12 + (STACK - 1) * DROP + FALL, 0.12 + (STACK - 1) * DROP + FALL + 0.3));

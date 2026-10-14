@@ -31,11 +31,15 @@ class AdoptScene implements GLScene {
     const glow = await glowTexture(kit);
     this.floaters = new Floaters(glow, 40, 'adopt', { x: 26, y: 14, z0: -10, z1: -3 });
     this.scene.add(this.floaters.mesh);
+    // โต๊ะเซ็นสัญญา (มุมบน) + กระดาษจริง: ภาพสร้างด้วย AI (CREDITS.md D34 v3)
+    const desk = new THREE.Mesh(new THREE.PlaneGeometry(15, 10), new THREE.MeshBasicMaterial({ map: await kit.tex('/images/film/bg-adopt-desk.jpg'), toneMapped: false }));
+    desk.position.set(0, 0.2, -2.2);
+    this.scene.add(desk);
+    const paper = await kit.image('/images/film/tex-paper.jpg');
     const street = kit.shared.get('street') as string | undefined;
     const img = street ? await kit.image(street) : await kit.image('/mascot/cat-happy.png');
     const tex = await kit.canvasTex(512, 640, (c) => {
-      c.fillStyle = '#fffaf2';
-      c.fillRect(0, 0, 512, 640);
+      c.drawImage(paper, 0, 0, 512, 640);
       c.save();
       c.beginPath();
       c.roundRect(20, 20, 472, 470, 20);
@@ -54,8 +58,7 @@ class AdoptScene implements GLScene {
     this.card = photoCard(tex, 2.4, 3.0);
     this.scene.add(this.card);
     const paperTex = await kit.canvasTex(600, 800, (c) => {
-      c.fillStyle = '#fffdf6';
-      c.fillRect(0, 0, 600, 800);
+      c.drawImage(paper, 0, 0, 600, 800);
       c.fillStyle = '#f4b400';
       c.fillRect(0, 0, 600, 18);
       c.fillStyle = '#eadfcc';

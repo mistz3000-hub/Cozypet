@@ -7,7 +7,7 @@ import type { GLKit, GLScene } from '../gl';
 import type { FilmContext, SceneProps } from '../context';
 import { fill } from '../context';
 import { clamp, ease, lerp, prog } from '../timeline';
-import { SupplyBox, iconDisc } from '../props/objects';
+import { SupplyBox, iconDisc, preloadKraft } from '../props/objects';
 import type { SceneModule, SceneSfx } from './types';
 import { Beam, Floaters, Sparks, applyCam, atlasCanvasTex, featureCoin, glowTexture, iconCardTexture, makeCamera, portraitDisc, project, studio, type CamRig } from './stage';
 import s from './scenes.module.css';
@@ -34,6 +34,7 @@ class PackageScene implements GLScene {
     const glow = await glowTexture(kit);
     this.floaters = new Floaters(glow, 40, 'package', { x: 26, y: 14, z0: -10, z1: -3 });
     this.scene.add(this.floaters.mesh);
+    await preloadKraft(kit);
     this.box = new SupplyBox(kit, 1.3, await iconDisc(kit, 'heart', '#fff3d1'));
     this.scene.add(this.box.group);
     this.partner = featureCoin(await iconCardTexture(kit, 'box', { size: 256 }), 0.85);

@@ -8,7 +8,12 @@
 - **GSAP 3.15** (ease, SplitText/ScrambleText/DrawSVG/MorphSVG/CustomEase): ใช้ฟรีรวมปลั๊กอินตามเงื่อนไขของ GSAP ณ วันที่ติดตั้ง (ตรวจหน้า https://gsap.com/licensing อีกครั้งก่อนเผยแพร่)
 - **ดนตรีและ SFX:** สังเคราะห์ด้วย Web Audio (OfflineAudioContext) ใน `src/features/film/audio/render.ts` ทั้งหมด ไม่มีเพลง/เสียงจากคลิปอ้างอิงหรือคลังเสียงภายนอก ยกเว้นเสียงแมวครางที่บันทึกไว้แล้วใน D28 (`public/audio/cat-purr.wav`)
 - **เสียงพากย์ภาษาอังกฤษ (ฉบับร่าง):** เสียงสังเคราะห์ Kokoro-82M (Apache-2.0) เสียง `af_heart` ผ่าน kokoro-onnx (MIT) และ espeak-ng (GPL-3.0, ใช้เป็นเครื่องมือแปลงเสียงอ่าน ไม่รวมใน repo) ไฟล์โมเดลและเสียงไม่อยู่ใน repo — เป็นเสียงสังเคราะห์ ไม่ได้เลียนแบบคนจริง และต้องเขียนกำกับในเครดิตท้ายวิดีโอ/รายงานว่า “เสียงบรรยายสังเคราะห์ด้วย AI”
-- **เสียงพากย์ภาษาไทย:** ยังไม่มี — ใช้ Gemini TTS ด้วย key ของทีม (free tier) หรือให้ทีมอัดเองจากสคริปต์ `--script-only`
+- **เสียงพากย์ภาษาไทย:** เสียงสังเคราะห์ด้วย AI จาก Google AI Studio (Gemini 3.8 Flash TTS เสียง “Fola”) ทีมสร้างเองทีละบรรทัดตามบทใน `out/film/voice/demo-th-script.md` แล้วนำเข้าด้วย `film:voice --provider files` (ตัดเงียบ เร่งแบบคงระดับเสียงไม่เกิน 1.12 เท่า) — ไม่ได้เลียนแบบเสียงคนจริง ต้องเขียนกำกับในเครดิตท้ายวิดีโอว่า “เสียงบรรยายสังเคราะห์ด้วย AI” · ไฟล์เสียงไม่อยู่ใน repo
+- **ภาพประกอบ Demo Video รอบ v3** (`public/images/film/`): ทีมสร้างด้วย ChatGPT ตาม prompt ใน `docs/FILM_ASSET_BRIEF.md` (14 ต.ค. 2026) ภาพสร้างด้วย AI ไม่มีคน ไม่มีโลโก้/แบรนด์จริง ไม่มีตัวหนังสือ
+  - `bg-rain-window.jpg`, `bg-living-room.jpg`, `bg-fridge-door.jpg`, `bg-adopt-desk.jpg`, `bg-night-skyline.jpg` — ฉากหลังภาพถ่ายสมจริง (แปลงเป็น JPG)
+  - `tex-kraft.jpg`, `tex-paper.jpg`, `tex-night-map.jpg` — พื้นผิวกล่องลัง กระดาษ และพื้นแผนที่กลางคืน
+  - `pet-bed.png` + `pet-bed-front.png` — เบาะแมวพื้นหลังโปร่งใส (ชั้นขอบหน้าแยกด้วยโค้ดเพื่อวางหน้าแมว)
+  - `sprites/*.png` — ไอคอน 3 มิติดินปั้น 18 ชิ้น และน้องแมวลูกกลม 6 แบบ ตัดจากแผ่นตาราง `icons-3d-a/b` และ `cat-balls` (ต้นฉบับแผ่นตารางไม่เก็บใน repo)
 - **QR ในการ์ดทีม:** สร้างด้วย `qrcode` (MIT) ชี้เว็บเดโม https://cozypet-iota.vercel.app
 
 ## D30 — ภาพป้าย Critical

@@ -6,7 +6,7 @@ import type { GLKit, GLScene } from '../gl';
 import type { FilmContext, SceneProps } from '../context';
 import { ease, prog } from '../timeline';
 import { Logo3D } from '../props/logo3d';
-import { CapacityTank, ChatBubble, MapPin, ScanFrame, STATUS, SupplyBox, heartCoin, iconDisc, noticeFace, photoCard, pushPin, readCheck } from '../props/objects';
+import { CapacityTank, ChatBubble, MapPin, ScanFrame, STATUS, SupplyBox, heartCoin, preloadKraft, iconDisc, noticeFace, photoCard, pushPin, readCheck } from '../props/objects';
 import type { SceneModule } from './types';
 import { applyCam, atlasCanvasTex, featureCoin, iconCardTexture, makeCamera, phoneModel, portraitDisc, project, studio, type CamRig } from './stage';
 import s from './scenes.module.css';
@@ -58,6 +58,7 @@ class ShowcaseScene implements GLScene {
     }
     add(tankG, 2);
     const sticker = await iconDisc(kit, 'heart', '#fff3d1');
+    await preloadKraft(kit);
     this.box = new SupplyBox(kit, 1.3, sticker);
     this.box.group.position.y = -0.7;
     add(this.box.group, 3);

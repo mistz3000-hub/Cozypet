@@ -11,7 +11,7 @@ import { rngFromKey } from '@/lib/seeded-random';
 import { photoCard } from '../props/objects';
 import { filmAssets } from '../assets';
 import type { SceneModule, SceneSfx } from './types';
-import { Floaters, applyCam, atlasCanvasTex, glowSprite, glowTexture, makeCamera, softMaterial, type CamRig } from './stage';
+import { Floaters, applyCam, glowSprite, glowTexture, makeCamera, softMaterial, type CamRig } from './stage';
 import s from './scenes.module.css';
 
 const IN = 3.0;
@@ -54,45 +54,20 @@ class HomeScene implements GLScene {
     key.position.set(-3, 4, 5);
     scene.add(key);
     const glow = await glowTexture(kit);
-    const homeTex = await atlasCanvasTex(kit, '/images/homes/homes-01.png', 5, 5, 0, 1024);
-    const homeBlur = await kit.canvasTex(1024, 1024, (c) => {
-      c.filter = 'blur(10px) brightness(1.05) saturate(1.1)';
-      c.drawImage(homeTex.image as HTMLCanvasElement, 0, 0);
+    // ฉากหลังเป็นภาพถ่ายสมจริงที่สร้างด้วย AI (CREDITS.md D34 v3): หน้าต่างกลางคืนตอนฝนตก · ห้องนั่งเล่นอุ่น ๆ
+    const living = await kit.image('/images/film/bg-living-room.jpg');
+    const homeBlur = await kit.canvasTex(1536, 1024, (c) => {
+      c.filter = 'blur(9px) brightness(1.04) saturate(1.08)';
+      c.drawImage(living, 0, 0, 1536, 1024);
     });
 
-    // ── ภายนอก: ผนังมืด หน้าต่างเปิดไฟอุ่น ฝนตก
-    const wall = new THREE.Mesh(new THREE.PlaneGeometry(30, 18), new THREE.MeshStandardMaterial({ color: '#1e2433', roughness: 0.9 }));
-    wall.position.z = -0.2;
-    const winW = 3.2;
-    const winH = 2.4;
-    const hole = new THREE.Mesh(new THREE.PlaneGeometry(winW, winH), new THREE.MeshBasicMaterial({ map: homeBlur, toneMapped: false }));
-    hole.position.z = -0.6;
-    const wallShape = new THREE.Shape();
-    wallShape.moveTo(-15, -9);
-    wallShape.lineTo(15, -9);
-    wallShape.lineTo(15, 9);
-    wallShape.lineTo(-15, 9);
-    wallShape.closePath();
-    const h = new THREE.Path();
-    h.moveTo(-winW / 2, -winH / 2);
-    h.lineTo(-winW / 2, winH / 2);
-    h.lineTo(winW / 2, winH / 2);
-    h.lineTo(winW / 2, -winH / 2);
-    h.closePath();
-    wallShape.holes.push(h);
-    const wallMesh = new THREE.Mesh(new THREE.ShapeGeometry(wallShape), new THREE.MeshStandardMaterial({ color: '#232a3c', roughness: 0.95 }));
-    this.outside.add(wallMesh, hole);
-    void wall;
-    const wood = softMaterial('#8a5a34', 0.6);
-    for (const [w, hh, x, y] of [[winW + 0.24, 0.16, 0, winH / 2], [winW + 0.24, 0.16, 0, -winH / 2], [0.16, winH, -winW / 2, 0], [0.16, winH, winW / 2, 0], [0.08, winH, 0, 0]] as const) {
-      const b = new THREE.Mesh(new THREE.BoxGeometry(w, hh, 0.18), wood);
-      b.position.set(x, y, 0.05);
-      this.outside.add(b);
-    }
-    const sill = new THREE.Mesh(new THREE.BoxGeometry(winW + 0.6, 0.12, 0.5), wood);
-    sill.position.set(0, -winH / 2 - 0.1, 0.2);
-    this.outside.add(sill);
-    const warm = glowSprite(glow, '#ffb45a', 7, 0.55);
+    // ── ภายนอก: ภาพผนังเปียกฝน หน้าต่างกลางภาพเปิดไฟอุ่น — กล้องดันเข้าไปที่กลางหน้าต่าง
+    const rainTex = await kit.tex('/images/film/bg-rain-window.jpg');
+    const outsideImg = new THREE.Mesh(new THREE.PlaneGeometry(9.9, 6.6), new THREE.MeshBasicMaterial({ map: rainTex, toneMapped: false }));
+    // หน้าต่างอยู่ที่ราว 45% จากบนของภาพ → เลื่อนภาพลงให้กลางหน้าต่างอยู่ตรงจุดที่กล้องมอง
+    outsideImg.position.set(0, -0.28, -0.6);
+    this.outside.add(outsideImg);
+    const warm = glowSprite(glow, '#ffb45a', 5, 0.28);
     warm.position.z = 0.3;
     this.outside.add(warm);
     const rnd = rngFromKey('cozypet:v1:film:rain');
@@ -104,26 +79,22 @@ class HomeScene implements GLScene {
     scene.add(this.outside);
 
     // ── ภายใน: ห้องของผู้รับเลี้ยง + ขนมชั้นบนเบาะ
-    const back = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.MeshBasicMaterial({ map: homeBlur, toneMapped: false }));
-    back.position.set(0, 0.6, -4);
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(13.5, 9), new THREE.MeshBasicMaterial({ map: homeBlur, toneMapped: false }));
+    back.position.set(0, 0.9, -4);
     this.inside.add(back);
-    // เบาะนอนแมวทรงโดนัท (ขอบหน้าบังขอบล่างของภาพแมว)
-    const bed = new THREE.Group();
-    // วางราบ เอียงด้านหลังขึ้นหากล้องเล็กน้อย (มองเห็นด้านในเบาะ)
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(1.25, 0.38, 24, 64), softMaterial('#fff1de', 0.95));
-    rim.rotation.x = -Math.PI / 2 + 0.25;
-    rim.scale.set(1, 1, 0.8);
-    bed.add(rim);
-    const inner = new THREE.Mesh(new THREE.CircleGeometry(1.15, 48), softMaterial('#f8c9bf', 0.9));
-    inner.rotation.x = -Math.PI / 2 + 0.25;
-    inner.position.y = -0.1;
-    bed.add(inner);
-    bed.position.set(0, -1.15, -0.9);
-    this.inside.add(bed);
-    const catTex = await kit.tex('/mascot/cat-happy.png');
-    this.cat = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.2), new THREE.MeshBasicMaterial({ map: catTex, transparent: true, toneMapped: false }));
+    // เบาะนอนแมว (ภาพ) 2 ชั้น: ทั้งใบอยู่หลังแมว + ขอบหน้าอยู่หน้าแมว — วางที่ z เดียวกัน ลำดับวาดด้วย renderOrder จึงตรงกันทุกมุมกล้อง
+    const [bedTex, bedFrontTex, catTex] = await Promise.all([kit.tex('/images/film/pet-bed.png'), kit.tex('/images/film/pet-bed-front.png'), kit.tex('/mascot/cat-happy.png')]);
+    const layer = (tex: THREE.Texture, size: number, order: number) => {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
+      m.renderOrder = order;
+      this.inside.add(m);
+      return m;
+    };
+    const BED = new THREE.Vector3(0, -0.82, -1.2);
+    layer(bedTex, 3.6, 5).position.copy(BED);
+    this.cat = layer(catTex, 2.2, 6) as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
     this.cat.position.set(0, -0.2, -1.2);
-    this.inside.add(this.cat);
+    layer(bedFrontTex, 3.6, 7).position.copy(BED);
     const rayTex = await kit.canvasTex(256, 512, (c) => {
       const g = c.createLinearGradient(0, 0, 256, 0);
       g.addColorStop(0, 'rgba(255,214,150,0)');
@@ -148,21 +119,21 @@ class HomeScene implements GLScene {
 
     // ── ตู้เย็น + โพลารอยด์สองใบ
     this.fridge.position.z = 30;
-    const door = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshPhysicalMaterial({ color: '#f6efe3', roughness: 0.35, clearcoat: 0.6 }));
-    door.position.z = -0.3;
+    const door = new THREE.Mesh(new THREE.PlaneGeometry(10.5, 7), new THREE.MeshBasicMaterial({ map: await kit.tex('/images/film/bg-fridge-door.jpg'), toneMapped: false }));
+    door.position.set(-0.6, 0, -0.3);
+    const paper = await kit.image('/images/film/tex-paper.jpg');
     this.fridge.add(door);
     const street = kit.shared.get('street') as string | undefined;
     for (const [i, url] of [street, homeShot].entries()) {
       if (!url) continue;
       const img = await kit.image(url);
       const tex = await kit.canvasTex(600, 720, (c) => {
-        c.fillStyle = '#fffdf8';
-        c.fillRect(0, 0, 600, 720);
+        c.drawImage(paper, 0, 0, 600, 720);
         const k = Math.min(img.width * 0.75, img.height);
         c.drawImage(img, (img.width - k) / 2, (img.height - k) / 2, k, k, 36, 36, 528, 528);
       });
       const pc = photoCard(tex, 2.0, 2.4);
-      pc.position.set(i ? 1.35 : -1.35, i ? -0.1 : 0.15, 0);
+      pc.position.set(i ? 1.35 : -1.35, i ? 0.18 : 0.42, 0);
       pc.rotation.z = i ? -0.06 : 0.07;
       const mag = new THREE.Mesh(new THREE.SphereGeometry(0.1, 20, 14), softMaterial(i ? '#f4b400' : '#f0707a', 0.3));
       mag.scale.z = 0.5;

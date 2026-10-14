@@ -8,7 +8,7 @@ import type { FilmContext } from './context';
 import type { ExplainKind, Shot } from './cuts';
 import type { GLKit } from './gl';
 import { clamp, ease, lerp, prog } from './timeline';
-import { CapacityTank, ChatBubble, MapPin, STATUS, ScanFrame, SupplyBox, clay, heartCoin, iconDisc, noticeFace, photoCard, pushPin, readCheck } from './props/objects';
+import { CapacityTank, ChatBubble, MapPin, STATUS, ScanFrame, SupplyBox, clay, preloadKraft, heartCoin, iconDisc, noticeFace, photoCard, pushPin, readCheck } from './props/objects';
 import { Beam, Sparks, atlasCanvasTex, dotSphere, featureCoin, glowSprite, glowTexture, iconCardTexture, makeCamera, project, setShock, shockRing, type CamRig } from './scenes/stage';
 
 /** ตำแหน่งกลางของพื้นที่ prop (ขวาล่าง ใต้คำบรรยาย) */
@@ -206,6 +206,7 @@ export class ExplainLayer {
     // donate: กล่องของใช้บินมาแล้วเปิด + เหรียญแบ่งส่วน
     const dn = mk('donate');
     const sticker = await iconDisc(kit, 'heart', '#fff3d1');
+    await preloadKraft(kit);
     this.box = new SupplyBox(kit, 1.15, sticker);
     dn.add(this.box.group);
     const splitTex = await iconCardTexture(kit, 'split', { size: 192 });

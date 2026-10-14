@@ -47,6 +47,22 @@ function rig(t: number): CamRig {
 
 const W3 = (p: [number, number], y = 0) => new THREE.Vector3(p[0], y, -p[1]);
 
+/** ระยะห่างจากแม่น้ำในภาพแผนที่ (เส้นกลางแม่น้ำวัดจากภาพ: u ซ้าย→ขวา, v บน→ล่าง) — ตึกไม่ขึ้นบนน้ำ */
+const RIVER: [number, number][] = [[0.19, 0], [0.28, 0.1], [0.38, 0.25], [0.48, 0.38], [0.58, 0.48], [0.68, 0.55], [0.78, 0.65], [0.85, 0.75], [0.93, 0.83], [1.0, 0.86]];
+function riverDist(x: number, z: number): number {
+  const pts = RIVER.map(([u, v]) => [-15 + 30 * u, -15 + 30 * v] as const);
+  let best = Infinity;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i];
+    const [bx, bz] = pts[i + 1];
+    const dx = bx - ax;
+    const dz = bz - az;
+    const k = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz)));
+    best = Math.min(best, Math.hypot(x - (ax + dx * k), z - (az + dz * k)));
+  }
+  return best;
+}
+
 class BalancerScene implements GLScene {
   scene = new THREE.Scene();
   camera = makeCamera();
@@ -69,54 +85,21 @@ class BalancerScene implements GLScene {
     await nightStudio(kit, scene, 0.7);
     scene.fog = new THREE.Fog('#0d0f26', 18, 40);
     const glow = await glowTexture(kit);
-    // พื้นแผนที่: แม่น้ำเรืองแสง ถนน และบล็อกเมือง
-    const mapTex = await kit.canvasTex(2048, 2048, (c) => {
-      c.fillStyle = '#121735';
-      c.fillRect(0, 0, 2048, 2048);
-      const rnd = rngFromKey('cozypet:v1:film:map');
-      c.strokeStyle = 'rgba(140,150,255,0.16)';
-      c.lineWidth = 3;
-      for (let i = 0; i < 46; i++) {
-        const x = rnd() * 2048;
-        c.beginPath();
-        c.moveTo(x, 0);
-        c.lineTo(x + (rnd() - 0.5) * 300, 2048);
-        c.stroke();
-        const y = rnd() * 2048;
-        c.beginPath();
-        c.moveTo(0, y);
-        c.lineTo(2048, y + (rnd() - 0.5) * 300);
-        c.stroke();
-      }
-      c.lineCap = 'round';
-      const river = () => {
-        c.beginPath();
-        c.moveTo(420, -50);
-        c.bezierCurveTo(700, 500, 300, 800, 760, 1100);
-        c.bezierCurveTo(1100, 1320, 820, 1700, 1000, 2100);
-      };
-      c.strokeStyle = 'rgba(90,140,255,0.35)';
-      c.lineWidth = 120;
-      river();
-      c.stroke();
-      c.strokeStyle = 'rgba(140,190,255,0.9)';
-      c.lineWidth = 46;
-      river();
-      c.stroke();
-    });
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshStandardMaterial({ map: mapTex, roughness: 0.85, metalness: 0, emissive: '#ffffff', emissiveMap: mapTex, emissiveIntensity: 0.55 }));
+    // พื้นแผนที่: ภาพแผนที่เมืองกลางคืนที่สร้างด้วย AI (CREDITS.md D34 v3) ถนนทองเรืองแสง
+    const mapTex = await kit.tex('/images/film/tex-night-map.jpg');
+    mapTex.anisotropy = 8;
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshStandardMaterial({ map: mapTex, color: '#8a90b8', roughness: 0.85, metalness: 0, emissive: '#ffffff', emissiveMap: mapTex, emissiveIntensity: 0.75 }));
     ground.rotation.x = -Math.PI / 2;
     scene.add(ground);
     // ตึกเล็ก ๆ (instanced) หลีกเลี่ยงหมุดและแม่น้ำ
     const rnd = rngFromKey('cozypet:v1:film:blocks');
-    const N = 520;
+    const N = 300;
     for (let i = 0; i < N; i++) {
       const x = (rnd() - 0.5) * 26;
       const z = (rnd() - 0.5) * 26;
       const near = PLACES.some((p) => Math.hypot(p.at[0] - x, -p.at[1] - z) < 1.9) || Math.hypot(FOUND[0] - x, -FOUND[1] - z) < 1.6;
-      const riverX = -8.5 + ((z + 13) / 26) * 6 + Math.sin(z * 0.35) * 1.5;
-      if (near || Math.abs(x - riverX) < 1.1) continue;
-      this.blockData.push({ x, z, h: 0.12 + Math.pow(rnd(), 2.6) * 1.5, d: Math.hypot(x, z) });
+      if (near || riverDist(x, z) < 1.6) continue;
+      this.blockData.push({ x, z, h: 0.1 + Math.pow(rnd(), 2.8) * 1.1, d: Math.hypot(x, z) });
     }
     this.blocks = new THREE.InstancedMesh(new THREE.BoxGeometry(0.5, 1, 0.5), new THREE.MeshPhysicalMaterial({ color: '#1c2052', roughness: 0.55, metalness: 0.2, clearcoat: 0.5, emissive: '#2c2c8a', emissiveIntensity: 0.08 }), this.blockData.length);
     scene.add(this.blocks);

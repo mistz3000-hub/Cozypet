@@ -157,7 +157,7 @@ export const filmEn: FilmMessages = {
     localOnly: 'Local export only',
   },
   closing: {
-    lines: ['All demo data is simulated', 'Music and sounds synthesized in code (cat purr from a CC0 recording)', 'Pet, people and home images are AI-generated'],
+    lines: ['All demo data is simulated', 'Narration is AI-synthesized · music and sound effects synthesized in code', 'Pet, people, home and set images are AI-generated'],
   },
   sounds: {
     shutter: '[shutter click]',

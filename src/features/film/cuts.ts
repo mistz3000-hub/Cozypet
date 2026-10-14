@@ -56,7 +56,7 @@ const DEMO: ShotDef[] = [
   { id: 'S02', bars: 2, vo: [{ at: 0.6, key: 'swarm' }], chapter: 'swarm', scene: 'swarm', sounds: [{ at: 0, to: 1.6, key: 'music' }] },
   { id: 'S03', bars: 2, vo: [{ at: 0.05, key: 'problems' }], chapter: 'problems', scene: 'problems' },
   { id: 'S04', bars: 2, vo: [{ at: 2.2, key: 'logo' }], chapter: 'logo', scene: 'logo' },
-  { id: 'S05', bars: 2, vo: [{ at: 0.35, key: 'connect' }], chapter: 'connect', scene: 'connect' },
+  { id: 'S05', bars: 3, vo: [{ at: 0.35, key: 'connect' }], chapter: 'connect', scene: 'connect' },
   {
     id: 'S06', bars: 2, vo: [{ at: 0.6, key: 'critical' }], chapter: 'critical', capture: 'C0', transitionIn: 'paw',
     anchors: [{ at: 0, mark: 'start' }, { at: 0.5, mark: 'notice' }, { at: 4.1, mark: 'close' }, { at: 5.333, mark: 'end' }],
@@ -82,7 +82,7 @@ const DEMO: ShotDef[] = [
   },
   {
     id: 'S10', bars: 2, vo: [{ at: 0.3, key: 'post' }], explain: [{ from: 2.0, to: 5.1, kind: 'post' }], chapter: 'post', capture: 'C2',
-    anchors: [{ at: 0, mark: 'form' }, { at: 1.4, mark: 'name-focus' }, { at: 3.3, mark: 'preview' }, { at: 4.1, mark: 'submit' }, { at: 4.6, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.73 }],
+    anchors: [{ at: 0, mark: 'form', offset: 0.45 }, { at: 1.4, mark: 'name-focus' }, { at: 3.3, mark: 'preview' }, { at: 4.1, mark: 'submit' }, { at: 4.6, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.73 }],
     captions: [{ at: 0.1, to: 5.25, key: 'post' }], ipo: [[0, 'input'], [4.6, 'output']],
   },
   { id: 'S11', bars: 2, vo: [{ at: 0.25, key: 'balancer' }], chapter: 'balancer', scene: 'balancer', captions: [{ at: 0.1, to: 5.2, key: 'balancer' }] },
@@ -132,7 +132,7 @@ const DEMO: ShotDef[] = [
   { id: 'S20', bars: 1, vo: [{ at: 0.2, key: 'waiting' }], chapter: 'waiting', scene: 'waiting', transitionIn: 'paw', captions: [{ at: 0.1, to: 1.3, key: 'waiting1' }, { at: 1.35, to: 2.6, key: 'waiting2' }] },
   { id: 'S21', bars: 1, vo: [{ at: 0.4, key: 'adopt' }], chapter: 'adopt', scene: 'adopt', captions: [{ at: 0.1, to: 2.6, key: 'adopt' }] },
   { id: 'S22', bars: 4, vo: [{ at: 7.8, key: 'home' }], chapter: 'home', scene: 'home', captions: [{ at: 3.0, to: 7.6, key: 'home1' }, { at: 8.1, to: 10.6, key: 'home2' }], sounds: [{ at: 0, to: 3.0, key: 'rain' }, { at: 3.0, to: 7.4, key: 'purr' }, { at: 7.5, to: 8.4, key: 'meow' }] },
-  { id: 'S23', bars: 2, vo: [{ at: 0.3, key: 'impact' }], chapter: 'impact', scene: 'impact', transitionIn: 'windows' },
+  { id: 'S23', bars: 3, vo: [{ at: 0.3, key: 'impact' }], chapter: 'impact', scene: 'impact', transitionIn: 'windows' },
   { id: 'S24', bars: 2, vo: [{ at: 1.0, key: 'team' }], chapter: 'team', scene: 'team', variant: 'withClosing' },
 ];
 
@@ -163,7 +163,7 @@ const SHORT: ShotDef[] = [
   },
   {
     id: 'S09', bars: 2, vo: [{ at: 0.3, key: 'post' }], chapter: 'post', capture: 'C2',
-    anchors: [{ at: 0, mark: 'form' }, { at: 1.2, mark: 'name-focus' }, { at: 3.1, mark: 'preview' }, { at: 3.9, mark: 'submit' }, { at: 4.4, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.93 }],
+    anchors: [{ at: 0, mark: 'form', offset: 0.45 }, { at: 1.2, mark: 'name-focus' }, { at: 3.1, mark: 'preview' }, { at: 3.9, mark: 'submit' }, { at: 4.4, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.93 }],
     captions: [{ at: 0.1, to: 5.25, key: 'post' }], ipo: [[0, 'input'], [4.4, 'output']],
   },
   {

@@ -1,5 +1,5 @@
 /**
- * npm run film:render -- --cut demo --locale th [--from 0 --to 10] [--jobs 3] [--chunk 90] [--fresh] [--allow-placeholders]
+ * npm run film:render -- --cut demo --locale th [--fps 120] [--gpu] [--from 0 --to 10] [--jobs 3] [--chunk 360] [--fresh] [--allow-placeholders]
  * เปิด /film?record=1 แล้ว seek ทีละเฟรม (30 fps) → screenshot → ffmpeg (DEMO_VIDEO.md หัวข้อ 9)
  * ผลลัพธ์: out/film/<cut>-<locale>/video.mp4 (ไม่มีเสียง)
  */
@@ -9,11 +9,13 @@ import path from 'node:path';
 import type { Browser } from '@playwright/test';
 import { BASE_URL, OUT, arg, ensureDir, ffmpegPath, flag, launch, teamPlaceholders, waitForServer } from './lib.ts';
 
-const FPS = 30;
+/** เฟรมต่อวินาที (ค่าเริ่มต้น 30 · งานสุดท้ายใช้ --fps 60 หรือ 120 ได้ — เวลา render เพิ่มตามจำนวนเฟรม) */
+const FPS = Math.max(1, Math.round(Number(arg('fps', '30'))));
 const cut = arg('cut', 'demo')!;
 const locale = arg('locale', 'th') === 'en' ? 'en' : 'th';
 const jobs = Math.max(1, Number(arg('jobs', '3')));
-const GL_ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+/** --gpu: ใช้การ์ดจอจริงของเครื่อง (เครื่อง cloud นี้ไม่มี จึงใช้ SwiftShader ซึ่งวาดด้วย CPU) */
+const GL_ARGS = flag('gpu') ? ['--ignore-gpu-blocklist', '--enable-gpu-rasterization', '--enable-zero-copy'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 
 export function captureIndex(loc: string): Record<string, unknown> {
   const dir = path.join(OUT, 'captures', loc);
@@ -111,8 +113,8 @@ async function main() {
   const from = Math.round(Number(arg('from', '0')) * FPS);
   const to = Math.min(Math.round(Number(arg('to', String(duration))) * FPS), Math.round(duration * FPS));
   // แบ่งเป็นชิ้นสั้น ๆ ในคิวเดียว งานที่ว่างหยิบชิ้นถัดไป (ฉาก 3 มิติหนักไม่ไปกองที่งานเดียว) · ชิ้นที่เสร็จแล้วเก็บไว้ รันซ้ำจะทำต่อ (--fresh เพื่อเริ่มใหม่)
-  const chunk = Math.max(15, Number(arg('chunk', '90')));
-  const chunkDir = path.join(outDir, `chunks-${from}-${to}${flag('draft') ? '-draft' : ''}`);
+  const chunk = Math.max(15, Number(arg('chunk', String(FPS * 3))));
+  const chunkDir = path.join(outDir, `chunks-${FPS}fps-${from}-${to}${flag('draft') ? '-draft' : ''}`);
   if (flag('fresh')) rmSync(chunkDir, { recursive: true, force: true });
   ensureDir(chunkDir);
   const all: { from: number; to: number; file: string }[] = [];

@@ -8,7 +8,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import type { GLKit } from '../gl';
 import { clamp, ease } from '../timeline';
 import { rngFromKey } from '@/lib/seeded-random';
-import { C, drawIcon, goldMaterial, pawGeometry, roundedShape, shapeGeo, softMaterial, type IconName } from '../scenes/stage';
+import { C, drawIcon, goldMaterial, icon3d, pawGeometry, roundedShape, shapeGeo, softMaterial, type IconName } from '../scenes/stage';
 
 const prog = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 
@@ -138,9 +138,23 @@ export class CapacityTank {
 }
 
 /** กล่องพัสดุคราฟต์: ฝา 4 แผ่นเปิดได้ เทปกาว สติกเกอร์หัวใจ */
-let kraftCache: THREE.CanvasTexture | null = null;
-/** พื้นผิวกระดาษลังคราฟต์ (สร้างด้วยโค้ด ค่าสุ่มคงที่) — ใช้ร่วมกันทุกกล่อง */
-export function kraftTexture(): THREE.CanvasTexture {
+let kraftCache: THREE.Texture | null = null;
+/** โหลดภาพพื้นผิวกระดาษลังจริง (ภาพสร้างด้วย AI ต่อกันไร้รอย) ก่อนสร้างกล่อง — ถ้าโหลดไม่ได้ใช้แบบวาดด้วยโค้ด */
+export async function preloadKraft(kit: GLKit) {
+  if (kraftCache) return;
+  try {
+    const t = await kit.tex('/images/film/tex-kraft.jpg');
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.anisotropy = 8;
+    t.needsUpdate = true;
+    kraftCache = t;
+  } catch {
+    /* ใช้แบบวาด */
+  }
+}
+
+/** พื้นผิวกระดาษลังคราฟต์ — ภาพจริงถ้าโหลดไว้แล้ว ไม่อย่างนั้นวาดด้วยโค้ด (ค่าสุ่มคงที่) */
+export function kraftTexture(): THREE.Texture {
   if (kraftCache) return kraftCache;
   const N = 512;
   const cv = document.createElement('canvas');
@@ -482,12 +496,14 @@ export function pushPin(color: string = C.full): THREE.Group {
 
 /** ไอคอนบนแผ่นวงกลม (ใช้เป็นหน้าหมุด/เหรียญ) */
 export async function iconDisc(kit: GLKit, name: IconName, bg = '#ffffff', ink: string = C.ink, accent: string = C.gold): Promise<THREE.CanvasTexture> {
+  const img = await icon3d(kit, name);
   return kit.canvasTex(256, 256, (c) => {
     c.fillStyle = bg;
     c.beginPath();
     c.arc(128, 128, 128, 0, Math.PI * 2);
     c.fill();
-    drawIcon(c, name, 128, 128, 150, ink, accent);
+    if (img) c.drawImage(img, 38, 38, 180, 180);
+    else drawIcon(c, name, 128, 128, 150, ink, accent);
   });
 }
 

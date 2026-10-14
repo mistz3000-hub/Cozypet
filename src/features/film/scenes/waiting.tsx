@@ -27,6 +27,7 @@ class WaitingScene implements GLScene {
   private winData: { on: number }[] = [];
   private floaters!: Floaters;
   private moon!: THREE.Sprite;
+  private skyline!: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
 
   async init(kit: GLKit) {
     const { scene } = this;
@@ -39,32 +40,12 @@ class WaitingScene implements GLScene {
     this.moon = glowSprite(glow, '#fff2c4', 3.5, 0.9);
     this.moon.position.set(5.5, 5.2, -12);
     scene.add(this.moon);
-    // ตึกเป็นเงาดำ + หน้าต่าง (instanced)
+    // เมืองกลางคืน: ภาพถ่ายสมจริงที่สร้างด้วย AI (CREDITS.md D34 v3) เป็นฉากหลังไกล
     const rnd = rngFromKey('cozypet:v1:film:waiting');
-    const bmat = new THREE.MeshStandardMaterial({ color: '#141533', roughness: 0.9 });
-    const wins: THREE.Matrix4[] = [];
-    const d = new THREE.Object3D();
-    for (let i = 0; i < 18; i++) {
-      const w = 1.2 + rnd() * 1.6;
-      const h = 2 + rnd() * 6;
-      const x = -15 + i * 1.75 + rnd() * 0.6;
-      const z = -6 - rnd() * 3;
-      const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, 1.2), bmat);
-      b.position.set(x, h / 2 - 2, z);
-      scene.add(b);
-      for (let r = 0; r < Math.floor(h / 0.55); r++) {
-        for (let c = 0; c < Math.floor(w / 0.45); c++) {
-          if (rnd() < 0.45) continue;
-          d.position.set(x - w / 2 + 0.3 + c * 0.45, -2 + 0.4 + r * 0.55, z + 0.61);
-          d.updateMatrix();
-          wins.push(d.matrix.clone());
-          this.winData.push({ on: rnd() });
-        }
-      }
-    }
-    this.win = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.24, 0.3), new THREE.MeshBasicMaterial({ color: '#ffd27a', toneMapped: false }), wins.length);
-    wins.forEach((m, i) => this.win.setMatrixAt(i, m));
-    scene.add(this.win);
+    this.skyline = new THREE.Mesh(new THREE.PlaneGeometry(27, 18), new THREE.MeshBasicMaterial({ map: await kit.tex('/images/film/bg-night-skyline.jpg'), toneMapped: false }));
+    this.skyline.position.set(0, 2.2, -10);
+    scene.add(this.skyline);
+    this.win = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.24, 0.3), new THREE.MeshBasicMaterial({ color: '#ffd27a', toneMapped: false }), 0);
     // ประกาศพบสัตว์ของขนมชั้นปลิวไปทั่ว
     const street = kit.shared.get('street') as string | undefined;
     const face = await noticeFace(kit, street ? await kit.image(street) : null);
@@ -104,7 +85,8 @@ class WaitingScene implements GLScene {
     // ค่ำลงเรื่อย ๆ
     const night = ease.inOut(prog(t, 0, 2.0));
     this.sky.set('#3b3f7a').lerp(new THREE.Color('#0b0c1f'), night);
-    this.moon.material.opacity = 0.4 + 0.5 * night;
+    this.moon.material.opacity = 0.15 + 0.25 * night;
+    this.skyline.material.color.set('#ffffff').lerp(new THREE.Color('#c9cde6'), night);
     const c = new THREE.Color();
     this.winData.forEach((w, i) => {
       const on = night > w.on * 0.9 ? 1 : 0.08;
