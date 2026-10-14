@@ -62,10 +62,12 @@ async function renderRange(ff: string, browser: Browser, from: number, to: numbe
   const start = Date.now();
   for (let f = from; f < to; f++) {
     const t = f / FPS;
+    // เฟรมแรกของแต่ละงานต้องเตรียมฉาก/พื้นผิวทั้งหมด จึงให้เวลานานกว่า (เครื่องที่ใช้ SwiftShader และรันหลายงานพร้อมกันช้ามาก)
+    const limit = f === from ? 180 : 60;
     const timer = setTimeout(() => {
-      console.error(`เฟรม ${f} (t=${t.toFixed(3)}s) รอ seek/ready เกิน 10 วินาที — หยุด`);
+      console.error(`เฟรม ${f} (t=${t.toFixed(3)}s) รอ seek/ready เกิน ${limit} วินาที — หยุด`);
       process.exit(1);
-    }, 10_000);
+    }, limit * 1000);
     await page.evaluate((tt) => window.__cozypetFilm!.seek(tt), t);
     clearTimeout(timer);
     const shot = await cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 95, clip: { x: 0, y: 0, width: 1920, height: 1080, scale: 1 }, captureBeyondViewport: false });
