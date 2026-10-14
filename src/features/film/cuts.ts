@@ -82,7 +82,7 @@ const DEMO: ShotDef[] = [
   },
   {
     id: 'S10', bars: 2, vo: [{ at: 0.3, key: 'post' }], explain: [{ from: 2.0, to: 5.1, kind: 'post' }], chapter: 'post', capture: 'C2',
-    anchors: [{ at: 0, mark: 'post', offset: -0.1 }, { at: 0.15, mark: 'form' }, { at: 1.4, mark: 'name-focus' }, { at: 3.3, mark: 'preview' }, { at: 4.1, mark: 'submit' }, { at: 4.6, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.73 }],
+    anchors: [{ at: 0, mark: 'form' }, { at: 1.4, mark: 'name-focus' }, { at: 3.3, mark: 'preview' }, { at: 4.1, mark: 'submit' }, { at: 4.6, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.73 }],
     captions: [{ at: 0.1, to: 5.25, key: 'post' }], ipo: [[0, 'input'], [4.6, 'output']],
   },
   { id: 'S11', bars: 2, vo: [{ at: 0.25, key: 'balancer' }], chapter: 'balancer', scene: 'balancer', captions: [{ at: 0.1, to: 5.2, key: 'balancer' }] },
@@ -163,7 +163,7 @@ const SHORT: ShotDef[] = [
   },
   {
     id: 'S09', bars: 2, vo: [{ at: 0.3, key: 'post' }], chapter: 'post', capture: 'C2',
-    anchors: [{ at: 0, mark: 'post', offset: -0.1 }, { at: 0.15, mark: 'form' }, { at: 1.2, mark: 'name-focus' }, { at: 3.1, mark: 'preview' }, { at: 3.9, mark: 'submit' }, { at: 4.4, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.93 }],
+    anchors: [{ at: 0, mark: 'form' }, { at: 1.2, mark: 'name-focus' }, { at: 3.1, mark: 'preview' }, { at: 3.9, mark: 'submit' }, { at: 4.4, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.93 }],
     captions: [{ at: 0.1, to: 5.25, key: 'post' }], ipo: [[0, 'input'], [4.4, 'output']],
   },
   {
