@@ -22,7 +22,7 @@ export function LoginPage() {
   const params = useSearchParams();
   const router = useRouter();
   const id = useId();
-  const next = safeNext(params.get('next'), '/dashboard');
+  const next = safeNext(params.get('next'), '/');
   const initialErr = params.get('error');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

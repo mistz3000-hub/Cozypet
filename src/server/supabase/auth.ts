@@ -24,7 +24,7 @@ export async function getCurrentUser(): Promise<ClientUser | null> {
     return {
       id: u.id,
       displayName,
-      avatarUrl: (profile?.avatar_url as string | undefined) ?? (meta.avatar_url as string | undefined) ?? null,
+      avatarUrl: (profile?.avatar_url as string | undefined) ?? (meta.avatar_url as string | undefined) ?? (meta.picture as string | undefined) ?? null,
       emailMasked: maskEmail(u.email),
       providers: ((u.app_metadata?.providers as string[] | undefined) ?? [u.app_metadata?.provider as string]).filter(Boolean),
       runNumber: (profile?.run_number as number | null | undefined) ?? null,

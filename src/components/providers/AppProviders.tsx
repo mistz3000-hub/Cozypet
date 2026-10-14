@@ -13,6 +13,7 @@ import { TourLauncher } from '@/features/motion/tour/TourLauncher';
 import { StorageNotice } from './StorageNotice';
 import { AccountSync } from '@/features/auth/AccountSync';
 import { CriticalNotice } from '@/features/business/CriticalNotice';
+import { OAuthReturnRecovery } from '@/features/auth/OAuthReturnRecovery';
 
 const TYPING_TYPES = new Set(['text', 'search', 'email', 'password', 'number', 'tel', 'url', 'textarea', 'datetime-local', 'date']);
 
@@ -57,6 +58,7 @@ export function AppProviders({ locale, auth, children }: { locale: Locale; auth:
           <AnnouncerProvider>
             <ToastProvider>
               <StorageNotice />
+              <OAuthReturnRecovery />
               {auth.user ? <AccountSync /> : null}
               {children}
               <CriticalNotice/>

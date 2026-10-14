@@ -21,6 +21,7 @@ import { PetFrame, PetStat } from './PetFrame';
 import s from './business.module.css';
 import p from './profile-credit.module.css';
 import { RoleChooser } from '@/features/shelters/RoleChooser';
+import { GoogleProfileCard } from '@/features/auth/GoogleProfileCard';
 
 export function ProfilePage() {
   const { m, f, money, loc, locale, dateTime } = useI18n();
@@ -49,6 +50,7 @@ export function ProfilePage() {
   ];
   return <div className={`cp-container cp-page ${s.page} ${p.profile}`}><DemoModeBar next="/profile" />
     <header className={p.pageHeader}><div><Badge tone="butter">{f(m.business.reviewer, { run: String(run.run).padStart(3, '0') })}</Badge><h1>{m.business.profileTitle}</h1><p className={s.lead}>{m.business.profileNote}</p></div><span className={p.petChip} data-pet={mascot}><PawPrint kind={mascot} />{mascot === 'cat' ? m.mascot.cat : m.mascot.dog}</span></header>
+    <GoogleProfileCard variant="profile" mascot={mascot} />
     <RoleChooser/>
     <ButtonLink href="/donation-tax" icon="doc">{m.community.tax.receipt}</ButtonLink>
     <PetFrame mascot={mascot} id="profile-credit" data-tour="profile-credit">

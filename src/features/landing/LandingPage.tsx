@@ -27,6 +27,7 @@ import s from './landing.module.css';
 import { MicroDonationTracker, CrisisCards, SponsorBanner } from '@/features/business/BusinessWidgets';
 import { RoleChooser } from '@/features/shelters/RoleChooser';
 import { useShelters } from '@/features/shelters/useShelters';
+import { GoogleProfileCard } from '@/features/auth/GoogleProfileCard';
 
 export function LandingPage() {
   const { m, f, district } = useI18n();
@@ -61,6 +62,7 @@ export function LandingPage() {
       <section id="top" className={s.hero} aria-labelledby="hero-title">
         <div className={`cp-container ${s.heroGrid}`}>
           <div className={s.heroText}>
+            <GoogleProfileCard variant="home" mascot={mascot} />
             <Badge tone="butter" icon="sparkle">{m.landing.heroBadge}</Badge>
             <h1 id="hero-title" className={s.heroTitle}>{m.landing.heroTitle}</h1>
             <p className={s.heroLead}>{m.landing.heroText}</p>

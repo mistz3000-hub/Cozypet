@@ -19,3 +19,13 @@ export function passwordResetEnabled(): boolean {
 export function siteUrl(): string {
   return (process.env.SITE_URL?.trim() || 'http://localhost:3000').replace(/\/$/, '');
 }
+
+/** In development, keep OAuth on the exact host the browser used (localhost and 127.0.0.1 have separate cookies). */
+export function authSiteUrl(request: Request): string {
+  if (process.env.NODE_ENV === 'production') return siteUrl();
+  try {
+    return new URL(request.url).origin;
+  } catch {
+    return siteUrl();
+  }
+}

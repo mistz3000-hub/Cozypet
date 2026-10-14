@@ -144,11 +144,18 @@ export function AccountButton() {
         ) : (
           <span className={s.avatarInitial} aria-hidden="true">{initial}</span>
         )}
+        <span className={s.accountDisplayName}>{user.displayName}</span>
         <Icon name="chevronDown" size="1em" />
       </button>
       {open ? (
         <div role="menu" className={s.menuPop}>
-          <p className={s.menuName}>{user.displayName}</p>
+          <div className={s.menuIdentity}>
+            {user.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={user.avatarUrl} alt="" width={38} height={38} className={s.menuAvatar} referrerPolicy="no-referrer" />
+            ) : <span className={s.menuAvatarFallback}>{initial}</span>}
+            <div><p className={s.menuName}>{user.displayName}</p><p className={s.menuEmail}>{user.emailMasked}</p></div>
+          </div>
           <Link role="menuitem" href="/dashboard" onClick={() => setOpen(false)}><Icon name="chart" />{m.header.dashboard}</Link>
           <Link role="menuitem" href="/profile" onClick={() => setOpen(false)}><Icon name="user" />{m.header.profile}</Link>
           <Link role="menuitem" href="/shelter/manage" onClick={() => setOpen(false)}><Icon name="home" />{m.community.manage}</Link>
