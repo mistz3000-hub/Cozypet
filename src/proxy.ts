@@ -1,11 +1,19 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { PUBLIC_SITE_URL } from '@/lib/public-site';
 
 /**
  * ต่ออายุ session ของ Supabase (PROMPT.md 13) — ทำงานเฉพาะเมื่อตั้ง SUPABASE_URL/SUPABASE_PUBLISHABLE_KEY
  * cookie: HttpOnly, SameSite=Lax, Secure (production) · ไม่ log token
  */
 export async function proxy(request: NextRequest) {
+  // Account entry always happens on the shared site. Password/email flows
+  // need their PKCE cookies there as well as Google OAuth.
+  if (['GET', 'HEAD'].includes(request.method) &&
+      ['/login', '/signup'].includes(request.nextUrl.pathname) &&
+      request.nextUrl.origin !== PUBLIC_SITE_URL) {
+    return NextResponse.redirect(new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, PUBLIC_SITE_URL));
+  }
   const url = process.env.SUPABASE_URL?.trim();
   const key = process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
   if (!url || !key) return NextResponse.next();

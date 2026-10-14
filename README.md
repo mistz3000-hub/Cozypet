@@ -2,7 +2,7 @@
 
 > D30: ป้ายเคส Critical พร้อมภาพเจนสมจริงขึ้นครั้งแรกต่อ session ของแท็บ ปิดได้ด้วย × / Esc / พื้นหลัง เปิดซ้ำจาก Footer ชื่อและเลขจากเคสทดลองจริงใน data ดู [กฎและภาพ](docs/CRITICAL_NOTICE_D30.md)
 
-> D31 (14 ต.ค. 2026): Vercel Production และ Supabase Auth/ฐานข้อมูลกลางเชื่อมแล้ว; ตรวจ `SITE_URL` และ Google OAuth callback บน Production แล้ว — ล็อกอินที่เริ่มจาก `localhost:3000` จะกลับ localhost ตาม origin ของ dev ให้เริ่มล็อกอินจาก [เว็บสาธารณะ](https://cozypet-iota.vercel.app/) เท่านั้น เพิ่มช่องเลขทะเบียนที่แจ้งและบังคับกรอกเมื่อเลือกมูลนิธิ (ข้อมูลจำลอง ไม่ตรวจทะเบียนจริง) งาน Motion M8.6 ยังไม่ครบ ดู [handoff ให้ Claude](docs/CLAUDE_MOTION_HANDOFF.md)
+> D32 (14 ต.ค. 2026): Login/Signup และ Google OAuth จาก localhost/Preview ส่งไปเริ่มที่ `https://cozypet-iota.vercel.app`; callback ใช้ origin นี้. Supabase URL Configuration แก้แล้วและตรวจ flow ใหม่/กรณียกเลิกว่าเลือกเว็บสาธารณะจริง. มูลนิธิบังคับเลขจำลองทั้ง UI/API/ฐานข้อมูล (migration ที่ 4 ติดตั้งแล้ว). Tests 112 ข้อและ production build ผ่าน; ตรวจ mobile 360/390px ไม่มี horizontal overflow บน Home, บ้านพัก, ประกาศ, โปรไฟล์และ Login. อ่าน [หลักฐาน D32](docs/AUTH_AND_FOUNDATION_D32.md) และ [handoff ให้ Claude](docs/CLAUDE_MOTION_HANDOFF.md); Motion M8.6 ยังไม่ครบ.
 
 
 > D29 (14 ต.ค. 2026): ผู้ดูแล Login จริงก่อนจัดการบ้านพักที่ `/shelter/manage` → บันทึกร่าง → รูป/ปักหมุด → เผยแพร่; ทุกคนอ่านที่ `/shelters` และ `/nearby` ผ่าน Supabase Free กลาง Google provider เปิดแล้ว QR แพ็กเกจ/สมทบย่อยเปิดรูปสุ่ม 57 ไฟล์ก่อน “ฉันชำระเงินแล้ว (ทดลอง)” ไม่มีเงินจริง หน้า `/donation-tax` มีเงื่อนไขภาษีและสรุปทดลอง อ่าน [วิธีเข้า กฎ และ setup](docs/SHARED_SHELTERS_AND_QR.md)
@@ -190,13 +190,12 @@ Smart Assist (“เล่าให้ AI ช่วยสรุป” และ�
 
 1. **Supabase:** สร้างโปรเจกต์ฟรีที่ [supabase.com](https://supabase.com/) (ไม่ผูกบัตร) → รัน SQL ใน `supabase/migrations/` (มีหลัง implement) → คัดลอก Project URL และ publishable/anon key
 2. **Google OAuth:** ใน [Google Cloud Console](https://console.cloud.google.com/) สร้าง OAuth client แบบ Web application (ไม่ต้องเปิด billing) ใส่ redirect URI ตามที่หน้า Auth → Providers → Google ของ Supabase บอก แล้วนำ Client ID/Secret ไปใส่ใน Supabase (ไม่ใช่ใน repo) ขอ scope เฉพาะ `openid`, `email`, `profile`
-3. ใน Supabase ตั้ง Site URL และ Redirect URLs เป็นโดเมนบน Vercel และ `http://localhost:3000`
+3. ใน Supabase → Authentication → URL Configuration ตั้ง Site URL เป็น `https://cozypet-iota.vercel.app` และ Redirect URLs ให้มี `https://cozypet-iota.vercel.app/auth/callback`. Google OAuth ของแอปเริ่มและจบที่โดเมนสาธารณะนี้ แม้เริ่มกดจาก localhost หรือ Vercel Preview; ไม่เพิ่ม localhost เป็น callback ของ Google login
 4. ใส่ใน `.env.local` และ Vercel (ฝั่ง server เท่านั้น ห้ามขึ้นต้นด้วย `NEXT_PUBLIC_`):
 
    ```bash
    SUPABASE_URL=
    SUPABASE_PUBLISHABLE_KEY=
-   SITE_URL=http://localhost:3000
    AUTH_PASSWORD_RESET_ENABLED=false
    ```
 

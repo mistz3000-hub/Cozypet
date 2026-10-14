@@ -16,8 +16,8 @@
 - สถานะ `draft` → `published` / `paused` → `archived` ร่างและเก็บถาวรเห็นเฉพาะเจ้าของ เผยแพร่แล้วทุกคนอ่านได้ พักการรับยังปรากฏพร้อมสถานะปิดรับ
 - เก็บในตารางกลาง Supabase ไม่ใช่ localStorage ประจำ Run ไม่ใช้หน่วยความจำของ Vercel เป็นฐานข้อมูล หากฐานข้อมูลยังไม่พร้อม ต้องบอกตามจริงและไม่อ้างว่าเผยแพร่ให้คนอื่นแล้ว
 - ID สถานที่และตำแหน่งคงเดิมขณะอัปเดต ไม่สุ่มหมุดใหม่ตาม Run รหัส `DEMO-REG-...` ที่สร้างฝั่งฐานข้อมูลเป็นเพียง ID ของ record ไม่ใช่เลขทะเบียนมูลนิธิ
-- เมื่อเลือกประเภท “มูลนิธิ” ต้องกรอก `payload.registrationNumber` ก่อนบันทึกหรืออัปเดต บันทึกเป็นข้อมูลจำลองใน JSONB และแสดงต่อสาธารณะหลังเผยแพร่เท่านั้น ระบบตรวจว่ากรอกแล้ว แต่ไม่ตรวจสอบกับหน่วยงานและไม่รับรองการจดทะเบียน/สิทธิ์ภาษี สถานที่ประเภทอื่นไม่บังคับช่องนี้
-- record รุ่นเก่าที่ไม่มี `registrationNumber` ยังอ่านและแสดงได้; เมื่อเจ้าของแก้ record มูลนิธิจะต้องกรอกเลขก่อนบันทึก ไม่มี schema migration เพิ่มเพราะใช้ field ใน JSONB เดิม
+- เมื่อเลือกประเภท “มูลนิธิ” ต้องกรอก `payload.registrationNumber` ก่อนบันทึกหรืออัปเดต มีตัวอย่างรหัสสาธิต `DEMO-FND-BKK-2569-0001` และระบบสร้าง `DEMO-REG-...` เป็นรหัสรายการแยกให้อัตโนมัติ ทั้งคู่เป็นข้อมูลจำลองใน JSONB และแสดงต่อสาธารณะหลังเผยแพร่เท่านั้น ระบบตรวจเพียงว่ากรอกแล้ว ไม่ตรวจสอบกับหน่วยงานและไม่รับรองการจดทะเบียน/สิทธิ์ภาษี สถานที่ประเภทอื่นไม่บังคับช่องนี้
+- record รุ่นเก่าที่ไม่มี `registrationNumber` ยังอ่านและแสดงได้; เมื่อเจ้าของแก้ record มูลนิธิจะต้องกรอกเลขก่อนบันทึก เก็บ field ใน JSONB เดิมและ D32 เพิ่ม trigger บังคับฝั่งฐานข้อมูลใน migration `20261014045430_cozypet_required_foundation_registration.sql` ซึ่งติดตั้งแล้ว ไม่ apply ซ้ำ
 - ใช้ RLS: คนทั่วไปอ่านเฉพาะ published/paused เจ้าของอ่านและแก้ของตัวเองเท่านั้น API ตรวจผู้ใช้จาก Supabase ไม่รับ owner ID จาก client ไม่ใช้ service role
 - แต่ละครั้งส่ง version เดิมมาด้วย หากข้อมูลเปลี่ยนจากอีกแท็บต้องแจ้ง conflict ไม่เขียนทับเงียบ เก็บวันที่ปรับปรุงและกิจกรรมเปลี่ยนสถานะ
 - ตรวจความจุเป็นจำนวนเต็ม 1–1000, จำนวนดูแล 0–ความจุ, เสบียง 0–365 วัน, หมุดในขอบแผนที่กรุงเทพฯ รูปต้อง JPEG/PNG/WebP ที่ resize ในเว็บ ปฏิเสธ SVG/HTML ข้อความมีเพดานความยาว
@@ -51,7 +51,7 @@
 3. Migration history จริงตรงกับชื่อไฟล์ใน repo: `20261012193713_cozypet_initial_accounts.sql` → `20261013085213_cozypet_shared_shelters.sql` → `20261013214254_cozypet_photo_publication.sql` (applied แล้ว ไม่รัน SQL ซ้ำในโปรเจกต์นี้; โปรเจกต์ใหม่รันตามลำดับ)
 4. Google Cloud Web application: origin `https://cozypet-iota.vercel.app`, redirect URI ตาม Supabase `/auth/v1/callback`
 5. Supabase Sign In / Providers → Google → Client ID/Secret และ Enable; Skip nonce checks และ Allow users without an email ปิด
-6. URL Configuration: Site URL `https://cozypet-iota.vercel.app`, Redirect URLs `https://cozypet-iota.vercel.app/auth/callback**`
+6. URL Configuration: Site URL `https://cozypet-iota.vercel.app`, Redirect URLs `https://cozypet-iota.vercel.app/auth/callback` (เจ้าของแก้และ Save แล้วใน D32; ตรวจ flow ใหม่จาก Supabase ว่าเลือก callback สาธารณะแล้ว)
 7. ปุ่ม Google ตรวจ configuration จริงจาก `/auth/v1/settings` ไม่เปิดเพียงเพราะมี env ไม่ฝัง Client Secret อีเมลยังใช้ confirmation และจำกัดตาม Supabase หากไม่ได้ตั้ง SMTP ให้ใช้ Google เป็นช่องทางหลักของห้องเรียน
 8. ไม่ใช้ Supabase OAuth Server สำหรับรับ Google Login ไม่เปิด billing/Free Trial ที่ผูกบัตร
 

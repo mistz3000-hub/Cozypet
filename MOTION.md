@@ -8,7 +8,7 @@
 
 เว็บและ backend พร้อมเป็นฐานสำหรับ implement Motion ต่อแล้ว แต่ M8.6 ยังไม่เสร็จครบ: `src/features/motion/howto/PhoneTourSection.tsx` ยังคืน `null` และยังไม่มี source ใน `src/features/motion/webgl/`. โปรดเริ่มจาก source จริงและตรวจ AC-81–AC-89 ไม่รายงานตามสเปกอย่างเดียว
 
-Supabase project และ Vercel production เชื่อมแล้ว; OAuth บน Production ตรวจพบว่า redirect ไปโดเมน `cozypet-iota.vercel.app/auth/callback` ถูกต้อง. การเริ่ม login จาก localhost จะกลับ localhost ตาม origin ของ development โดยตั้งใจ ให้ทดสอบบัญชีจากเว็บจริง ไม่แก้ PKCE ให้ข้าม host. รายละเอียด project, สิ่งที่ทำแล้ว, ข้อจำกัด และงานต่ออยู่ใน [docs/CLAUDE_MOTION_HANDOFF.md](docs/CLAUDE_MOTION_HANDOFF.md).
+Supabase project และ Vercel production เชื่อมแล้ว; D32 แก้หน้า Login/Signup และจุดเริ่ม OAuth จาก localhost/Preview ให้ไปเริ่มที่เว็บสาธารณะก่อนสร้าง PKCE cookie. Callback ใช้ `https://cozypet-iota.vercel.app/auth/callback` เสมอ. ตรวจพบ Supabase เคย fallback ไป localhost และเจ้าของแก้ URL Configuration แล้ว; flow ที่สร้างหลังแก้เลือกโดเมนเว็บจริงทั้งกรณีปกติและกดยกเลิก. รายละเอียดบริการ หลักฐาน ข้อจำกัด และงาน Motion ที่เหลืออยู่ใน [docs/CLAUDE_MOTION_HANDOFF.md](docs/CLAUDE_MOTION_HANDOFF.md) และ [docs/AUTH_AND_FOUNDATION_D32.md](docs/AUTH_AND_FOUNDATION_D32.md).
 
 
 ## เพิ่มเติม 8 ต.ค. 2026 — ภาพสมจริงและฉากปาก

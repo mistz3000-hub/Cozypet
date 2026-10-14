@@ -1,5 +1,7 @@
 # ส่งมอบ D29 / D30 — 14 ตุลาคม 2026
 
+> บันทึกนี้เป็น snapshot D29/D30. สถานะใหม่ของ Auth, เลขมูลนิธิและ migration ชุดที่ 4 อยู่ใน [AUTH_AND_FOUNDATION_D32.md](AUTH_AND_FOUNDATION_D32.md); อ่าน [CLAUDE_MOTION_HANDOFF.md](CLAUDE_MOTION_HANDOFF.md) ก่อนเริ่ม Motion. ข้อมูลว่า OAuth configuration ผ่านใน snapshot เดิมอ้างเพียง URL ที่แอปส่ง ยังไม่ได้พิสูจน์ปลายทางที่ Supabase เลือก; D32 ตรวจและแก้ fallback localhost แล้ว.
+
 ## เว็บและโค้ด
 
 - เว็บหลัก: https://cozypet-iota.vercel.app/

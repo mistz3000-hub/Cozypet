@@ -16,6 +16,11 @@ describe('safeNext (กัน open redirect)', () => {
     expect(safeNext('https://evil.com', '/dashboard')).toBe('/dashboard');
     expect(safeNext(null, '/dashboard')).toBe('/dashboard');
   });
+  it('rejects control characters that URL parsing could turn into another host', () => {
+    for (const value of ['/\n/localhost:3000', '/\t/evil.com', '/\r\\evil.com', '/profile\u0000']) {
+      expect(safeNext(value, '/')).toBe('/');
+    }
+  });
 });
 
 describe('merge-state (ย้ายข้อมูลโหมดทดลองเข้าบัญชี)', () => {

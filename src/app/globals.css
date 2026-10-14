@@ -131,6 +131,10 @@ textarea {
   scroll-margin-top: calc(var(--cp-header-h) + 12px);
 }
 
+#crisis-cases {
+  scroll-margin-top: calc(var(--cp-space-6) * 2);
+}
+
 /* ซ่อน tab bar ขณะพิมพ์บนมือถือ */
 body[data-typing='true'] .cp-hide-when-typing {
   transform: translateY(120%);
@@ -148,13 +152,15 @@ body[data-typing='true'] .cp-hide-when-typing {
 }
 
 @media print {
-  .cp-no-print {
+  header, footer, nav, .cp-bottom-dock, .cp-no-print {
     display: none !important;
   }
   body {
     background: #fff;
   }
   .cp-main {
+    min-height: 0;
+    padding: 0;
     padding-bottom: 0;
   }
 }

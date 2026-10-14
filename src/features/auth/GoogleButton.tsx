@@ -1,5 +1,6 @@
 'use client';
 
+import { PUBLIC_SITE_URL } from '@/lib/public-site';
 import s from './auth.module.css';
 
 /**
@@ -19,5 +20,5 @@ export function GoogleButton({ label, next, disabled }: { label: string; next: s
     </>
   );
   if (disabled) return <button type="button" className={s.google} disabled>{content}</button>;
-  return <a className={s.google} href={`/api/auth/google?next=${encodeURIComponent(next)}`}>{content}</a>;
+  return <a className={s.google} href={`${PUBLIC_SITE_URL}/api/auth/google?next=${encodeURIComponent(next)}`}>{content}</a>;
 }

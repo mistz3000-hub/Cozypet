@@ -24,5 +24,6 @@ coverage/
 test-results/
 playwright-report/
 .vercel
+supabase/.temp/
 .env*
 !.env.example

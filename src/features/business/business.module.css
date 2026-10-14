@@ -1,5 +1,5 @@
 .page { display: grid; gap: var(--cp-space-5); padding-bottom: var(--cp-space-6); }
-.panel, .banner, .micro, :global(#crisis-cases) { scroll-margin-top: calc(var(--cp-space-6) * 2); }
+.panel, .banner, .micro { scroll-margin-top: calc(var(--cp-space-6) * 2); }
 .panel { border: 1px solid var(--cp-border); border-radius: var(--cp-radius-card); background: var(--cp-surface); padding: clamp(18px, 3vw, 30px); }
 .head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
 .lead, .muted { color: var(--cp-ink-muted); font-size: var(--cp-text-sm); line-height: 1.7; }
@@ -53,4 +53,4 @@
 @media (max-width: 560px) { .grid, .flow { grid-template-columns: 1fr; } .stats { gap: 8px; } .banner { grid-template-columns: 1fr; } .bannerImage { display: none; } .money { font-size: 28px; } .stat { padding: 12px; } }
 @media (prefers-reduced-motion: reduce) { .star { transition: none; } .star:hover { transform: none; } }
 @page { size: A4; margin: 18mm; }
-@media print { :global(header), :global(footer), :global(nav), :global(.cp-bottom-dock), .noPrint { display: none !important; } :global(.cp-main) { min-height: 0; padding: 0; } .agreement { width: 100%; max-width: none; margin: 0; border: 0; padding: 0; color: black; background: white; font-size: 11pt; line-height: 1.65; } .agreement p, .agreement li { margin-block: 12px; } .agreement h1 { font-size: 18pt; } .printOnly { display: block; } }
+@media print { .noPrint { display: none !important; } .agreement { width: 100%; max-width: none; margin: 0; border: 0; padding: 0; color: black; background: white; font-size: 11pt; line-height: 1.65; } .agreement p, .agreement li { margin-block: 12px; } .agreement h1 { font-size: 18pt; } .printOnly { display: block; } }

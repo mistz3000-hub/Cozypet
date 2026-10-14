@@ -1,4 +1,5 @@
 import 'server-only';
+import { PUBLIC_SITE_URL } from '@/lib/public-site';
 
 /** ระบบบัญชีเปิดเมื่อมีทั้ง SUPABASE_URL และ SUPABASE_PUBLISHABLE_KEY (ฝั่ง server เท่านั้น ไม่มี NEXT_PUBLIC_) */
 export function supabaseEnv(): { url: string; key: string } | null {
@@ -16,16 +17,25 @@ export function passwordResetEnabled(): boolean {
   return process.env.AUTH_PASSWORD_RESET_ENABLED === 'true';
 }
 
-export function siteUrl(): string {
-  return (process.env.SITE_URL?.trim() || 'http://localhost:3000').replace(/\/$/, '');
+/** Every interactive auth flow uses this public origin, including development and previews. */
+export function publicAuthSiteUrl(): string {
+  return PUBLIC_SITE_URL;
 }
 
-/** In development, keep OAuth on the exact host the browser used (localhost and 127.0.0.1 have separate cookies). */
-export function authSiteUrl(request: Request): string {
-  if (process.env.NODE_ENV === 'production') return siteUrl();
+/** Public base URL for provider redirects, email callbacks, and shareable URLs. */
+export function siteUrl(): string {
+  return publicAuthSiteUrl();
+}
+
+export function isNonCanonicalAuthRequest(request: Request): boolean {
   try {
-    return new URL(request.url).origin;
+    return new URL(request.url).origin !== publicAuthSiteUrl();
   } catch {
-    return siteUrl();
+    return true;
   }
+}
+
+/** Callback handlers always write the session cookie on the public origin. */
+export function authSiteUrl(): string {
+  return publicAuthSiteUrl();
 }
