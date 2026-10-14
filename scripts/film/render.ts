@@ -13,6 +13,7 @@ const FPS = 30;
 const cut = arg('cut', 'demo')!;
 const locale = arg('locale', 'th') === 'en' ? 'en' : 'th';
 const jobs = Math.max(1, Number(arg('jobs', '3')));
+const GL_ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 
 export function captureIndex(loc: string): Record<string, unknown> {
   const dir = path.join(OUT, 'captures', loc);
@@ -93,7 +94,7 @@ async function main() {
     process.exit(1);
   }
   await waitForServer();
-  const browser = await launch(['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']);
+  const browser = await launch(GL_ARGS);
   const probe = await openFilm(browser, cut, locale);
   const duration = await probe.page.evaluate(() => window.__cozypetFilm!.duration());
   const info = await probe.page.evaluate(() => window.__cozypetFilm!.info());
@@ -111,10 +112,18 @@ async function main() {
     if (a >= b) break;
     const part = path.join(outDir, `part-${j}.mp4`);
     parts.push(part);
-    tasks.push(renderRange(ff, browser, a, b, part, `งาน ${j + 1}`));
+    // แต่ละงานใช้เบราว์เซอร์ของตัวเอง (GPU process แยกกัน) — SwiftShader ใน process เดียวกันจะทำงานแบบเรียงคิว
+    tasks.push((async () => {
+      const own = await launch(GL_ARGS);
+      try {
+        await renderRange(ff, own, a, b, part, `งาน ${j + 1}`);
+      } finally {
+        await own.close();
+      }
+    })());
   }
-  await Promise.all(tasks);
   await browser.close();
+  await Promise.all(tasks);
   if (parts.length === 1) {
     rmSync(outFile, { force: true });
     await new Promise<void>((resolve, reject) => spawn(ff, ['-v', 'error', '-y', '-i', parts[0], '-c', 'copy', '-movflags', '+faststart', outFile], { stdio: 'inherit' }).on('close', (c) => (c === 0 ? resolve() : reject(new Error('copy')))));
