@@ -1,10 +1,10 @@
 /**
- * npm run film:render -- --cut demo --locale th [--from 0 --to 10] [--jobs 3] [--allow-placeholders]
+ * npm run film:render -- --cut demo --locale th [--from 0 --to 10] [--jobs 3] [--chunk 90] [--fresh] [--allow-placeholders]
  * เปิด /film?record=1 แล้ว seek ทีละเฟรม (30 fps) → screenshot → ffmpeg (DEMO_VIDEO.md หัวข้อ 9)
  * ผลลัพธ์: out/film/<cut>-<locale>/video.mp4 (ไม่มีเสียง)
  */
 import { spawn } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Browser } from '@playwright/test';
 import { BASE_URL, OUT, arg, ensureDir, ffmpegPath, flag, launch, teamPlaceholders, waitForServer } from './lib.ts';
@@ -55,33 +55,41 @@ export async function openFilm(browser: Browser, cutId: string, loc: string) {
   return { ctx, page };
 }
 
-async function renderRange(ff: string, browser: Browser, from: number, to: number, file: string, label: string) {
+/** เตรียมหน้า /film หนึ่งหน้าต่อหนึ่งงาน แล้วเรนเดอร์ช่วงเฟรมทีละชิ้นจากคิวเดียวกัน */
+async function worker(ff: string, label: string, queue: { from: number; to: number; file: string }[], total: { done: number; frames: number; start: number }) {
+  const browser = await launch(GL_ARGS);
   const { ctx, page } = await openFilm(browser, cut, locale);
   const cdp = await ctx.newCDPSession(page);
-  const enc = spawn(ff, ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', flag('draft') ? 'veryfast' : 'slow', '-crf', flag('draft') ? '23' : '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-movflags', '+faststart', file], { stdio: ['pipe', 'inherit', 'inherit'] });
-  const done = new Promise<void>((resolve, reject) => enc.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`ffmpeg exit ${code}`)))));
-  const start = Date.now();
-  for (let f = from; f < to; f++) {
-    const t = f / FPS;
-    // เฟรมแรกของแต่ละงานต้องเตรียมฉาก/พื้นผิวทั้งหมด จึงให้เวลานานกว่า (เครื่องที่ใช้ SwiftShader และรันหลายงานพร้อมกันช้ามาก)
-    const limit = f === from ? 180 : 60;
-    const timer = setTimeout(() => {
-      console.error(`เฟรม ${f} (t=${t.toFixed(3)}s) รอ seek/ready เกิน ${limit} วินาที — หยุด`);
-      process.exit(1);
-    }, limit * 1000);
-    await page.evaluate((tt) => window.__cozypetFilm!.seek(tt), t);
-    clearTimeout(timer);
-    const shot = await cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 95, clip: { x: 0, y: 0, width: 1920, height: 1080, scale: 1 }, captureBeyondViewport: false });
-    const buf = Buffer.from(shot.data, 'base64');
-    if (!enc.stdin.write(buf)) await new Promise((r) => enc.stdin.once('drain', r));
-    if ((f - from) % 60 === 59) {
-      const fps = (f - from + 1) / ((Date.now() - start) / 1000);
-      process.stdout.write(`  [${label}] เฟรม ${f + 1 - from}/${to - from} · ${fps.toFixed(1)} เฟรม/วินาที\n`);
+  let first = true;
+  for (let job = queue.shift(); job; job = queue.shift()) {
+    const tmp = job.file.replace(/\.mp4$/, '.tmp.mp4');
+    const enc = spawn(ff, ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', flag('draft') ? 'veryfast' : 'slow', '-crf', flag('draft') ? '23' : '18', '-pix_fmt', 'yuv420p', '-r', String(FPS), '-movflags', '+faststart', '-f', 'mp4', tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
+    const done = new Promise<void>((resolve, reject) => enc.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`ffmpeg exit ${code}`)))));
+    for (let f = job.from; f < job.to; f++) {
+      const t = f / FPS;
+      // เฟรมแรกของงานต้องเตรียมฉาก/พื้นผิวทั้งหมด จึงให้เวลานานกว่า (SwiftShader หลายงานพร้อมกันช้ามาก)
+      const limit = first ? 180 : 60;
+      first = false;
+      const timer = setTimeout(() => {
+        console.error(`เฟรม ${f} (t=${t.toFixed(3)}s) รอ seek/ready เกิน ${limit} วินาที — หยุด (รันคำสั่งเดิมซ้ำเพื่อทำต่อจากชิ้นที่เสร็จแล้ว)`);
+        process.exit(1);
+      }, limit * 1000);
+      await page.evaluate((tt) => window.__cozypetFilm!.seek(tt), t);
+      clearTimeout(timer);
+      const shot = await cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 95, clip: { x: 0, y: 0, width: 1920, height: 1080, scale: 1 }, captureBeyondViewport: false });
+      const buf = Buffer.from(shot.data, 'base64');
+      if (!enc.stdin.write(buf)) await new Promise((r) => enc.stdin.once('drain', r));
+      total.done++;
     }
+    enc.stdin.end();
+    await done;
+    renameSync(tmp, job.file);
+    const fps = total.done / ((Date.now() - total.start) / 1000);
+    const left = (total.frames - total.done) / Math.max(0.01, fps);
+    process.stdout.write(`  [${label}] ${path.basename(job.file)} · รวม ${total.done}/${total.frames} เฟรม · ${fps.toFixed(2)} เฟรม/วินาที · เหลือ ~${Math.ceil(left / 60)} นาที\n`);
   }
-  enc.stdin.end();
-  await done;
   await ctx.close();
+  await browser.close();
 }
 
 async function main() {
@@ -99,41 +107,26 @@ async function main() {
   const duration = await probe.page.evaluate(() => window.__cozypetFilm!.duration());
   const info = await probe.page.evaluate(() => window.__cozypetFilm!.info());
   await probe.ctx.close();
+  await browser.close();
   const from = Math.round(Number(arg('from', '0')) * FPS);
   const to = Math.min(Math.round(Number(arg('to', String(duration))) * FPS), Math.round(duration * FPS));
-  console.log(`เรนเดอร์ ${cut}/${locale}: เฟรม ${from}–${to} (${((to - from) / FPS).toFixed(1)} วินาที) · ภาพใช้งานจริง ${(info.realUsage * 100).toFixed(1)}% · ${jobs} งานพร้อมกัน`);
-  const total = to - from;
-  const per = Math.ceil(total / jobs);
-  const parts: string[] = [];
-  const tasks: Promise<void>[] = [];
-  for (let j = 0; j < jobs; j++) {
-    const a = from + j * per;
-    const b = Math.min(to, a + per);
-    if (a >= b) break;
-    const part = path.join(outDir, `part-${j}.mp4`);
-    parts.push(part);
-    // แต่ละงานใช้เบราว์เซอร์ของตัวเอง (GPU process แยกกัน) — SwiftShader ใน process เดียวกันจะทำงานแบบเรียงคิว
-    tasks.push((async () => {
-      const own = await launch(GL_ARGS);
-      try {
-        await renderRange(ff, own, a, b, part, `งาน ${j + 1}`);
-      } finally {
-        await own.close();
-      }
-    })());
-  }
-  await browser.close();
-  await Promise.all(tasks);
-  if (parts.length === 1) {
-    rmSync(outFile, { force: true });
-    await new Promise<void>((resolve, reject) => spawn(ff, ['-v', 'error', '-y', '-i', parts[0], '-c', 'copy', '-movflags', '+faststart', outFile], { stdio: 'inherit' }).on('close', (c) => (c === 0 ? resolve() : reject(new Error('copy')))));
-  } else {
-    const list = path.join(outDir, 'parts.txt');
-    writeFileSync(list, parts.map((p) => `file '${p}'`).join('\n'));
-    await new Promise<void>((resolve, reject) => spawn(ff, ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', outFile], { stdio: 'inherit' }).on('close', (c) => (c === 0 ? resolve() : reject(new Error('concat')))));
-    rmSync(list, { force: true });
-  }
-  parts.forEach((p) => rmSync(p, { force: true }));
+  // แบ่งเป็นชิ้นสั้น ๆ ในคิวเดียว งานที่ว่างหยิบชิ้นถัดไป (ฉาก 3 มิติหนักไม่ไปกองที่งานเดียว) · ชิ้นที่เสร็จแล้วเก็บไว้ รันซ้ำจะทำต่อ (--fresh เพื่อเริ่มใหม่)
+  const chunk = Math.max(15, Number(arg('chunk', '90')));
+  const chunkDir = path.join(outDir, `chunks-${from}-${to}${flag('draft') ? '-draft' : ''}`);
+  if (flag('fresh')) rmSync(chunkDir, { recursive: true, force: true });
+  ensureDir(chunkDir);
+  const all: { from: number; to: number; file: string }[] = [];
+  for (let a = from; a < to; a += chunk) all.push({ from: a, to: Math.min(to, a + chunk), file: path.join(chunkDir, `${String(a).padStart(6, '0')}.mp4`) });
+  const queue = all.filter((c) => !existsSync(c.file));
+  const frames = queue.reduce((n, c) => n + c.to - c.from, 0);
+  console.log(`เรนเดอร์ ${cut}/${locale}: เฟรม ${from}–${to} (${((to - from) / FPS).toFixed(1)} วินาที) · ภาพใช้งานจริง ${(info.realUsage * 100).toFixed(1)}% · ${all.length} ชิ้น (เหลือ ${queue.length}) · ${jobs} งานพร้อมกัน`);
+  const total = { done: 0, frames, start: Date.now() };
+  await Promise.all(Array.from({ length: Math.min(jobs, queue.length) }, (_, j) => worker(ff, `งาน ${j + 1}`, queue, total)));
+  const list = path.join(chunkDir, 'list.txt');
+  writeFileSync(list, all.map((c) => `file '${c.file}'`).join('\n'));
+  rmSync(outFile, { force: true });
+  await new Promise<void>((resolve, reject) => spawn(ff, ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', outFile], { stdio: 'inherit' }).on('close', (c) => (c === 0 ? resolve() : reject(new Error('concat')))));
+  if (!flag('keep-chunks')) rmSync(chunkDir, { recursive: true, force: true });
   writeFileSync(path.join(outDir, 'info.json'), JSON.stringify(info, null, 2));
   console.log(`เสร็จ → ${path.relative(process.cwd(), outFile)}`);
 }
