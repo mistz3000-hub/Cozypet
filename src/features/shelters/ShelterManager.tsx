@@ -24,17 +24,18 @@ export function ShelterManager(){
   const {places,loading,error,refresh}=useShelters(true,!!user);const [editing,setEditing]=useState<PublicShelter|null|undefined>(undefined);
   if(!user)return <div className={`cp-container cp-page ${s.page}`}><h1>{c.manage}</h1><Notice tone="butter">{c.login}</Notice><ButtonLink variant="primary" href="/login?next=/shelter/manage">{m.auth.google}</ButtonLink><ButtonLink href="/signup?next=/shelter/manage">{m.auth.signupTitle}</ButtonLink></div>;
   return <div className={`cp-container cp-page ${s.page}`}><header className={s.head}><div><h1>{c.manage}</h1><p>{c.privateDraft}</p></div><div className={s.actions}><Button onClick={()=>setEditing(null)} variant="primary" icon="plus">{c.create}</Button><ButtonLink href="/shelters">{c.title}</ButtonLink></div></header>
-    <PetFrame mascot={mascot}>{loading?<Skeleton style={{height:100}}/>:<div className={s.list}>{places.map(p=><div className={s.head} key={p.id}><div><strong>{p.payload.name}</strong><p className={s.muted}>{c.status[p.status]} · {p.registrationDemoId}</p></div><Button small onClick={()=>setEditing(p)}>{m.common.edit}</Button></div>)}</div>}{error?<Notice tone="error">{c.errors.unavailable}</Notice>:null}</PetFrame>
+    <PetFrame mascot={mascot}>{loading?<Skeleton style={{height:100}}/>:<div className={s.list}>{places.map(p=><div className={s.head} key={p.id}><div><strong>{p.payload.name}</strong><p className={s.muted}>{c.status[p.status]} · {c.recordId}: {p.registrationDemoId}</p>{p.payload.organisationType==='foundation'&&p.payload.registrationNumber?<p className={s.muted}>{c.fields.registrationNumber}: {p.payload.registrationNumber}</p>:null}</div><Button small onClick={()=>setEditing(p)}>{m.common.edit}</Button></div>)}</div>}{error?<Notice tone="error">{c.errors.unavailable}</Notice>:null}</PetFrame>
     {editing!==undefined?<ShelterEditor key={`${editing?.id??'new'}-${editing?.version??0}`} initial={editing} onSaved={p=>{setEditing(p);void refresh();}} onReload={async()=>{await refresh();const r=await fetch(`/api/shelters?mine=1&id=${editing?.id}`,{cache:'no-store'});const d=await r.json();if(d.ok&&d.places[0])setEditing(d.places[0]);}}/>:null}
     {editing?.id?<ShelterInbox key={editing.id} placeId={editing.id} owner/>:null}
   </div>;
 }
 function ShelterEditor({initial,onSaved,onReload}:{initial:PublicShelter|null;onSaved:(p:PublicShelter)=>void;onReload:()=>Promise<void>}){
-  const {m,f}=useI18n();const c=m.community;const [{mascot}]=useDemoSession();const [d,setD]=useState<ShelterPayload>(()=>initial?.payload??emptyShelter());
+  const {m,f}=useI18n();const c=m.community;const [{mascot}]=useDemoSession();const [d,setD]=useState<ShelterPayload>(()=>{const payload=initial?.payload??emptyShelter();return {...payload,registrationNumber:payload.registrationNumber??''};});
   const [busy,setBusy]=useState(false);const [uploading,setUploading]=useState(false);const [error,setError]=useState<string|null>(null);const [consent,setConsent]=useState(false);
   const patch=(p:Partial<ShelterPayload>)=>setD(prev=>({...prev,...p}));
   const errText=error?c.errors[error as keyof typeof c.errors]??c.errors.unavailable:null;
   async function save(status:ShelterPublication){
+    if(d.organisationType==='foundation'&&!d.registrationNumber?.trim()){setError('registration_required');return;}
     if(busy||uploading||((status==='published'||status==='paused')&&!consent))return;setBusy(true);setError(null);
     try{const r=await fetch(`/api/shelters${initial?`?id=${initial.id}`:''}`,{method:initial?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({payload:d,status,version:initial?.version})});const data=await r.json();if(!r.ok||!data.ok){setError(data.error);return;}onSaved(data.place);}catch{setError('unavailable');}finally{setBusy(false);}
   }
@@ -51,6 +52,7 @@ function ShelterEditor({initial,onSaved,onReload}:{initial:PublicShelter|null;on
     {initial?<Notice tone="butter"><strong>{initial.registrationDemoId}</strong><p>{c.demoId}</p></Notice>:null}
     {errText?<Notice tone="error">{errText}{error==='conflict'?<Button small onClick={()=>void onReload()}>{c.reload}</Button>:null}</Notice>:null}
     <div className={s.columns}>{text('name',c.fields.name,80)}<Field id="place-type" label={c.fields.type}><Select id="place-type" value={d.organisationType} onChange={e=>patch({organisationType:e.target.value as ShelterPayload['organisationType']})}>{(['foundation','shelter','independent'] as const).map(v=><option key={v} value={v}>{c.types[v]}</option>)}</Select></Field>
+    {d.organisationType==='foundation'?<Field id="place-registration-number" label={c.fields.registrationNumber} required><TextInput id="place-registration-number" maxLength={60} required value={d.registrationNumber??''} onChange={e=>patch({registrationNumber:e.target.value})}/><span className={s.muted}>{c.registrationNumberHint}</span></Field>:null}
     <Field id="place-district" label={c.fields.district}><DistrictSelect id="place-district" value={d.districtId} onChange={e=>patch({districtId:e.target.value})}/></Field>{text('address',c.fields.address,250)}</div>
     {area('description',c.fields.description,1200)}
     <ChipGroup legend={c.fields.species} values={d.speciesAccepted} onChange={v=>patch({speciesAccepted:v as ShelterPayload['speciesAccepted']})} options={(['cat','dog','other'] as const).map(v=>({value:v,label:m.species[v]}))}/>

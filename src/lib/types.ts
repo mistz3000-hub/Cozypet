@@ -17,6 +17,8 @@ export interface ShelterPet {
 }
 export interface ShelterPayload {
   name: string; organisationType: 'foundation' | 'shelter' | 'independent';
+  /** User-entered demo value. Required only when organisationType is foundation; not verified. */
+  registrationNumber?: string;
   districtId: DistrictId; location: GeoPoint; address: string; description: string;
   speciesAccepted: Species[]; careModes: CareMode[]; capacityTotal: number; currentCount: number;
   foodDays: number; litterDays?: number; acceptsEmergency: boolean; hours: string;

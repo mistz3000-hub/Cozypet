@@ -4,6 +4,12 @@
 
 ใช้ Dialog เดิมกับ tokens/Reduced motion พื้นครีม ขอบมน ภาพสัตว์จริง ปุ่มปิด 44px และ focus trap แสดงหนึ่งครั้งต่อ tab session หลังอ่านข้อมูลกลาง หยุด polling ของป้ายเมื่อปิด Skeleton ของภาพรอ load/decode จริง ไม่มีเวลารอปลอม ป้ายไม่สร้าง donation/request และ autopilot ไม่กดช่วยหรือปิดป้ายเอง ผู้ถ่ายคลิปเปิด/ปิดด้วยมือก่อนเริ่มทัวร์ ดู docs/CRITICAL_NOTICE_D30.md
 
+## D31 — สถานะส่งต่องานให้ Claude (14 ต.ค. 2026)
+
+เว็บและ backend พร้อมเป็นฐานสำหรับ implement Motion ต่อแล้ว แต่ M8.6 ยังไม่เสร็จครบ: `src/features/motion/howto/PhoneTourSection.tsx` ยังคืน `null` และยังไม่มี source ใน `src/features/motion/webgl/`. โปรดเริ่มจาก source จริงและตรวจ AC-81–AC-89 ไม่รายงานตามสเปกอย่างเดียว
+
+Supabase project และ Vercel production เชื่อมแล้ว; OAuth บน Production ตรวจพบว่า redirect ไปโดเมน `cozypet-iota.vercel.app/auth/callback` ถูกต้อง. การเริ่ม login จาก localhost จะกลับ localhost ตาม origin ของ development โดยตั้งใจ ให้ทดสอบบัญชีจากเว็บจริง ไม่แก้ PKCE ให้ข้าม host. รายละเอียด project, สิ่งที่ทำแล้ว, ข้อจำกัด และงานต่ออยู่ใน [docs/CLAUDE_MOTION_HANDOFF.md](docs/CLAUDE_MOTION_HANDOFF.md).
+
 
 ## เพิ่มเติม 8 ต.ค. 2026 — ภาพสมจริงและฉากปาก
 

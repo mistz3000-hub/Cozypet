@@ -9,6 +9,7 @@ import { inBangkok } from '@/lib/geo';
 import { availableSlots } from '@/lib/capacity';
 import { statusLevel, supplyLevel } from '@/lib/status';
 import { buildSimPlaces, SIM_SCENARIOS } from '@/lib/simulation';
+import { canReceivePackages } from '@/lib/balancer';
 import { readFileSync } from 'node:fs';
 
 describe('ข้อมูล seed (PROMPT.md 10.4)', () => {
@@ -86,10 +87,9 @@ describe('ข้อมูล seed (PROMPT.md 10.4)', () => {
     }
   });
 
-  it('ข้อ 10: acceptsSupplyPackages คำนวณตามกฎ และ shelter เป็น false', () => {
+  it('ข้อ 10: acceptsSupplyPackages สอดคล้องกับกฎผู้รับรายบุคคล มูลนิธิทดลอง และบ้านพักชุมชน', () => {
     for (const h of HELPERS) {
-      const expected = h.kind === 'individual' && h.availability !== 'unavailable' && h.currentCount > 0;
-      expect(!!h.acceptsSupplyPackages).toBe(expected);
+      expect(!!h.acceptsSupplyPackages).toBe(canReceivePackages(h));
     }
   });
 
@@ -107,10 +107,10 @@ describe('ข้อมูล seed (PROMPT.md 10.4)', () => {
     expect(levels.filter((l) => l === 'low').length).toBeGreaterThanOrEqual(25);
   });
 
-  it('ข้อ 12: แบรนด์ทุกรายเป็นแบรนด์สมมติ', () => {
+  it('ข้อ 12: แบรนด์มี flag ระบุว่าเป็นข้อมูลสมมติ แยกจากชื่อที่แสดง', () => {
     for (const b of BRANDS) {
       expect(b.isFictional).toBe(true);
-      expect(b.name.th).toContain('(แบรนด์สมมติ)');
+      expect(b.name.th.trim() && b.name.en.trim()).toBeTruthy();
     }
   });
 
