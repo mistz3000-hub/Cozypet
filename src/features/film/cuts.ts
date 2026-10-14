@@ -64,7 +64,7 @@ const DEMO: ShotDef[] = [
   },
   {
     id: 'S07', bars: 4, vo: [{ at: 0.4, key: 'demo' }, { at: 5.0, key: 'micro' }], explain: [{ from: 5.2, to: 10.3, kind: 'micro' }], chapter: 'start', capture: 'C1',
-    anchors: [{ at: 0, mark: 'start' }, { at: 0.5, mark: 'run-focus' }, { at: 2.4, mark: 'start-run' }, { at: 3.4, mark: 'dashboard' }, { at: 5.2, mark: 'micro-ack' }, { at: 6.0, mark: 'micro-50' }, { at: 8.0, mark: 'micro-done-50' }, { at: 8.4, mark: 'micro-100' }, { at: 10.1, mark: 'micro-done-100' }, { at: 10.667, mark: 'end' }],
+    anchors: [{ at: 0, mark: 'start' }, { at: 0.5, mark: 'run-focus' }, { at: 2.4, mark: 'start-run' }, { at: 2.55, mark: 'dashboard', offset: 1.32 }, { at: 5.2, mark: 'micro-ack' }, { at: 6.0, mark: 'micro-50' }, { at: 8.0, mark: 'micro-done-50' }, { at: 8.4, mark: 'micro-100' }, { at: 10.1, mark: 'micro-done-100' }, { at: 10.667, mark: 'end' }],
     captions: [{ at: 0.2, to: 5.0, key: 'demo' }, { at: 5.2, to: 10.5, key: 'micro' }],
     ipo: [[0, 'input'], [3.4, 'output'], [5.2, 'input'], [8.0, 'output']],
   },
@@ -82,7 +82,7 @@ const DEMO: ShotDef[] = [
   },
   {
     id: 'S10', bars: 2, vo: [{ at: 0.3, key: 'post' }], explain: [{ from: 2.0, to: 5.1, kind: 'post' }], chapter: 'post', capture: 'C2',
-    anchors: [{ at: 0, mark: 'post', offset: -0.1 }, { at: 0.9, mark: 'form' }, { at: 1.4, mark: 'name-focus' }, { at: 3.3, mark: 'preview' }, { at: 4.1, mark: 'submit' }, { at: 4.6, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.73 }],
+    anchors: [{ at: 0, mark: 'post', offset: -0.1 }, { at: 0.15, mark: 'form' }, { at: 1.4, mark: 'name-focus' }, { at: 3.3, mark: 'preview' }, { at: 4.1, mark: 'submit' }, { at: 4.6, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.73 }],
     captions: [{ at: 0.1, to: 5.25, key: 'post' }], ipo: [[0, 'input'], [4.6, 'output']],
   },
   { id: 'S11', bars: 2, vo: [{ at: 0.25, key: 'balancer' }], chapter: 'balancer', scene: 'balancer', captions: [{ at: 0.1, to: 5.2, key: 'balancer' }] },
@@ -148,7 +148,7 @@ const SHORT: ShotDef[] = [
   },
   {
     id: 'S06', bars: 1, vo: [{ at: 0.2, key: 'demo' }], chapter: 'start', capture: 'C1',
-    anchors: [{ at: 0, mark: 'run-focus' }, { at: 1.3, mark: 'start-run' }, { at: 1.8, mark: 'dashboard' }, { at: 2.667, mark: 'dashboard', offset: 0.9 }],
+    anchors: [{ at: 0, mark: 'run-focus' }, { at: 1.3, mark: 'start-run' }, { at: 1.45, mark: 'dashboard', offset: 1.32 }, { at: 2.667, mark: 'dashboard', offset: 2.0 }],
     captions: [{ at: 0.1, to: 2.6, key: 'demo' }], ipo: [[0, 'input'], [1.8, 'output']],
   },
   {
@@ -163,7 +163,7 @@ const SHORT: ShotDef[] = [
   },
   {
     id: 'S09', bars: 2, vo: [{ at: 0.3, key: 'post' }], chapter: 'post', capture: 'C2',
-    anchors: [{ at: 0, mark: 'post', offset: -0.1 }, { at: 0.8, mark: 'form' }, { at: 1.2, mark: 'name-focus' }, { at: 3.1, mark: 'preview' }, { at: 3.9, mark: 'submit' }, { at: 4.4, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.93 }],
+    anchors: [{ at: 0, mark: 'post', offset: -0.1 }, { at: 0.15, mark: 'form' }, { at: 1.2, mark: 'name-focus' }, { at: 3.1, mark: 'preview' }, { at: 3.9, mark: 'submit' }, { at: 4.4, mark: 'done' }, { at: 5.333, mark: 'done', offset: 0.93 }],
     captions: [{ at: 0.1, to: 5.25, key: 'post' }], ipo: [[0, 'input'], [4.4, 'output']],
   },
   {
