@@ -281,4 +281,6 @@ Cozypet เป็น **Final Project prototype** ของ **ทีมก้า�
 
 **วิดีโอเดโม (D34) ทีละขั้น:** `npm run build && npx next start -p 3100` แล้ว
 `npm run film:capture -- --locale th` (อัดหน้าจอแอปจริง C0–C9) → `npm run film:voice -- --cut demo --lang en` (เสียงพากย์ร่างภาษาอังกฤษ ต้องตั้ง `FILM_TTS_PYTHON`/`KOKORO_DIR`; ภาษาไทยใช้ `--provider gemini` หรือ `--script-only`) → `npm run film:audio -- --cut demo --locale th` → `npm run film:render -- --cut demo --locale th --jobs 3` → `npm run film:mux -- --cut demo --locale th` ผลอยู่ที่ `out/film/cozypet-<cut>-<locale>.mp4` พร้อม .srt ภาพปก และ contact sheet ดูทีละเฟรมได้ที่ `/film?cut=demo&t=<วินาที>` หรือ `npm run film:frames -- --cut demo --t 12,40`
+
+เรนเดอร์ 1080p 120fps บนเครื่องทีมที่มีการ์ดจอ (เครื่อง cloud ไม่มีการ์ดจอ วาดด้วย CPU ราว 1.2–1.8 วินาที/เฟรม): `npm run film:local -- --fps 120` ทำ build → เปิดเว็บ → render `--gpu` → mux ให้ในคำสั่งเดียว ดูขั้นตอนบน Windows ใน [docs/FILM_LOCAL_RENDER.md](docs/FILM_LOCAL_RENDER.md)
 ก่อน render ฉบับส่งจริงให้สร้าง `team.local.json` (ไม่ commit) ใส่ชื่อทีม สมาชิก รหัสนักศึกษา และ `siteUrl` ไม่อย่างนั้นการ์ดทีมจะขึ้น `[[ต้องเติม: …]]` (render ร่างได้ด้วย `--allow-placeholders`)

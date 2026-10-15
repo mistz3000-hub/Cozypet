@@ -1,5 +1,5 @@
 /**
- * npm run film:render -- --cut demo --locale th [--fps 120] [--gpu] [--from 0 --to 10] [--jobs 3] [--chunk 360] [--fresh] [--allow-placeholders]
+ * npm run film:render -- --cut demo --locale th [--fps 120] [--gpu] [--headed] [--from 0 --to 10] [--jobs 3] [--chunk 360] [--fresh] [--allow-placeholders]
  * เปิด /film?record=1 แล้ว seek ทีละเฟรม (30 fps) → screenshot → ffmpeg (DEMO_VIDEO.md หัวข้อ 9)
  * ผลลัพธ์: out/film/<cut>-<locale>/video.mp4 (ไม่มีเสียง)
  */
@@ -7,15 +7,19 @@ import { spawn } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Browser } from '@playwright/test';
-import { BASE_URL, OUT, arg, ensureDir, ffmpegPath, flag, launch, teamPlaceholders, waitForServer } from './lib.ts';
+import { BASE_URL, OUT, arg, ensureDir, ffmpegPath, flag, glRenderer, isSoftwareGL, launch, teamPlaceholders, waitForServer } from './lib.ts';
 
 /** เฟรมต่อวินาที (ค่าเริ่มต้น 30 · งานสุดท้ายใช้ --fps 60 หรือ 120 ได้ — เวลา render เพิ่มตามจำนวนเฟรม) */
 const FPS = Math.max(1, Math.round(Number(arg('fps', '30'))));
 const cut = arg('cut', 'demo')!;
 const locale = arg('locale', 'th') === 'en' ? 'en' : 'th';
 const jobs = Math.max(1, Number(arg('jobs', '3')));
-/** --gpu: ใช้การ์ดจอจริงของเครื่อง (เครื่อง cloud นี้ไม่มี จึงใช้ SwiftShader ซึ่งวาดด้วย CPU) */
-const GL_ARGS = flag('gpu') ? ['--ignore-gpu-blocklist', '--enable-gpu-rasterization', '--enable-zero-copy'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+/** --gpu: ใช้การ์ดจอจริงของเครื่อง (เครื่อง cloud ไม่มี จึงใช้ SwiftShader ซึ่งวาดด้วย CPU) · Windows ใช้ Direct3D 11 */
+const GL_ARGS = flag('gpu')
+  ? ['--ignore-gpu-blocklist', '--enable-gpu', '--enable-gpu-rasterization', '--enable-zero-copy', ...(process.platform === 'win32' ? ['--use-angle=d3d11'] : [])]
+  : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+/** --headed เปิดหน้าต่างเบราว์เซอร์ · ถ้าสั่ง --gpu แล้วโหมดซ่อนหน้าต่างยังวาดด้วย CPU จะสลับเป็นโหมดนี้ให้เอง */
+let headed = flag('headed');
 
 export function captureIndex(loc: string): Record<string, unknown> {
   const dir = path.join(OUT, 'captures', loc);
@@ -59,7 +63,7 @@ export async function openFilm(browser: Browser, cutId: string, loc: string) {
 
 /** เตรียมหน้า /film หนึ่งหน้าต่อหนึ่งงาน แล้วเรนเดอร์ช่วงเฟรมทีละชิ้นจากคิวเดียวกัน */
 async function worker(ff: string, label: string, queue: { from: number; to: number; file: string }[], total: { done: number; frames: number; start: number }) {
-  const browser = await launch(GL_ARGS);
+  const browser = await launch(GL_ARGS, { headed });
   const { ctx, page } = await openFilm(browser, cut, locale);
   const cdp = await ctx.newCDPSession(page);
   let first = true;
@@ -104,8 +108,20 @@ async function main() {
     process.exit(1);
   }
   await waitForServer();
-  const browser = await launch(GL_ARGS);
-  const probe = await openFilm(browser, cut, locale);
+  let browser = await launch(GL_ARGS, { headed });
+  let probe = await openFilm(browser, cut, locale);
+  let gl = await glRenderer(probe.page);
+  if (flag('gpu') && isSoftwareGL(gl) && !headed) {
+    console.warn(`  โหมดซ่อนหน้าต่างยังวาดด้วย CPU (${gl}) — สลับเป็นโหมดเปิดหน้าต่าง (อย่าปิดหน้าต่าง Chrome ระหว่างเรนเดอร์)`);
+    await probe.ctx.close();
+    await browser.close();
+    headed = true;
+    browser = await launch(GL_ARGS, { headed });
+    probe = await openFilm(browser, cut, locale);
+    gl = await glRenderer(probe.page);
+  }
+  console.log(`ตัววาด WebGL: ${gl}${isSoftwareGL(gl) ? ' (CPU)' : ' (การ์ดจอ)'}`);
+  if (flag('gpu') && isSoftwareGL(gl)) console.warn('  ⚠ ยังไม่ได้ใช้การ์ดจอ — เรนเดอร์ได้แต่จะช้า ดูวิธีแก้ใน docs/FILM_LOCAL_RENDER.md');
   const duration = await probe.page.evaluate(() => window.__cozypetFilm!.duration());
   const info = await probe.page.evaluate(() => window.__cozypetFilm!.info());
   await probe.ctx.close();
@@ -125,7 +141,8 @@ async function main() {
   const total = { done: 0, frames, start: Date.now() };
   await Promise.all(Array.from({ length: Math.min(jobs, queue.length) }, (_, j) => worker(ff, `งาน ${j + 1}`, queue, total)));
   const list = path.join(chunkDir, 'list.txt');
-  writeFileSync(list, all.map((c) => `file '${c.file}'`).join('\n'));
+  // ffmpeg อ่าน / ได้ทุกระบบ (Windows ใช้ \ ในพาธ ซึ่งชนกับการ escape ของไฟล์ concat)
+  writeFileSync(list, all.map((c) => `file '${c.file.replace(/\\/g, '/')}'`).join('\n'));
   rmSync(outFile, { force: true });
   await new Promise<void>((resolve, reject) => spawn(ff, ['-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', outFile], { stdio: 'inherit' }).on('close', (c) => (c === 0 ? resolve() : reject(new Error('concat')))));
   if (!flag('keep-chunks')) rmSync(chunkDir, { recursive: true, force: true });

@@ -5,7 +5,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { chromium, type Browser } from '@playwright/test';
+import { chromium, type Browser, type Page } from '@playwright/test';
 
 export const ROOT = path.resolve(import.meta.dirname, '..', '..');
 export const OUT = path.join(ROOT, 'out', 'film');
@@ -33,14 +33,46 @@ export function chromiumPath(): string | undefined {
   return undefined;
 }
 
-export async function launch(extraArgs: string[] = []): Promise<Browser> {
-  // เครื่องอื่น (เช่น Windows ที่มีการ์ดจอ): FILM_CHROME_CHANNEL=chrome ใช้ Chrome ที่ติดตั้งในเครื่อง
-  const channel = process.env.FILM_CHROME_CHANNEL;
+/**
+ * เบราว์เซอร์ที่ใช้: FILM_CHROME_CHANNEL (chrome/msedge) ถ้ากำหนด → Chromium ที่ติดตั้งไว้ในเครื่อง cloud →
+ * Windows/macOS ใช้ Chrome ในเครื่อง (Windows ไม่มี Chrome ใช้ Edge แทน) · Linux อื่นใช้ค่าเริ่มต้นของ Playwright
+ */
+function browserChoice(): { channel?: string; executablePath?: string } {
+  if (process.env.FILM_CHROME_CHANNEL) return { channel: process.env.FILM_CHROME_CHANNEL };
+  const local = chromiumPath();
+  if (local) return { executablePath: local };
+  if (process.platform === 'win32') {
+    const dirs = [process.env.PROGRAMFILES, process.env['PROGRAMFILES(X86)'], process.env.LOCALAPPDATA].filter((d): d is string => !!d);
+    return { channel: dirs.some((d) => existsSync(path.join(d, 'Google', 'Chrome', 'Application', 'chrome.exe'))) ? 'chrome' : 'msedge' };
+  }
+  if (process.platform === 'darwin') return { channel: 'chrome' };
+  return {};
+}
+
+/** headed: เปิดหน้าต่างเบราว์เซอร์ให้เห็น (บางเครื่องใช้การ์ดจอได้เฉพาะโหมดนี้) — หรือ FILM_HEADED=1 */
+export async function launch(extraArgs: string[] = [], opts: { headed?: boolean } = {}): Promise<Browser> {
   return chromium.launch({
-    ...(channel ? { channel } : { executablePath: chromiumPath() }),
-    args: ['--no-proxy-server', '--disable-background-networking', '--disable-component-update', '--autoplay-policy=no-user-gesture-required', '--font-render-hinting=none', ...extraArgs],
+    ...browserChoice(),
+    headless: !(opts.headed || process.env.FILM_HEADED === '1'),
+    // หน้าต่างที่ถูกบัง/ย่อต้องไม่ถูกหน่วง ไม่งั้น seek ค้าง
+    args: ['--no-proxy-server', '--disable-background-networking', '--disable-component-update', '--autoplay-policy=no-user-gesture-required', '--font-render-hinting=none', '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows', ...extraArgs],
   });
 }
+
+/** ชื่อตัววาด WebGL ของหน้า (เช่นชื่อการ์ดจอ หรือ SwiftShader เมื่อวาดด้วย CPU) */
+export async function glRenderer(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    const c = document.createElement('canvas');
+    const g = c.getContext('webgl2') ?? c.getContext('webgl');
+    if (!g) return 'none';
+    const ext = g.getExtension('WEBGL_debug_renderer_info');
+    const name = String(ext ? g.getParameter(ext.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER));
+    g.getExtension('WEBGL_lose_context')?.loseContext();
+    return name;
+  });
+}
+
+export const isSoftwareGL = (name: string) => /swiftshader|llvmpipe|softpipe|software|basic render|^none$/i.test(name);
 
 export function ffmpegPath(): string {
   const p = process.env.FFMPEG_PATH ?? 'ffmpeg';
