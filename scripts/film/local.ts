@@ -1,5 +1,5 @@
 /**
- * npm run film:local -- [--fps 120] [--cut demo] [--locale th] [--jobs 3] [--headed] [--cpu] [--build]
+ * npm run film:local -- [--kit <โฟลเดอร์ zip>] [--fps 120] [--cut demo] [--locale th] [--jobs 3] [--headed] [--cpu] [--build]
  * เรนเดอร์วิดีโอเดโมทั้งชุดบนเครื่องทีม (เช่น Windows ที่มีการ์ดจอ) ด้วยคำสั่งเดียว — คู่มือ: docs/FILM_LOCAL_RENDER.md
  * ตรวจไฟล์ → build (ถ้ายังไม่มี หรือ --build) → เปิดเว็บ production ที่ FILM_BASE_URL (ค่าเริ่มต้นพอร์ต 3100) →
  * film:render --gpu → film:mux → ปิดเว็บที่เปิดเอง
@@ -36,6 +36,10 @@ function fail(msg: string): never {
   console.error(`✗ ${msg}`);
   process.exit(1);
 }
+
+// 0) --kit <โฟลเดอร์>: แตกชุดไฟล์ (cozypet-film-kit-*.zip) ลง out/film ก่อน
+const kit = arg('kit');
+if (kit) await run(['--experimental-strip-types', '--no-warnings', path.join(ROOT, 'scripts', 'film', 'kit.ts'), 'unpack', '--from', kit]);
 
 // 1) ตรวจของที่ต้องมีให้ครบก่อนเริ่ม (เรนเดอร์ 120fps ใช้เวลานาน ไม่ควรมาพังกลางทาง)
 const ff = ffmpegPath();

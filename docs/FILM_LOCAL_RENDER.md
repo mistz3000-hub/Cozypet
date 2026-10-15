@@ -21,6 +21,7 @@ node -v       # ต้องได้ v22.6 ขึ้นไป
 ffmpeg -version
 ```
 
+- ffmpeg ต้องเป็นรุ่น 5.1 ขึ้นไป (winget ติดตั้งรุ่นล่าสุดให้)
 - ต้องมี Google Chrome หรือ Microsoft Edge (Windows มี Edge อยู่แล้ว) ไม่ต้องรัน `playwright install`
 - อัปเดตไดรเวอร์การ์ดจอเป็นรุ่นล่าสุด
 - โน้ตบุ๊กที่มีการ์ดจอ 2 ตัว (Intel + NVIDIA/AMD): Settings → System → Display → Graphics → เพิ่ม `chrome.exe` (หรือ `msedge.exe`) แล้วเลือก **High performance**
@@ -39,36 +40,32 @@ npm ci
 
 ## 3. วางไฟล์ที่ไม่ได้อยู่ใน Git
 
-| ไฟล์ | วางที่ | ที่มา |
-|---|---|---|
-| `cozypet-film-kit-th-1.zip` และ `-2.zip` (ภาพอัดหน้าจอแอป, ดนตรี, เสียงพากย์) | แตก**ทั้งสองไฟล์**ลง `Cozypet\out\film\` | ไฟล์ที่ Claude ส่งให้ในแชต (แยก 2 ส่วนเพราะจำกัดไฟล์ละ 500 MB) |
-| `team.local.json` (ชื่อทีม สมาชิก รหัสนักศึกษา) | `Cozypet\team.local.json` | ไฟล์ของทีม ห้าม commit (อยู่ใน `.gitignore` แล้ว) |
+| ไฟล์ | วางที่ |
+|---|---|
+| `cozypet-film-kit-th-1of2.zip` และ `cozypet-film-kit-th-2of2.zip` (ภาพอัดหน้าจอแอป ดนตรี และเสียงพากย์ รวม 33 MB) | โฟลเดอร์ **Downloads** ไม่ต้องแตกเอง |
+| `team.local.json` (ชื่อทีม สมาชิก รหัสนักศึกษา) | `Cozypet\team.local.json` ห้าม commit (อยู่ใน `.gitignore` แล้ว) |
 
-แตก zip ทั้งสองไฟล์ด้วยคำสั่ง (แก้พาธถ้าไฟล์ไม่ได้อยู่ใน Downloads):
-
-```powershell
-Expand-Archive $HOME\Downloads\cozypet-film-kit-th-1.zip -DestinationPath out\film -Force
-Expand-Archive $HOME\Downloads\cozypet-film-kit-th-2.zip -DestinationPath out\film -Force
-```
-
-แตกถูกที่แล้วจะมี `out\film\captures\th\C0\capture.json` … `C9`, `out\film\demo-th\music.wav` และ `out\film\voice\demo-th\voice.wav`
+ภาพอัดหน้าจอถูกเก็บเป็นวิดีโอ H.264 4:4:4 คุณภาพสูงเพื่อให้ไฟล์เล็ก (ภาพเหมือนต้นฉบับด้วยตา PSNR ~49–53 dB) ส่วนดนตรีและเสียงพากย์เป็น FLAC ซึ่งได้เสียงตรงกับต้นฉบับทุก sample สคริปต์จะถอดกลับให้เอง
 
 ## 4. เรนเดอร์
 
 ```powershell
-npm run film:local -- --fps 120
+npm run film:local -- --kit "$HOME\Downloads" --fps 120
 ```
+
+ใส่ `--kit` เฉพาะครั้งแรก (หรือเมื่อได้ชุดไฟล์ใหม่) ครั้งต่อไปใช้ `npm run film:local -- --fps 120` ได้เลย
 
 สคริปต์จะทำต่อกันเอง:
 
-1. ตรวจ ffmpeg, `team.local.json`, ภาพอัดหน้าจอ, ดนตรี และเสียงพากย์ ถ้าขาดอะไรจะหยุดตั้งแต่ต้นพร้อมบอกว่าขาดไฟล์ไหน
-2. build เว็บ (ครั้งแรกใช้เวลาหลายนาที) แล้วเปิดเว็บ production ที่ `http://localhost:3100`
-3. เรนเดอร์ภาพด้วยการ์ดจอ โดยดูบรรทัด `ตัววาด WebGL:`
+1. แตกชุดไฟล์จาก Downloads ลง `out\film\` แล้วตรวจจำนวนเฟรมทุกชุด
+2. ตรวจ ffmpeg, `team.local.json`, ภาพอัดหน้าจอ, ดนตรี และเสียงพากย์ ถ้าขาดอะไรจะหยุดตั้งแต่ต้นพร้อมบอกว่าขาดไฟล์ไหน
+3. build เว็บ (ครั้งแรกใช้เวลาหลายนาที) แล้วเปิดเว็บ production ที่ `http://localhost:3100`
+4. เรนเดอร์ภาพด้วยการ์ดจอ โดยดูบรรทัด `ตัววาด WebGL:`
    - ถ้าเป็นชื่อการ์ดจอ (เช่น NVIDIA / AMD / Intel) แปลว่าใช้การ์ดจอแล้ว
    - ถ้าเป็น SwiftShader สคริปต์จะสลับไปเปิดหน้าต่าง Chrome ให้เอง **ห้ามปิดหน้าต่างนั้นระหว่างเรนเดอร์** ย่อหน้าต่างได้
    - ระหว่างทำจะแสดงความเร็ว (เฟรม/วินาที) และเวลาที่เหลือโดยประมาณ
-4. ผสมดนตรีกับเสียงพากย์ (ปรับความดัง −16 LUFS) แล้วทำซับ ภาพปก และ contact sheet
-5. ปิดเว็บที่เปิดเอง
+5. ผสมดนตรีกับเสียงพากย์ (ปรับความดัง −16 LUFS) แล้วทำซับ ภาพปก และ contact sheet
+6. ปิดเว็บที่เปิดเอง
 
 ผลลัพธ์อยู่ใน `out\film\`:
 
@@ -96,6 +93,7 @@ npm run film:local -- --fps 120
 | พอร์ต 3100 ถูกใช้อยู่ | `$env:FILM_BASE_URL="http://localhost:3200"` แล้วรันใหม่ |
 | ใช้ Edge แต่อยากใช้ Chrome (หรือกลับกัน) | `$env:FILM_CHROME_CHANNEL="chrome"` หรือ `"msedge"` |
 | ยังขึ้น SwiftShader แม้เปิดหน้าต่าง | ตั้ง High performance ตามข้อ 1 อัปเดตไดรเวอร์ แล้วเปิด `chrome://gpu` ดูว่า WebGL2 เป็น *Hardware accelerated* |
+| `ชุดไฟล์ยังไม่ครบ` | ดาวน์โหลด zip ให้ครบทั้ง 2 ส่วนไว้ในโฟลเดอร์เดียวกัน แล้วใส่โฟลเดอร์นั้นหลัง `--kit` |
 | ค้างที่เฟรมใดเฟรมหนึ่งเกิน 60 วินาที | สคริปต์จะหยุดเอง รันคำสั่งเดิมซ้ำเพื่อทำต่อ |
 
 ## ข้อควรจำ

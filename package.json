@@ -23,6 +23,7 @@
     "film:mux": "node --experimental-strip-types scripts/film/mux.ts",
     "film:all": "node --experimental-strip-types scripts/film/all.ts",
     "film:local": "node --experimental-strip-types scripts/film/local.ts",
+    "film:kit": "node --experimental-strip-types scripts/film/kit.ts",
     "print:poster": "node --experimental-strip-types scripts/print/export.ts poster",
     "print:deck": "node --experimental-strip-types scripts/print/export.ts deck",
     "print:report": "node --experimental-strip-types scripts/print/export.ts report",
