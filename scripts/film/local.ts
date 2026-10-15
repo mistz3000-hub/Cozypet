@@ -39,10 +39,15 @@ function fail(msg: string): never {
 
 // 0) --kit <โฟลเดอร์>: แตกชุดไฟล์ (cozypet-film-kit-*.zip) ลง out/film ก่อน
 const kit = arg('kit');
-if (kit) await run(['--experimental-strip-types', '--no-warnings', path.join(ROOT, 'scripts', 'film', 'kit.ts'), 'unpack', '--from', kit]);
+if (kit) {
+  // ส่ง ffmpeg ที่หาเจอให้สคริปต์ลูกใช้ต่อ (เช่นติดตั้งด้วย winget แต่ PATH ยังไม่อัปเดต)
+  process.env.FFMPEG_PATH = ffmpegPath();
+  await run(['--experimental-strip-types', '--no-warnings', path.join(ROOT, 'scripts', 'film', 'kit.ts'), 'unpack', '--from', kit]).catch((e: Error) => fail(e.message));
+}
 
 // 1) ตรวจของที่ต้องมีให้ครบก่อนเริ่ม (เรนเดอร์ 120fps ใช้เวลานาน ไม่ควรมาพังกลางทาง)
 const ff = ffmpegPath();
+process.env.FFMPEG_PATH = ff;
 console.log(`✓ ffmpeg: ${ff}`);
 const missing = teamPlaceholders();
 if (missing.length) fail(`team.local.json ยังไม่ครบ: ${missing.join(', ')} — วางไฟล์ไว้ที่ ${ROOT}`);
@@ -64,7 +69,7 @@ console.log(hasVoice ? `✓ เสียงพากย์ ${rel(path.dirname(vo
 // 2) build + เปิดเว็บ
 if (flag('build') || !existsSync(path.join(ROOT, '.next', 'BUILD_ID'))) {
   console.log('\n— build เว็บ (ครั้งแรกใช้เวลาหลายนาที)');
-  await run([NEXT, 'build']);
+  await run([NEXT, 'build']).catch((e: Error) => fail(e.message));
 }
 let server: ChildProcess | null = null;
 if (!(await up())) {

@@ -3,7 +3,7 @@
  * ใช้ Chromium ที่ติดตั้งไว้แล้ว (ห้ามรัน playwright install) และ ffmpeg ในเครื่อง (หรือ FFMPEG_PATH)
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { chromium, type Browser, type Page } from '@playwright/test';
 
@@ -74,14 +74,28 @@ export async function glRenderer(page: Page): Promise<string> {
 
 export const isSoftwareGL = (name: string) => /swiftshader|llvmpipe|softpipe|software|basic render|^none$/i.test(name);
 
-export function ffmpegPath(): string {
-  const p = process.env.FFMPEG_PATH ?? 'ffmpeg';
-  const r = spawnSync(p, ['-version'], { encoding: 'utf8' });
-  if (r.status !== 0) {
-    console.error(`ไม่พบ ffmpeg (${p}) — ติดตั้ง ffmpeg ในเครื่อง หรือกำหนด FFMPEG_PATH ให้ชี้ไปยังไฟล์ ffmpeg ที่มี libx264 และ aac`);
-    process.exit(1);
+/** ที่ที่ winget ติดตั้ง ffmpeg ไว้ (ใช้ได้ทันทีแม้ยังไม่ได้เปิด PowerShell ใหม่ให้ PATH อัปเดต) */
+function wingetFfmpeg(): string[] {
+  const out: string[] = [];
+  for (const base of [process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'Microsoft', 'WinGet'), process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'WinGet')]) {
+    if (!base) continue;
+    out.push(path.join(base, 'Links', 'ffmpeg.exe'));
+    const pk = path.join(base, 'Packages');
+    if (!existsSync(pk)) continue;
+    for (const d of readdirSync(pk).filter((x) => x.startsWith('Gyan.FFmpeg'))) {
+      for (const sub of readdirSync(path.join(pk, d))) out.push(path.join(pk, d, sub, 'bin', 'ffmpeg.exe'));
+    }
   }
-  return p;
+  return out.filter((p) => existsSync(p));
+}
+
+export function ffmpegPath(): string {
+  const cands = [process.env.FFMPEG_PATH, 'ffmpeg', ...(process.platform === 'win32' ? wingetFfmpeg() : [])].filter((p): p is string => !!p);
+  for (const p of cands) {
+    if (spawnSync(p, ['-version'], { encoding: 'utf8' }).status === 0) return p;
+  }
+  console.error(`ไม่พบ ffmpeg (ลองแล้ว: ${cands.join(', ')}) — ติดตั้ง ffmpeg (Windows: winget install Gyan.FFmpeg แล้วปิด/เปิด PowerShell ใหม่) หรือกำหนด FFMPEG_PATH ให้ชี้ไปยังไฟล์ ffmpeg ที่มี libx264 และ aac`);
+  process.exit(1);
 }
 
 export function ffprobeDuration(ff: string, file: string): number {
