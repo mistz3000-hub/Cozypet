@@ -6,7 +6,7 @@
  * ต้องมี out/film/captures/<locale>, out/film/<cut>-<locale>/music.wav และ team.local.json ก่อน
  */
 import { spawn, type ChildProcess } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { BASE_URL, OUT, ROOT, arg, ffmpegPath, flag, teamPlaceholders, waitForServer } from './lib.ts';
 
@@ -45,8 +45,11 @@ if (missing.length) fail(`team.local.json ยังไม่ครบ: ${missing
 console.log('✓ team.local.json');
 const capDir = path.join(OUT, 'captures', locale);
 const caps = existsSync(capDir) ? readdirSync(capDir).filter((id) => existsSync(path.join(capDir, id, 'capture.json'))) : [];
-if (!caps.length) fail(`ไม่พบภาพอัดหน้าจอใน ${rel(capDir)} — แตกไฟล์ชุดเรนเดอร์ (film-kit) ลงโฟลเดอร์ out/film ก่อน`);
-console.log(`✓ ภาพอัดหน้าจอ ${caps.length} ชุด (${caps.join(', ')})`);
+// ชุดภาพที่ช็อตในวิดีโอใช้ (อ่านจาก cuts.ts) ต้องมีครบ ไม่งั้นจอโทรศัพท์ในวิดีโอจะว่าง
+const needed = [...new Set([...readFileSync(path.join(ROOT, 'src', 'features', 'film', 'cuts.ts'), 'utf8').matchAll(/capture: '([A-Z0-9]+)'/g)].map((m) => m[1]))].sort();
+const lack = needed.filter((id) => !caps.includes(id));
+if (lack.length) fail(`ภาพอัดหน้าจอใน ${rel(capDir)} ยังขาด ${lack.join(', ')} — แตกไฟล์ชุดเรนเดอร์ (film-kit) ทุกส่วนลงโฟลเดอร์ out/film ก่อน`);
+console.log(`✓ ภาพอัดหน้าจอครบ ${needed.length} ชุด (${needed.join(', ')})`);
 const music = path.join(OUT, `${cut}-${locale}`, 'music.wav');
 if (!existsSync(music)) fail(`ไม่พบ ${rel(music)} — แตกไฟล์ชุดเรนเดอร์ หรือรัน npm run film:audio -- --cut ${cut} --locale ${locale}`);
 console.log(`✓ ${rel(music)}`);

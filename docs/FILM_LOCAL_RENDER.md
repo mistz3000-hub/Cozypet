@@ -41,16 +41,17 @@ npm ci
 
 | ไฟล์ | วางที่ | ที่มา |
 |---|---|---|
-| `cozypet-film-kit-th.zip` (ภาพอัดหน้าจอแอป, ดนตรี, เสียงพากย์) | แตกลง `Cozypet\out\film\` | ไฟล์แนบใน release ฉบับร่าง `film-kit-th` ของ repo (เห็นเฉพาะเจ้าของ repo) |
+| `cozypet-film-kit-th-1.zip` และ `-2.zip` (ภาพอัดหน้าจอแอป, ดนตรี, เสียงพากย์) | แตก**ทั้งสองไฟล์**ลง `Cozypet\out\film\` | ไฟล์ที่ Claude ส่งให้ในแชต (แยก 2 ส่วนเพราะจำกัดไฟล์ละ 500 MB) |
 | `team.local.json` (ชื่อทีม สมาชิก รหัสนักศึกษา) | `Cozypet\team.local.json` | ไฟล์ของทีม ห้าม commit (อยู่ใน `.gitignore` แล้ว) |
 
-แตก zip ด้วยคำสั่ง (แก้พาธถ้าไฟล์ไม่ได้อยู่ใน Downloads):
+แตก zip ทั้งสองไฟล์ด้วยคำสั่ง (แก้พาธถ้าไฟล์ไม่ได้อยู่ใน Downloads):
 
 ```powershell
-Expand-Archive $HOME\Downloads\cozypet-film-kit-th.zip -DestinationPath out\film -Force
+Expand-Archive $HOME\Downloads\cozypet-film-kit-th-1.zip -DestinationPath out\film -Force
+Expand-Archive $HOME\Downloads\cozypet-film-kit-th-2.zip -DestinationPath out\film -Force
 ```
 
-แตกถูกที่แล้วจะมี `out\film\captures\th\C0\capture.json`, `out\film\demo-th\music.wav` และ `out\film\voice\demo-th\voice.wav`
+แตกถูกที่แล้วจะมี `out\film\captures\th\C0\capture.json` … `C9`, `out\film\demo-th\music.wav` และ `out\film\voice\demo-th\voice.wav`
 
 ## 4. เรนเดอร์
 
